@@ -1,3 +1,7 @@
 flask
 flask_restful
 pymongo
+flask_restx
+boto3
+werkzeug
+awscli
