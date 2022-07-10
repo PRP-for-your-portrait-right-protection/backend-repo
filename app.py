@@ -9,23 +9,7 @@ client = MongoClient(
     port=27017,
     serverSelectionTimeoutMS = 5000 #5초 동안 접속이 되지 않을경우 에러메세지 발생
     )
-def s3_connection():
-    try:
-        s3 = boto3.client(
-            service_name = "s3",
-            region_name = "ap-northease-2", #자신이 설정한 버켓 region
-            aws_access_key_id = 'AWSAccessKeyId=AKIAYXSYOOKJM5S6R2DJ',
-            aws_secret_access_key = 'AWSSecretKey=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',
-        )
-    except Exception as e:
-        print("***********************************************************")
-        print(e)
-        print("***********************************************************")
-    else:
-        print("***********************************************************")
-        print("S3 bucket connected!")
-        print("***********************************************************")
-        return s3
+
 @app.route('/')
 def hello():
     return "Hello!"
