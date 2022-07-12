@@ -1,44 +1,237 @@
-#-*- coding:utf-8 -*-
-from flask import Flask, render_template, redirect, request, url_for
-from pymongo import MongoClient
-from werkzeug.utils import secure_filename
-import boto3
+from flask import Flask, Response, request
+import json
+from static import status_code
+from module import file_module
+from db import db_connection
 app = Flask(__name__)
-client = MongoClient(
-    host="localhost",
-    port=27017,
-    serverSelectionTimeoutMS = 5000 #5초 동안 접속이 되지 않을경우 에러메세지 발생
-    )
 
-@app.route('/')
-def hello():
-    return "Hello!"
-@app.route('/test')
-def prt():
-    return "hi"
-s3 = s3_connection()
+# DB 연결
+db = db_connection.db_connection()
 
-@app.route("/images", methods=["POST"])
-def upload(s3): #프론트에서 멀티플 설정필요?, 파일형식 설정?
-    if Flask.request.method == "POST": #POST일 경우에 작동
-        image = request.files("image") #이미지 형식
-        # for image in images:
-        s3.put_object(
-            Bucket = "jhmys3bucket35", #BUCKET_NAME
-            Body = image,
-            key = image,
-            ContentType = "profile_image.jpg"
-        )
-        print("파일 저장 성공   ")
+# 스키마 생성
+# db_connection.init_collection(db)
 
-@app.route('/upload', methods=['GET', 'POST'])
-def uploader_file():
-    if request.method == 'POST':
-        f = request.files['file']
-        f.save(secure_filename(f.filename))
-        return 'file upload successfully'
+'''
+# 
+# @form-data : file, user_id, person_name
+#
+'''
+@app.route('/person', methods=['POST'])
+def uploadPerson():
+    try:
+        if file_module.multiple_upload(db, "people"):
+    
+            # 5-4. 성공 message return
+            return Response(
+                response=json.dumps(
+                    {
+                        "message":status_code.fileupload_01_success,
+                    }
+                ),
+                status=200,
+                mimetype="application/json"
+            )
+        
+        # 5. 버킷에 파일 저장 실패 시 진행
+        else:
+            # 5-1. 실패 message return
+            return Response(
+                response=json.dumps(
+                    {
+                        "message":status_code.fileupload_02_fail,
+                    }
+                ),
+                status=200,
+                mimetype="application/json"
+            )
+    except Exception as ex:
+        print("******************")
+        print(ex)
+        print("******************")
+        
+'''
+# 
+# @form-data : file, user_id
+#
+'''
+@app.route('/character', methods=['POST'])
+def uploadCharacter():
+    try:
+        if file_module.single_upload(db, "upload_character"):
+    
+            # 5-4. 성공 message return
+            return Response(
+                response=json.dumps(
+                    {
+                        "message":status_code.fileupload_01_success,
+                    }
+                ),
+                status=200,
+                mimetype="application/json"
+            )
+        
+        # 5. 버킷에 파일 저장 실패 시 진행
+        else:
+            # 5-1. 실패 message return
+            return Response(
+                response=json.dumps(
+                    {
+                        "message":status_code.fileupload_02_fail,
+                    }
+                ),
+                status=200,
+                mimetype="application/json"
+            )
+    except Exception as ex:
+            print("******************")
+            print(ex)
+            print("******************")
 
-if __name__ == '__main__':
-    app.run(debug=True , host='0.0.0.0', port=5000)
-    #port번호 : 0 0 0 0 으로 설정해야 외부에서 접근 가능
-    #port : 5000번으로 설정
+'''
+# 
+# @form-data : file, user_id
+#
+'''
+@app.route('/characters', methods=['POST'])
+def uploadCharacters():
+    try:
+        if file_module.multiple_upload(db, "upload_character"):
+    
+            # 5-4. 성공 message return
+            return Response(
+                response=json.dumps(
+                    {
+                        "message":status_code.fileupload_01_success,
+                    }
+                ),
+                status=200,
+                mimetype="application/json"
+            )
+        
+        # 5. 버킷에 파일 저장 실패 시 진행
+        else:
+            # 5-1. 실패 message return
+            return Response(
+                response=json.dumps(
+                    {
+                        "message":status_code.fileupload_02_fail,
+                    }
+                ),
+                status=200,
+                mimetype="application/json"
+            )
+    except Exception as ex:
+        print("******************")
+        print(ex)
+        print("******************")
+
+'''
+# 
+# @form-data : file, user_id
+#
+'''
+@app.route('/video-origin', methods=['POST'])
+def oringinVideo():
+    try:
+        if file_module.single_upload(db, "video_origin"):
+    
+            # 5-4. 성공 message return
+            return Response(
+                response=json.dumps(
+                    {
+                        "message":status_code.fileupload_01_success,
+                    }
+                ),
+                status=200,
+                mimetype="application/json"
+            )
+        
+        # 5. 버킷에 파일 저장 실패 시 진행
+        else:
+            # 5-1. 실패 message return
+            return Response(
+                response=json.dumps(
+                    {
+                        "message":status_code.fileupload_02_fail,
+                    }
+                ),
+                status=200,
+                mimetype="application/json"
+            )
+    except Exception as ex:
+        print("******************")
+        print(ex)
+        print("******************")
+
+'''
+# 
+# @form-data : file, user_id
+#
+'''
+@app.route('/video-modification', methods=['POST'])
+def modificationVideo():
+    try:
+        if file_module.single_upload(db, "video_modification"):
+    
+            # 5-4. 성공 message return
+            return Response(
+                response=json.dumps(
+                    {
+                        "message":status_code.fileupload_01_success,
+                    }
+                ),
+                status=200,
+                mimetype="application/json"
+            )
+        
+        # 5. 버킷에 파일 저장 실패 시 진행
+        else:
+            # 5-1. 실패 message return
+            return Response(
+                response=json.dumps(
+                    {
+                        "message":status_code.fileupload_02_fail,
+                    }
+                ),
+                status=200,
+                mimetype="application/json"
+            )
+    except Exception as ex:
+        print("******************")
+        print(ex)
+        print("******************")
+
+"""
+* 단일 파일 다운로드
+"""
+@app.route('/video-modification', methods=['GET'])
+def filedownload():
+    try:
+        if file_module.single_download(db, "video_modification") :
+            return Response(
+                    response=json.dumps(
+                        {
+                            "message":status_code.filedownload_01_success,
+                        }
+                    ),
+                    status=200,
+                    mimetype="application/json"
+            )
+        else:
+            return Response(
+                    response=json.dumps(
+                        {
+                            "message":status_code.filedownload_02_fail,
+                        }
+                    ),
+                    status=200,
+                    mimetype="application/json"
+            )
+    except Exception as ex:
+        print("******************")
+        print(ex)
+        print("******************")
+
+
+if __name__ == "__main__":
+    app.run(port=80, debug=True)
