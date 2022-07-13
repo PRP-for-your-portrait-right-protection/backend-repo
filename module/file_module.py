@@ -18,6 +18,7 @@ def single_upload(db, collction_name):
         f = request.files['file']
         
         # 2. 파일명 secure
+        # 파일명 자체를 알아볼 수 없게 암호화 함수 찾기
         filename = secure_filename(f.filename)
         
         # 3. lcoal에 파일 저장 - 필요 없을 시 삭제
@@ -42,9 +43,12 @@ def single_upload(db, collction_name):
             # 5-2. db에 저장할 object 생성
             # col = db.collction_name
             
+            
+            # aws에서 url을 받아와서 저장
+            # 기존에 쓰셨던 방법 : url은 그대로 + 파일명만 바뀌도록
             if collction_name == 'upload_character':
                 obj = {
-                    "character_id" : col.count()+1, # auto_increase
+                    "character_id" : 1, # auto_increase
                     "user_id" : request.form["user_id"],
                     "character_name" : filename,
                     "reg_date": now.strftime('%Y-%m-%d %H:%M:%S')
@@ -185,6 +189,7 @@ def multiple_upload(db, collction_name):
 사람2 - 5장
 사람3 - 3장
 
+- 백앤드에서 진행 : 갯수와 함께 백으로 넘겨주면
 for(int i=0; i<3; i++)
     // 여기서 video-modification에 post 반복
     // param으로 사람이름 보내기 -> 동명이인 고려X

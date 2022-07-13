@@ -1,28 +1,40 @@
 import pymongo
-from db_config import HOST, PORT
+from db.db_config import HOST, PORT
 
 def db_connection():
     db = None
+    
+    print("=================================")
+    print(HOST)
+    print("=================================")
 
     try:
-        mongo = pymongo.MongoClient(
-            host = HOST, 
-            port = PORT,
-            serverSelectionTimeoutMS = 1000
-        )
+        # mongo = pymongo.MongoClient(
+        #     # host = os.environ['DB_PORT_27017_TCP_ADDR'], 
+        #     host = HOST,
+        #     port = PORT
+        #     # serverSelectionTimeoutMS = 1000
+        # )
+        # MongoClient('mongodb://user:' + password + '@127.0.0.1')
+
+        mongo = pymongo.MongoClient('mongodb://root:root@db:27017')
         db = mongo.silicon
         mongo.server_info() # trigger exception if cannot connect to db
         return db
-    except:
-        print("ERROR - Cannot connect to db")
-        return False
+    # except:
+    #     print("ERROR - Cannot connect to db")
+    #     return False
+    except Exception as ex:
+        print("******************")
+        print(ex)
+        print("******************")
     
 def init_collection(db):
     people_result = db.create_collection("people", validator={
             '$jsonSchema': {
                 'bsonType': 'object',
                 'additionalProperties': True,
-                'required': ['person_id', 'user_id', 'person_img_name', 'person_name', 'reg_date'],
+                'required': ['person_id', 'user_id', 'person_img_name', 'person_name', 'person_url', 'reg_date'],
                 'properties': {
                     "person_id" : {
                         'bsonType': 'number'
@@ -34,6 +46,9 @@ def init_collection(db):
                         'bsonType': 'string'
                     },
                     "person_name" : {
+                        'bsonType': 'string'
+                    },
+                    "person_url" : {
                         'bsonType': 'string'
                     },
                     "reg_date": {
