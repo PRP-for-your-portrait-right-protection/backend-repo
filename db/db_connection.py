@@ -22,7 +22,7 @@ def init_collection(db):
             '$jsonSchema': {
                 'bsonType': 'object',
                 'additionalProperties': True,
-                'required': ['person_id', 'user_id', 'person_img_name', 'person_name', 'reg_date'],
+                'required': ['person_id', 'user_id', 'person_img_name', 'person_name', 'reg_date', 'person_img_url'],
                 'properties': {
                     "person_id" : {
                         'bsonType': 'number'
@@ -38,6 +38,10 @@ def init_collection(db):
                     },
                     "reg_date": {
                         'bsonType': 'string'
+                    },
+                    "person_img_url" : {
+                        'bsontype' : 'string'
+                    }
                     }
                 }
             }
@@ -62,6 +66,9 @@ def init_collection(db):
                     },
                     "reg_date": {
                         'bsonType': 'string'
+                    },
+                    "character_url" : {
+                        'bsontype' : 'string'
                     }
                 }
             }
@@ -87,6 +94,9 @@ def init_collection(db):
                     "reg_date": {
                         'bsonType': 'string',
                     },
+                    "video_url" : {
+                        'bsontype' : 'string'
+                    }
                 }
             }
         })
@@ -110,6 +120,9 @@ def init_collection(db):
                     },
                     "reg_date": {
                         'bsonType': 'string'
+                    },
+                    "video_modification_url" : {
+                        'bsontype' : 'string'
                     }
                 }
             }
