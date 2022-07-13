@@ -53,7 +53,7 @@ def init_collection(db):
             '$jsonSchema': {
                 'bsonType': 'object',
                 'additionalProperties': True,
-                'required': ['character_id', 'user_id', 'character_name', 'reg_date'],
+                'required': ['character_id', 'user_id', 'character_name', 'reg_date', 'character_url'],
                 'properties': {
                     "character_id": {
                         'bsonType': 'number'
@@ -80,7 +80,7 @@ def init_collection(db):
             '$jsonSchema': {
                 'bsonType': 'object',
                 'additionalProperties': True,
-                'required': ['video_id', 'user_id', 'video_name', 'reg_date'],
+                'required': ['video_id', 'user_id', 'video_name', 'reg_date', 'video_url'],
                 'properties': {
                     "video_id" : {
                         'bsonType': 'number',
@@ -107,7 +107,7 @@ def init_collection(db):
             '$jsonSchema': {
                 'bsonType': 'object',
                 'additionalProperties': True,
-                'required': ['video_id', 'user_id', 'video_name', 'reg_date'],
+                'required': ['video_id', 'user_id', 'video_name', 'reg_date', 'video_modification_url'],
                 'properties': {
                     "video_id" : {
                         'bsonType': 'number'
