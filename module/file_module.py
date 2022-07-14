@@ -46,12 +46,9 @@ def single_upload(db, collction_name):
             # 5-2. db에 저장할 object 생성
             # col = db.collction_name
             
-            
-            # aws에서 url을 받아와서 저장
-            # 기존에 쓰셨던 방법 : url은 그대로 + 파일명만 바뀌도록
             if collction_name == 'upload_character':
                 obj = {
-                    "character_id" : 1, # auto_increase
+                    "character_id" : col.count()+1, # auto_increase
                     "user_id" : request.form["user_id"],
                     "character_name" : filename,
                     "reg_date": now.strftime('%Y-%m-%d %H:%M:%S'),
@@ -185,7 +182,56 @@ def multiple_upload(db, collction_name):
             print(ex)
             print("******************")
             return False
-        
+
+"""
+* 인물 사진, 캐릭터 사진 가져오기
+"""
+def multiple_get(db, collction_name):
+    try:
+        if collction_name == "get_character": 
+            col = db.upload_character
+            docs = col.find({"user_id" : request.form["user_id"]})
+
+            character_json = {}
+
+            count = 0
+
+            for x in docs:
+                
+                character_json[f'character_url_{count}'] = x['character_url']
+                count += 1
+
+            return character_json
+
+        elif collction_name == "get_people":
+            col = db.people
+
+            userId = request.form["user_id"]
+
+            person_list = col.distinct("person_name", {"user_id" : userId}) #user id에 해당하는 person_name을 중복 제거 하여 가져옴
+
+            person_json = {}
+
+            # for name in person_list:
+            #     count = 0
+            #     person_json[name] = {}
+            #     docs = col.find({"person_name" : name, "user_id" : userId})
+            #     for x in docs:
+            #         person_json[name][f'person_img_url_{count}'] = x['person_img_url']
+            #         count += 1
+
+            for name in person_list:
+                person_json[name] = []
+                docs = col.find({"person_name" : name, "user_id" : userId})
+                for x in docs:
+                    person_json[name].append(x['person_img_url'])
+
+            return person_json
+    except Exception as ex:
+        print('*********')
+        print(ex)
+        print('*********')
+        return False
         
 """
 * 다수 인물 다중 파일 업로드
@@ -199,7 +245,6 @@ def multiple_upload(db, collction_name):
 사람2 - 5장
 사람3 - 3장
 
-- 백앤드에서 진행 : 갯수와 함께 백으로 넘겨주면
 for(int i=0; i<3; i++)
     // 여기서 video-modification에 post 반복
     // param으로 사람이름 보내기 -> 동명이인 고려X

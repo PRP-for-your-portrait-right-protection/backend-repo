@@ -20,6 +20,7 @@ db = db_connection.db_connection()
 def uploadPerson():
     try:
         if file_module.multiple_upload(db, "people"):
+    
             # 5-4. 성공 message return
             return Response(
                 response=json.dumps(
@@ -30,6 +31,7 @@ def uploadPerson():
                 status=200,
                 mimetype="application/json"
             )
+        
         # 5. 버킷에 파일 저장 실패 시 진행
         else:
             # 5-1. 실패 message return
@@ -56,6 +58,7 @@ def uploadPerson():
 def uploadCharacter():
     try:
         if file_module.single_upload(db, "upload_character"):
+    
             # 5-4. 성공 message return
             return Response(
                 response=json.dumps(
@@ -66,6 +69,7 @@ def uploadCharacter():
                 status=200,
                 mimetype="application/json"
             )
+        
         # 5. 버킷에 파일 저장 실패 시 진행
         else:
             # 5-1. 실패 message return
@@ -92,6 +96,7 @@ def uploadCharacter():
 def uploadCharacters():
     try:
         if file_module.multiple_upload(db, "upload_character"):
+    
             # 5-4. 성공 message return
             return Response(
                 response=json.dumps(
@@ -102,6 +107,7 @@ def uploadCharacters():
                 status=200,
                 mimetype="application/json"
             )
+        
         # 5. 버킷에 파일 저장 실패 시 진행
         else:
             # 5-1. 실패 message return
@@ -128,6 +134,7 @@ def uploadCharacters():
 def oringinVideo():
     try:
         if file_module.single_upload(db, "video_origin"):
+    
             # 5-4. 성공 message return
             return Response(
                 response=json.dumps(
@@ -138,6 +145,7 @@ def oringinVideo():
                 status=200,
                 mimetype="application/json"
             )
+        
         # 5. 버킷에 파일 저장 실패 시 진행
         else:
             # 5-1. 실패 message return
@@ -164,6 +172,7 @@ def oringinVideo():
 def modificationVideo():
     try:
         if file_module.single_upload(db, "video_modification"):
+    
             # 5-4. 성공 message return
             return Response(
                 response=json.dumps(
@@ -174,6 +183,7 @@ def modificationVideo():
                 status=200,
                 mimetype="application/json"
             )
+        
         # 5. 버킷에 파일 저장 실패 시 진행
         else:
             # 5-1. 실패 message return
@@ -199,30 +209,82 @@ def filedownload():
     try:
         if file_module.single_download(db, "video_modification") :
             return Response(
-                response=json.dumps(
-                    {
-                        "message":status_code.filedownload_01_success,
-                    }
-                ),
-                status=200,
-                mimetype="application/json"
+                    response=json.dumps(
+                        {
+                            "message":status_code.filedownload_01_success,
+                        }
+                    ),
+                    status=200,
+                    mimetype="application/json"
             )
         else:
             return Response(
-                response=json.dumps(
-                    {
-                        "message":status_code.filedownload_02_fail,
-                    }
-                ),
-                status=200,
-                mimetype="application/json"
+                    response=json.dumps(
+                        {
+                            "message":status_code.filedownload_02_fail,
+                        }
+                    ),
+                    status=200,
+                    mimetype="application/json"
             )
     except Exception as ex:
         print("******************")
         print(ex)
         print("******************")
-
-
+"""
+* 캐릭터 사진 모두 가져오기
+"""
+@app.route('/characters', methods = ["GET"])
+def characterDownload():
+    try:
+        if file_module.multiple_get(db, "get_character"):
+            return Response(
+                response = json.dumps(file_module.multiple_get(db, "get_character")),
+                status = 200,
+                mimetype = "application/json"
+            )
+        else:
+            return Response(
+                    response=json.dumps(
+                        {
+                            "message":status_code.filedownload_02_fail,
+                        }
+                    ),
+                    status=200,
+                    mimetype="application/json"
+            )
+    except Exception as ex:
+        print("******************")
+        print(ex)
+        print("******************")
+"""
+* 인물 사진 모두 가져오기
+"""
+@app.route('/people', methods = ["GET"])
+def peopleDownload():
+    try:
+        if file_module.multiple_get(db, "get_people"):
+            return Response(
+                response = json.dumps(file_module.multiple_get(db, "get_people")),
+                status = 200,
+                mimetype = "application/json"
+            )
+        else:
+            return Response(
+                    response=json.dumps(
+                        {
+                            "message":status_code.filedownload_02_fail
+                        }
+                    ),
+                    status=200,
+                    mimetype="application/json"
+            )
+    except Exception as ex:
+        print("******************")
+        print(ex)
+        print("******************")
+"""
+* 
+"""
 if __name__ == "__main__":
     app.run(port=80, debug=True)
-
