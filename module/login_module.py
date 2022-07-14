@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import hashlib
 import jwt
 from flask import request
-from module.key import SECRET_KEY, TOKEN_EXPIRED
+from module.module_config import SECRET_KEY, TOKEN_EXPIRED
 
 """
 * 회원가입
