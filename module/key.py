@@ -1,0 +1,2 @@
+SECRET_KEY = "soohyun"
+TOKEN_EXPIRED = 3600

@@ -135,7 +135,8 @@ def init_collection(db):
                     
                 }
             }
-        })
+        }
+    )
     
     print(video_modification_result)
 

@@ -43,9 +43,7 @@ def single_upload(db, collction_name):
             # 5-1. 현재 시간 가져오기
             now = datetime.now()
             
-            # 5-2. db에 저장할 object 생성
-            # col = db.collction_name
-            
+            # 5-2. obj 생성
             if collction_name == 'upload_character':
                 obj = {
                     "character_id" : col.count()+1, # auto_increase
@@ -92,23 +90,17 @@ def single_upload(db, collction_name):
 """
 def single_download(db, collction_name):
     s3 = s3_connection()
-    
     filename = request.form["filename"]
-    
     if collction_name == 'video_modification':
         ret =s3_get_object(s3, AWS_S3_BUCKET_NAME, f"video_modification/{filename}", filename)
-        
     elif collction_name == 'video_origin':
         ret =s3_get_object(s3, AWS_S3_BUCKET_NAME, f"video_origin/{filename}", filename)
-        
     elif collction_name == 'upload_character':
         ret =s3_get_object(s3, AWS_S3_BUCKET_NAME, f"upload_character/{filename}", filename)
-    
     if ret :
         return True
     else:
         return False
-    
     
 """                                  
 * 다중 파일 업로드
@@ -120,14 +112,10 @@ def multiple_upload(db, collction_name):
         
         # 1. 파일 가져옴
         fs = request.files.getlist("file")
-        print(fs)
         
         for f in fs:
             # 2. 파일명 secure
             filename = secure_filename(f.filename)
-            print(filename)
-            
-            f.save(filename)
             
             # 3. lcoal에 파일 저장 - 필요 없을 시 삭제
             # f.save(filename)
@@ -148,8 +136,6 @@ def multiple_upload(db, collction_name):
                 now = datetime.now()
                 
                 # 5-2. db에 저장할 object 생성
-                # col = db.collction_name
-                
                 if collction_name == 'upload_character':
                     obj = {
                         "character_id" : col.count()+1, # auto_increase
@@ -212,14 +198,6 @@ def multiple_get(db, collction_name):
             person_list = col.distinct("person_name", {"user_id" : userId}) #user id에 해당하는 person_name을 중복 제거 하여 가져옴
 
             person_json = {}
-
-            # for name in person_list:
-            #     count = 0
-            #     person_json[name] = {}
-            #     docs = col.find({"person_name" : name, "user_id" : userId})
-            #     for x in docs:
-            #         person_json[name][f'person_img_url_{count}'] = x['person_img_url']
-            #         count += 1
 
             for name in person_list:
                 person_json[name] = []
