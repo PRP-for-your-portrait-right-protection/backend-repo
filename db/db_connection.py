@@ -132,9 +132,39 @@ def init_collection(db):
                     "video_modification_url" : {
                         'bsontype' : 'string'
                     }
+                    
+                }
+            }
+        })
+    
+    print(video_modification_result)
+
+    member = db.create_collection("member", validator={
+            '$jsonSchema': {
+                'bsonType': 'object',
+                'additionalProperties': True,
+                'required': ['member_id', 'member_password', 'member_name', 'reg_date'],
+                'properties': {
+                    "member_id" : {
+                        'bsonType': 'string'
+                    },
+                    "member_password" : {
+                        'bsonType': 'string'
+                    },
+                    "member_name" : {
+                        'bsonType': 'string'
+                    },
+                    "reg_date": {
+                        'bsonType': 'string'
+                    },
+                     "mod_date": {
+                        'bsonType': 'string'
+                    }
+                    
                 }
             }
         }
     )
-    
-    print(video_modification_result)
+
+    print(member)
+
