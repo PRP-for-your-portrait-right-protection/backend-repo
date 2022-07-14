@@ -18,6 +18,7 @@ def single_upload(db, collction_name):
         f = request.files['file']
         
         # 2. 파일명 secure
+        # 파일명 자체를 알아볼 수 없게 암호화 함수 찾기
         filename = secure_filename(f.filename)
         
         # 3. lcoal에 파일 저장 - 필요 없을 시 삭제
@@ -26,15 +27,15 @@ def single_upload(db, collction_name):
         # 4. 버킷에 파일 저장
         if collction_name == 'upload_character':
             ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, f.filename, f"upload_character/{filename}")
-            location = f'https://siliconproject.s3.ap-northeast-2/upload_character/{filename}'
+            location = f'https://prpproject.s3.ap-northeast-2/upload_character/{filename}'
             col = db.upload_character
         elif collction_name == 'video_origin':
             ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, f.filename, f"video_origin/{filename}")
-            location = f'https://siliconproject.s3.ap-northeast-2/video_origin/{filename}'        
+            location = f'https://prpproject.s3.ap-northeast-2/video_origin/{filename}'        
             col = db.video_origin
         elif collction_name == 'video_modification':
             ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, f.filename, f"video_modification/{filename}")
-            location = f'https://siliconproject.s3.ap-northeast-2/video_modification/{filename}'
+            location = f'https://prpproject.s3.ap-northeast-2/video_modification/{filename}'
             col = db.video_modification
             
         # 5. 버킷에 파일 저장 성공 시 진행
@@ -133,11 +134,11 @@ def multiple_upload(db, collction_name):
             # 4. 버킷에 파일 저장
             if collction_name == 'upload_character':
                 ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, filename, f"upload_character/{filename}")
-                location = f'https://siliconproject.s3.ap-northeast-2/upload_character/{filename}'
+                location = f'https://prpproject.s3.ap-northeast-2/upload_character/{filename}'
                 col = db.upload_character
             if collction_name == 'people':
                 ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, f.filename, f"people/{filename}")
-                location = f'https://siliconproject.s3.ap-northeast-2/people/{filename}'
+                location = f'https://prpproject.s3.ap-northeast-2/people/{filename}'
                 col = db.people
                 
             # 5. 버킷에 파일 저장 성공 시 진행
@@ -150,7 +151,7 @@ def multiple_upload(db, collction_name):
                 
                 if collction_name == 'upload_character':
                     obj = {
-                        "character_id" : 1, # auto_increase
+                        "character_id" : col.count()+1, # auto_increase
                         "user_id" : request.form["user_id"],
                         "character_name" : filename,
                         "reg_date": now.strftime('%Y-%m-%d %H:%M:%S'),
@@ -158,7 +159,7 @@ def multiple_upload(db, collction_name):
                     }
                 if collction_name == 'people':
                     obj = {
-                        "person_id" : 1, # auto_increase
+                        "person_id" : col.count()+1, # auto_increase
                         "user_id" : request.form["user_id"],
                         "person_img_name" : filename,
                         "person_name" : request.values.get("person_name"),
