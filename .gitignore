@@ -1,5 +1,5 @@
 bucket/m_config.py
-module/key.py
+module/module_config.py
 db/db_config.py
 
 __pycache__
