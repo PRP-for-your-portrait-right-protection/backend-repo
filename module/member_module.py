@@ -10,7 +10,7 @@ from module.module_config import SECRET_KEY, TOKEN_EXPIRED
 def id_duplicate_check(db):
     idReceive = request.form["user_id"]
     try:
-        findUser = db.member.find_one({"userId" : idReceive})
+        findUser = db.member.find_one({"user_id" : idReceive})
         if findUser is not None:
             return False
         else:
@@ -31,11 +31,12 @@ def create_users(db):
     now = datetime.now()
     try:
         user = {
-            "userId" : idReceive,
+            "user_id" : idReceive,
             "password" : pwHash,
             "name" : request.form["name"],
-            "date" : now.strftime('%Y-%m-%d %H:%M:%S'),
-            "updateDate" : ""
+            "phone" : request.form["phone"],
+            "reg_date" : now.strftime('%Y-%m-%d %H:%M:%S'),
+            "mod_date" : ""
         }
         db.member.insert_one(user)
         return idReceive
@@ -55,13 +56,13 @@ def login_modules(db):
     try:
         findUser = db.member.find_one(
             {
-            "userId" : idReceive,
+            "user_id" : idReceive,
             "password" : pwHash
             }
         )
         if findUser is not None:
             payload = {
-                "userId" : idReceive,
+                "user_id" : idReceive,
                 "exp" : datetime.utcnow() + timedelta(seconds = TOKEN_EXPIRED) 
             }
             token = jwt.encode(payload, SECRET_KEY, algorithm = 'HS256')
@@ -73,4 +74,46 @@ def login_modules(db):
         print(ex)
         print('*********')
         return 2
-       
+
+"""
+* 아이디 찾기
+"""
+def find_id(db):
+    try:
+        findUser = db.member.find_one(
+            {
+                "name" : request.form["name"],
+                "phone" : request.form["phone"]
+            },
+            {"user_id":1, "_id":0}
+        )
+        if findUser == None:
+            return False
+        else:
+            return findUser
+    except Exception as ex:
+        print('*********')
+        print(ex)
+        print('*********')
+        return False
+    
+"""
+* 비밀번호 찾기
+* TO-DO : 지금은 비밀번호를 찾아서 해시키로 넘겨줌
+"""
+def find_password(db):
+    idReceive = request.form["user_id"]
+    try:
+        findUser = db.member.find_one(
+            {"user_id" : request.form["user_id"]},
+            {"password":1, "_id":0}
+        )
+        if findUser == None:
+            return False
+        else:
+           return findUser
+    except Exception as ex:
+        print('*********')
+        print(ex)
+        print('*********')
+        return False

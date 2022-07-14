@@ -18,3 +18,11 @@ login_03_fail="fail to login"
 # register code
 create_01_success="success create"
 create_02_fail="can not create users"
+
+# find id code
+find_id_01_success="find id success"
+find_id_02_fail="find id fail"
+
+# find password code
+find_password_01_success="find password success"
+find_password_02_fail="find password fail"
