@@ -81,7 +81,7 @@ def uploadCharacter():
                         "message":status_code.fileupload_02_fail,
                     }
                 ),
-                status=424,
+                status=200,
                 mimetype="application/json"
             )
     except Exception as ex:
@@ -119,7 +119,7 @@ def uploadCharacters():
                         "message":status_code.fileupload_02_fail,
                     }
                 ),
-                status=424,
+                status=200,
                 mimetype="application/json"
             )
     except Exception as ex:
@@ -157,7 +157,7 @@ def oringinVideo():
                         "message":status_code.fileupload_02_fail,
                     }
                 ),
-                status=424,
+                status=200,
                 mimetype="application/json"
             )
     except Exception as ex:
@@ -195,7 +195,7 @@ def modificationVideo():
                         "message":status_code.fileupload_02_fail,
                     }
                 ),
-                status=424,
+                status=200,
                 mimetype="application/json"
             )
     except Exception as ex:
@@ -226,7 +226,7 @@ def filedownload():
                             "message":status_code.filedownload_02_fail,
                         }
                     ),
-                    status=424,
+                    status=200,
                     mimetype="application/json"
             )
     except Exception as ex:
@@ -268,7 +268,7 @@ def create_user():
                     "message" : status_code.create_02_fail
                 }
             ),
-            status = 424,
+            status = 200,
             mimetype = "application/json"
         )
         
@@ -307,7 +307,7 @@ def login():
                            
                         }
                     ),
-                    status=202, #요청을 수신하였지만 그에 응하여 행동할 수 없습니다.
+                    status=200,
                     mimetype="application/json"
             )
         elif(token==2):
