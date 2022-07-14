@@ -234,14 +234,11 @@ def filedownload():
         print(ex)
         print("******************")
 
-
 '''
 # 
 # @signup : db
 #회원가입
 '''
-
-
 @app.route('/signup', methods=['POST'])
 def create_user():
     try:
@@ -291,26 +288,23 @@ def create_user():
 # @login : db
 #로그인
 '''
-
-
 @app.route('/login', methods=['POST'])
 def login():
     
     try:
         token = login_module.login_modules(db)
 
-        if(token==1):
+        if token==1:
             return Response(
                     response=json.dumps(
                         {
                             "message":status_code.login_02_notmatch,
-                           
                         }
                     ),
                     status=200,
                     mimetype="application/json"
             )
-        elif(token==2):
+        elif token==2:
             return Response(
                     response=json.dumps(
                         {
@@ -320,9 +314,7 @@ def login():
                     status=424,#이전 요청이 실패하였기 때문에 지금의 요청도 실패
                     mimetype="application/json"
             )
-            
-
-        elif( token != None):
+        elif token != None:
              return Response(
                     response=json.dumps(
                         {
@@ -333,11 +325,6 @@ def login():
                     status=200,
                     mimetype="application/json"
             )
-
-
-
-
-    
     except Exception as ex:
         print("******************")
         print(ex)
@@ -351,8 +338,5 @@ def login():
                     status=500, #서버가 처리 방법을 모르는 상황이 발생했습니다. 서버는 아직 처리 방법을 알 수 없습니다.
                     mimetype="application/json"
             )
-        
-
-
 if __name__ == "__main__":
     app.run(port=80, debug=True)

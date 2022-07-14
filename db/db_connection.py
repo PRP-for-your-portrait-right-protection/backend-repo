@@ -5,6 +5,7 @@ def db_connection():
     db = None
 
     try:
+        # mongo = pymongo.MongoClient('mongodb://testuser:testpass@localhost:27017')
         mongo = pymongo.MongoClient(
             host = HOST, 
             port = PORT,
@@ -13,16 +14,18 @@ def db_connection():
         db = mongo.silicon
         mongo.server_info() # trigger exception if cannot connect to db
         return db
-    except:
+    except Exception as ex:
+        print("******************")
         print("ERROR - Cannot connect to db")
-        return False
-    
+        print(ex)
+        print("******************")
+
 def init_collection(db):
     people_result = db.create_collection("people", validator={
             '$jsonSchema': {
                 'bsonType': 'object',
                 'additionalProperties': True,
-                'required': ['person_id', 'user_id', 'person_img_name', 'person_name', 'reg_date'],
+                'required': ['person_id', 'user_id', 'person_img_name', 'person_name', 'reg_date', 'person_img_url'],
                 'properties': {
                     "person_id" : {
                         'bsonType': 'number'
@@ -36,12 +39,19 @@ def init_collection(db):
                     "person_name" : {
                         'bsonType': 'string'
                     },
+                    "person_url" : {
+                        'bsonType': 'string'
+                    },
                     "reg_date": {
                         'bsonType': 'string'
+                    },
+                    "person_img_url" : {
+                        'bsontype' : 'string'
                     }
                 }
             }
-        })
+        }
+    )
     
     print(people_result) 
     
@@ -49,7 +59,7 @@ def init_collection(db):
             '$jsonSchema': {
                 'bsonType': 'object',
                 'additionalProperties': True,
-                'required': ['character_id', 'user_id', 'character_name', 'reg_date'],
+                'required': ['character_id', 'user_id', 'character_name', 'reg_date', 'character_url'],
                 'properties': {
                     "character_id": {
                         'bsonType': 'number'
@@ -62,10 +72,14 @@ def init_collection(db):
                     },
                     "reg_date": {
                         'bsonType': 'string'
+                    },
+                    "character_url" : {
+                        'bsontype' : 'string'
                     }
                 }
             }
-        })
+        }
+    )
     
     print(upload_character_result)
     
@@ -73,7 +87,7 @@ def init_collection(db):
             '$jsonSchema': {
                 'bsonType': 'object',
                 'additionalProperties': True,
-                'required': ['video_id', 'user_id', 'video_name', 'reg_date'],
+                'required': ['video_id', 'user_id', 'video_name', 'reg_date', 'video_url'],
                 'properties': {
                     "video_id" : {
                         'bsonType': 'number',
@@ -87,9 +101,13 @@ def init_collection(db):
                     "reg_date": {
                         'bsonType': 'string',
                     },
+                    "video_url" : {
+                        'bsontype' : 'string'
+                    }
                 }
             }
-        })
+        }
+    )
     
     print(video_origin_result)
     
@@ -97,7 +115,7 @@ def init_collection(db):
             '$jsonSchema': {
                 'bsonType': 'object',
                 'additionalProperties': True,
-                'required': ['video_id', 'user_id', 'video_name', 'reg_date','member'],
+                'required': ['video_id', 'user_id', 'video_name', 'reg_date', 'video_modification_url'],
                 'properties': {
                     "video_id" : {
                         'bsonType': 'number'
@@ -110,6 +128,9 @@ def init_collection(db):
                     },
                     "reg_date": {
                         'bsonType': 'string'
+                    },
+                    "video_modification_url" : {
+                        'bsontype' : 'string'
                     }
                     
                 }
@@ -142,6 +163,8 @@ def init_collection(db):
                     
                 }
             }
-        })
-    
+        }
+    )
+
     print(member)
+
