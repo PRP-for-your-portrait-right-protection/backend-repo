@@ -5,10 +5,27 @@ from flask import request
 from module.module_config import SECRET_KEY, TOKEN_EXPIRED
 
 """
+* 아이디 중복체크
+"""
+def id_duplicate_check(db):
+    idReceive = request.form["user_id"]
+    try:
+        findUser = db.member.find_one({"userId" : idReceive})
+        if findUser is not None:
+            return False
+        else:
+           return True
+    except Exception as ex:
+        print('*********')
+        print(ex)
+        print('*********')
+        return 2
+       
+"""
 * 회원가입
 """
 def create_users(db):
-    idReceive = request.form["id"]
+    idReceive = request.form["user_id"]
     pwReceive = request.form["password"]
     pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
     now = datetime.now()
@@ -32,7 +49,7 @@ def create_users(db):
 * 로그인
 """
 def login_modules(db):
-    idReceive = request.form["id"]
+    idReceive = request.form["user_id"]
     pwReceive = request.form["password"]
     pwHash = hashlib.sha256(pwReceive.encode("utf-8")).hexdigest()
     try:
