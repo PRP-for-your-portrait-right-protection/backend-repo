@@ -3,32 +3,23 @@ from db.db_config import HOST, PORT
 
 def db_connection():
     db = None
-    
-    print("=================================")
-    print(HOST)
-    print("=================================")
 
     try:
-        # mongo = pymongo.MongoClient(
-        #     # host = os.environ['DB_PORT_27017_TCP_ADDR'], 
-        #     host = HOST,
-        #     port = PORT
-        #     # serverSelectionTimeoutMS = 1000
-        # )
-        # MongoClient('mongodb://user:' + password + '@127.0.0.1')
-
-        mongo = pymongo.MongoClient('mongodb://root:root@db:27017')
+        # mongo = pymongo.MongoClient('mongodb://testuser:testpass@localhost:27017')
+        mongo = pymongo.MongoClient(
+            host = HOST, 
+            port = PORT,
+            serverSelectionTimeoutMS = 1000
+        )
         db = mongo.silicon
         mongo.server_info() # trigger exception if cannot connect to db
         return db
-    # except:
-    #     print("ERROR - Cannot connect to db")
-    #     return False
     except Exception as ex:
         print("******************")
+        print("ERROR - Cannot connect to db")
         print(ex)
         print("******************")
-    
+
 def init_collection(db):
     people_result = db.create_collection("people", validator={
             '$jsonSchema': {
@@ -57,10 +48,10 @@ def init_collection(db):
                     "person_img_url" : {
                         'bsontype' : 'string'
                     }
-                    }
                 }
             }
-        })
+        }
+    )
     
     print(people_result) 
     
@@ -87,7 +78,8 @@ def init_collection(db):
                     }
                 }
             }
-        })
+        }
+    )
     
     print(upload_character_result)
     
@@ -114,7 +106,8 @@ def init_collection(db):
                     }
                 }
             }
-        })
+        }
+    )
     
     print(video_origin_result)
     
@@ -141,6 +134,7 @@ def init_collection(db):
                     }
                 }
             }
-        })
+        }
+    )
     
     print(video_modification_result)
