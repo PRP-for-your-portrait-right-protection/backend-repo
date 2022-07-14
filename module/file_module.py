@@ -27,15 +27,15 @@ def single_upload(db, collction_name):
         # 4. 버킷에 파일 저장
         if collction_name == 'upload_character':
             ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, f.filename, f"upload_character/{filename}")
-            location = f'https://prpproject.s3.ap-northeast-2/upload_character/{filename}'
+            location = f'https://prpproject.s3.ap-northeast-2amazonaws.com/upload_character/{filename}'
             col = db.upload_character
         elif collction_name == 'video_origin':
             ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, f.filename, f"video_origin/{filename}")
-            location = f'https://prpproject.s3.ap-northeast-2/video_origin/{filename}'        
+            location = f'https://prpproject.s3.ap-northeast-2.amazonaws.com/video_origin/{filename}'        
             col = db.video_origin
         elif collction_name == 'video_modification':
             ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, f.filename, f"video_modification/{filename}")
-            location = f'https://prpproject.s3.ap-northeast-2/video_modification/{filename}'
+            location = f'https://prpproject.s3.ap-northeast-2.amazonaws.com/video_modification/{filename}'
             col = db.video_modification
             
         # 5. 버킷에 파일 저장 성공 시 진행
@@ -134,11 +134,11 @@ def multiple_upload(db, collction_name):
             # 4. 버킷에 파일 저장
             if collction_name == 'upload_character':
                 ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, filename, f"upload_character/{filename}")
-                location = f'https://prpproject.s3.ap-northeast-2/upload_character/{filename}'
+                location = f'https://prpproject.s3.ap-northeast-2.amazonaws.com/upload_character/{filename}'
                 col = db.upload_character
             if collction_name == 'people':
                 ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, f.filename, f"people/{filename}")
-                location = f'https://prpproject.s3.ap-northeast-2/people/{filename}'
+                location = f'https://prpproject.s3.ap-northeast-2.amazonaws.com/people/{filename}'
                 col = db.people
                 
             # 5. 버킷에 파일 저장 성공 시 진행
