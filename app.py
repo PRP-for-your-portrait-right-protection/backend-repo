@@ -1,7 +1,7 @@
 from flask import Flask, Response, request
 import json
 from static import status_code
-from module import file_module,login_module
+from module import file_module,member_module
 from db import db_connection
 app = Flask(__name__)
 
@@ -336,26 +336,26 @@ def peopleDownload():
 @app.route('/id-check', methods=['POST'])
 def id_check():
     try:
-        if login_module.id_duplicate_check(db):
+        if member_module.id_duplicate_check(db):
             return Response(
                 response = json.dumps(
-                {
-                    "result" : status_code.id_check_01_success,
-                }
-            ),
-            status = 200,
-            mimetype = "application/json"
-        )
+                    {
+                        "result" : status_code.id_check_01_success,
+                    }
+                ),
+                status = 200,
+                mimetype = "application/json"
+            )
         else:
             return Response(
                 response = json.dumps(
-                {
-                    "message" : status_code.id_check_02_fail
-                }
-            ),
-            status = 200,
-            mimetype = "application/json"
-        )
+                    {
+                        "message" : status_code.id_check_02_fail
+                    }
+                ),
+                status = 200,
+                mimetype = "application/json"
+            )
     except Exception as ex:
         print("******************")
         print(ex)
@@ -363,34 +363,34 @@ def id_check():
         
 '''
 # 회원가입
-# @form-data : user_id, password, name
+# @form-data : user_id, password, name, phone
 #
 '''
 @app.route('/signup', methods=['POST'])
 def create_user():
     try:
-        idReceive = login_module.create_users(db)
+        idReceive = member_module.create_users(db)
         if idReceive != None:
             return Response(
                 response = json.dumps(
-                {
-                    "result" : status_code.create_01_success,
-                    "id" : idReceive,
-                }
-            ),
-            status = 201,
-            mimetype = "application/json"
-        )
+                    {
+                        "result" : status_code.create_01_success,
+                        "id" : idReceive,
+                    }
+                ),
+                status = 201,
+                mimetype = "application/json"
+            )
         else:
             return Response(
                 response = json.dumps(
-                {
-                    "message" : status_code.create_02_fail
-                }
-            ),
-            status = 200,
-            mimetype = "application/json"
-        )
+                    {
+                        "message" : status_code.create_02_fail
+                    }
+                ),
+                status = 200,
+                mimetype = "application/json"
+            )
     except Exception as ex:
         print("******************")
         print(ex)
@@ -404,7 +404,7 @@ def create_user():
 @app.route('/login', methods=['POST'])
 def login():
     try:
-        token = login_module.login_modules(db)
+        token = member_module.login_modules(db)
         if token==1:
             return Response(
                 response=json.dumps(
@@ -435,6 +435,66 @@ def login():
                 ),
                 status=200,
                 mimetype="application/json"
+            )
+    except Exception as ex:
+        print("******************")
+        print(ex)
+        print("******************")
+        
+'''
+# 아이디 찾기
+# @form-data : user_id, phone
+#
+'''
+@app.route('/find-id', methods=['POST'])
+def find_id():
+    try:
+        result = member_module.find_id(db)
+        if result != None:
+            return Response(
+                response = json.dumps(result),
+                status = 200,
+                mimetype = "application/json"
+            )
+        else:
+            return Response(
+                response = json.dumps(
+                    {
+                        "message" : status_code.find_id_02_fail
+                    }
+                ),
+                status = 200,
+                mimetype = "application/json"
+            )
+    except Exception as ex:
+        print("******************")
+        print(ex)
+        print("******************")
+        
+'''
+# 비밀번호 찾기 : 수정 필요
+# @form-data : user_id, phone
+#
+'''
+@app.route('/find-password', methods=['POST'])
+def find_password():
+    try:
+        result = member_module.find_password(db)
+        if result != False:
+            return Response(
+                response = json.dumps(result),
+                status = 200,
+                mimetype = "application/json"
+            )
+        else:
+            return Response(
+                response = json.dumps(
+                    {
+                        "message" : status_code.find_password_02_fail
+                    }
+                ),
+                status = 200,
+                mimetype = "application/json"
             )
     except Exception as ex:
         print("******************")

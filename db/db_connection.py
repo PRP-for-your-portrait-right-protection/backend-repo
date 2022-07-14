@@ -144,15 +144,18 @@ def init_collection(db):
             '$jsonSchema': {
                 'bsonType': 'object',
                 'additionalProperties': True,
-                'required': ['member_id', 'member_password', 'member_name', 'reg_date'],
+                'required': ['user_id', 'password', 'name', 'phone', 'reg_date'],
                 'properties': {
-                    "member_id" : {
+                    "user_id" : {
                         'bsonType': 'string'
                     },
-                    "member_password" : {
+                    "password" : {
                         'bsonType': 'string'
                     },
-                    "member_name" : {
+                    "name" : {
+                        'bsonType': 'string'
+                    },
+                    "phone" : {
                         'bsonType': 'string'
                     },
                     "reg_date": {
