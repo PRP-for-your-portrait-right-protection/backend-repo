@@ -1,27 +1,84 @@
 from flask import request
+import json
 from werkzeug.utils import secure_filename
-from bucket.m_connection import s3_connection, s3_put_object, s3_get_object
-from bucket.m_config import AWS_S3_BUCKET_NAME
-from datetime import datetime
+from m_connection import s3_connection, s3_put_object, s3_get_object
+from m_config import AWS_S3_BUCKET_NAME
+from datetime import datime, timedelta
+import hashlib
+import jwt
 
-#TO-DO 파일명 암호화 후 저장 - 파일명 겹치면 버킷에서 덮어쓰기 됨
+
+
+"""로그인"""
+
+
+@app.route('/users', methods=["POST"])
+def create_user():
+    idReceive = request.form["id"]
+    pwReceive = request.form["password"]
+    nameReceive = request.form["name"]
+
+    pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
+
+    now = datetime.now()
+
+    try:
+        user = {
+            "userId" : idReceive,
+            "password" : pwHash,
+            "name" : nameReceive,
+            "date" : f'{now.year}-{now.month}-{now.day} {now.hour}:{now.minute}:{now.second}',
+            "updateDate" : ""
+            }
+
+        db.account.insert_one(user)
+    except Exception as ex:
+        print(ex)
+        return Response(
+            response = json.dumps(
+                {
+                    "message" : "CANNOT CREATE USER"
+                }
+            ),
+            status = 500,
+            mimetype = "application/json"
+        )
+    else:
+        return Response(
+            response = json.dumps(
+                {
+                    "result" : "USER CREATED",
+                    "id" : idReceive,
+                    "token" : token
+                }
+            ),
+            status = 201,
+            mimetype = "application/json"
+        )
+
+
+        
+
+
+
+
+
+
 
 """
 * 단일 파일 업로드
-* 인물 : 한 명인 경우에만 가능
 """
-def single_upload(db, collction_name):
+def single_upload(s3, db, collction_name):
     try:
-        s3 = s3_connection()
-        
         # 1. 파일 가져옴
         f = request.files['file']
+        print(f)
         
         # 2. 파일명 secure
         filename = secure_filename(f.filename)
         
         # 3. lcoal에 파일 저장 - 필요 없을 시 삭제
-        # f.save(filename)
+        f.save(filename)
         
         # 4. 버킷에 파일 저장
         if collction_name == 'upload_character':
@@ -75,62 +132,49 @@ def single_upload(db, collction_name):
             # 5-1. 실패 message return
             return False
     except Exception as ex:
+        
             print("******************")
             print(ex)
             print("******************")
             return False
         
 """
-* 단일 파일 다운로드 - 동영상 다운로드에서만 사용
+* 단일 파일 다운로드
 """
-def single_download(db, collction_name):
-    s3 = s3_connection()
-    
-    filename = request.form["filename"]
-    
-    if collction_name == 'video_modification':
-        ret =s3_get_object(s3, AWS_S3_BUCKET_NAME, f"video_modification/{filename}", filename)
-        
+def download(s3, db, collction_name):
+    if collction_name == 'upload_character':
+        ret =s3_get_object(s3, AWS_S3_BUCKET_NAME, request.form["filename"], request.form["filename"])
+            
     elif collction_name == 'video_origin':
-        ret =s3_get_object(s3, AWS_S3_BUCKET_NAME, f"video_origin/{filename}", filename)
-        
-    elif collction_name == 'upload_character':
-        ret =s3_get_object(s3, AWS_S3_BUCKET_NAME, f"upload_character/{filename}", filename)
+        ret =s3_get_object(s3, AWS_S3_BUCKET_NAME, request.form["filename"], request.form["filename"])
+    
+    elif collction_name == 'video_modification':
+        ret =s3_get_object(s3, AWS_S3_BUCKET_NAME, request.form["filename"], request.form["filename"])
     
     if ret :
-        return True
+        return 'file download successfully'
     else:
-        return False
+        return 'file download fail'
     
     
-"""                                  
+"""
 * 다중 파일 업로드
 """
-
-def multiple_upload(db, collction_name):
+def multiple_upload(s3, db, collction_name):
     try:
-        s3 = s3_connection()
-        
         # 1. 파일 가져옴
-        fs = request.files.getlist("file")
-        print(fs)
+        fs = request.getlist("file[]")
         
         for f in fs:
             # 2. 파일명 secure
             filename = secure_filename(f.filename)
-            print(filename)
-            
-            f.save(filename)
             
             # 3. lcoal에 파일 저장 - 필요 없을 시 삭제
             # f.save(filename)
             
             # 4. 버킷에 파일 저장
-            if collction_name == 'upload_character':
-                ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, filename, f"upload_character/{filename}")
-                col = db.upload_character
             if collction_name == 'people':
-                ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, f.filename, f"people/{filename}")
+                ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, './temp', f"people/{filename}")
                 col = db.people
                 
             # 5. 버킷에 파일 저장 성공 시 진행
@@ -141,53 +185,28 @@ def multiple_upload(db, collction_name):
                 # 5-2. db에 저장할 object 생성
                 # col = db.collction_name
                 
-                if collction_name == 'upload_character':
-                    obj = {
-                        "character_id" : col.count()+1, # auto_increase
-                        "user_id" : request.form["user_id"],
-                        "character_name" : filename,
-                        "reg_date": now.strftime('%Y-%m-%d %H:%M:%S')
-                    }
                 if collction_name == 'people':
                     obj = {
-                        "person_id" : col.count()+1, # auto_increase
+                        "people_id" : col.count()+1, # auto_increase
                         "user_id" : request.form["user_id"],
-                        "person_img_name" : filename,
-                        "person_name" : request.values.get("person_name"),
+                        "people_name" : filename,
+                        "people_num" : 0,
                         "reg_date": now.strftime('%Y-%m-%d %H:%M:%S')
                     }
                 
                 # 5-3. db에 저장
                 dbResponse = col.insert_one(obj)
+                
+                # 5-4. 성공 message return
+                return True
         
             # 5. 버킷에 파일 저장 실패 시 진행
             else:
                 # 5-1. 실패 message return
                 return False
-            
-        # 6. 성공 message return
-        return True
     except Exception as ex:
+        
             print("******************")
             print(ex)
             print("******************")
             return False
-        
-        
-"""
-* 다수 인물 다중 파일 업로드
-"""
-'''
-프론트에서 작업해줘야 함
-사람들 갯수를 counting하고 그 수만큼 api와 통신하면서 진행!
-
-예)
-사람1 - 4장
-사람2 - 5장
-사람3 - 3장
-
-for(int i=0; i<3; i++)
-    // 여기서 video-modification에 post 반복
-    // param으로 사람이름 보내기 -> 동명이인 고려X
-        // 동명이인 정도는 사용자가 알아서 하겠찌,,,
-'''

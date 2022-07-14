@@ -1,5 +1,5 @@
 import pymongo
-from db_config import HOST, PORT
+from db.db_config import HOST, PORT
 
 def db_connection():
     db = None
@@ -97,7 +97,7 @@ def init_collection(db):
             '$jsonSchema': {
                 'bsonType': 'object',
                 'additionalProperties': True,
-                'required': ['video_id', 'user_id', 'video_name', 'reg_date'],
+                'required': ['video_id', 'user_id', 'video_name', 'reg_date','member'],
                 'properties': {
                     "video_id" : {
                         'bsonType': 'number'
@@ -111,8 +111,37 @@ def init_collection(db):
                     "reg_date": {
                         'bsonType': 'string'
                     }
+                    
                 }
             }
         })
     
     print(video_modification_result)
+
+    member = db.create_collection("member", validator={
+            '$jsonSchema': {
+                'bsonType': 'object',
+                'additionalProperties': True,
+                'required': ['member_id', 'member_password', 'member_name', 'reg_date'],
+                'properties': {
+                    "member_id" : {
+                        'bsonType': 'string'
+                    },
+                    "member_password" : {
+                        'bsonType': 'string'
+                    },
+                    "member_name" : {
+                        'bsonType': 'string'
+                    },
+                    "reg_date": {
+                        'bsonType': 'string'
+                    },
+                     "mod_date": {
+                        'bsonType': 'string'
+                    }
+                    
+                }
+            }
+        })
+    
+    print(member)

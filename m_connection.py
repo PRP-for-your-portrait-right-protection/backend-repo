@@ -1,6 +1,6 @@
 import boto3
-from bucket.m_config import AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY
-from bucket.m_config import AWS_S3_BUCKET_NAME, AWS_S3_BUCKET_REGION
+from m_config import AWS_ACCESS_KEY, AWS_SECRET_ACCESS_KEY
+from m_config import AWS_S3_BUCKET_NAME, AWS_S3_BUCKET_REGION
 
 def s3_connection():
     try:
@@ -12,7 +12,7 @@ def s3_connection():
         )
     except Exception as e:
         print(e)
-        return False
+        exit(ERROR_S3_CONNECTION_FAILED)
     else:
         print("s3 bucket connected!")
         return s3
