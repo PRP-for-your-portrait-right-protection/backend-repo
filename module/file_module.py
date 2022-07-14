@@ -3,12 +3,11 @@ from werkzeug.utils import secure_filename
 from bucket.m_connection import s3_connection, s3_put_object, s3_get_object
 from bucket.m_config import AWS_S3_BUCKET_NAME
 from datetime import datetime
-
-#TO-DO 파일명 암호화 후 저장 - 파일명 겹치면 버킷에서 덮어쓰기 됨
+import hashlib
+import os
 
 """
 * 단일 파일 업로드
-* 인물 : 한 명인 경우에만 가능
 """
 def single_upload(db, collction_name):
     try:
@@ -17,12 +16,15 @@ def single_upload(db, collction_name):
         # 1. 파일 가져옴
         f = request.files['file']
         
-        # 2. 파일명 secure
-        # 파일명 자체를 알아볼 수 없게 암호화 함수 찾기
-        filename = secure_filename(f.filename)
+        # 2. lcoal에 파일 저장 - 파일 경로 때문에 저장해야함
+        f.save(f.filename)
         
-        # 3. lcoal에 파일 저장 - 필요 없을 시 삭제
-        # f.save(filename)
+        # 3. 현재시간으로 파일명 secure
+        # 3-1. 현재시간 string으로 가져옴
+        now = datetime.now()
+        time = now.strftime('%Y-%m-%d %H:%M:%S')
+        # 3-2. 파일명 암호화
+        filename = hashlib.sha256(time.encode("utf-8")).hexdigest() + os.path.splitext(f.filename)[1]
         
         # 4. 버킷에 파일 저장
         if collction_name == 'upload_character':
@@ -37,13 +39,14 @@ def single_upload(db, collction_name):
             ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, f.filename, f"video_modification/{filename}")
             location = f'https://prpproject.s3.ap-northeast-2.amazonaws.com/video_modification/{filename}'
             col = db.video_modification
+        
+        # 5. local에 저장된 파일 삭제
+        os.remove(f.filename)
             
-        # 5. 버킷에 파일 저장 성공 시 진행
+        # 6. 버킷에 파일 저장 성공 시 진행
         if ret :
-            # 5-1. 현재 시간 가져오기
-            now = datetime.now()
             
-            # 5-2. obj 생성
+            # 6-1. obj 생성
             if collction_name == 'upload_character':
                 obj = {
                     "character_id" : col.count()+1, # auto_increase
@@ -68,16 +71,18 @@ def single_upload(db, collction_name):
                     "reg_date": now.strftime('%Y-%m-%d %H:%M:%S'),
                     "video_modification_url" : location
                 }
-            
-            # 5-3. db에 저장
+                
+            # 6-2. db에 저장
             dbResponse = col.insert_one(obj)
             
-            # 5-4. 성공 message return
+            if collction_name == 'video_modification':
+                return location
+            # 6-3. 성공 message return
             return True
         
-        # 5. 버킷에 파일 저장 실패 시 진행
+        # 6. 버킷에 파일 저장 실패 시 진행
         else:
-            # 5-1. 실패 message return
+            # 6-1. 실패 message return
             return False
     except Exception as ex:
             print("******************")
@@ -105,7 +110,6 @@ def single_download(db, collction_name):
 """                                  
 * 다중 파일 업로드
 """
-
 def multiple_upload(db, collction_name):
     try:
         s3 = s3_connection()
@@ -114,34 +118,39 @@ def multiple_upload(db, collction_name):
         fs = request.files.getlist("file")
         
         for f in fs:
-            # 2. 파일명 secure
-            filename = secure_filename(f.filename)
+            # 2. lcoal에 파일 저장 - 파일 경로 때문에 저장해야함
+            f.save(f.filename)
             
-            # 3. lcoal에 파일 저장 - 필요 없을 시 삭제
-            # f.save(filename)
-            
+            # 3. 현재시간으로 파일명 secure
+            # 3-1. 현재시간 string으로 가져옴
+            now = datetime.now()
+            time = now.strftime('%Y-%m-%d %H:%M:%S')
+            # 3-2. 파일명 암호화
+            filename = hashlib.sha256(time.encode("utf-8")).hexdigest() + os.path.splitext(f.filename)[1]
+
             # 4. 버킷에 파일 저장
             if collction_name == 'upload_character':
-                ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, filename, f"upload_character/{filename}")
+                ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, f.filename, f"upload_character/{filename}")
                 location = f'https://prpproject.s3.ap-northeast-2.amazonaws.com/upload_character/{filename}'
                 col = db.upload_character
             if collction_name == 'people':
                 ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, f.filename, f"people/{filename}")
                 location = f'https://prpproject.s3.ap-northeast-2.amazonaws.com/people/{filename}'
                 col = db.people
-                
-            # 5. 버킷에 파일 저장 성공 시 진행
+            
+            # 5. local에 저장된 파일 삭제
+            os.remove(f.filename)
+            
+            # 6. 버킷에 파일 저장 성공 시 진행
             if ret :
-                # 5-1. 현재 시간 가져오기
-                now = datetime.now()
                 
-                # 5-2. db에 저장할 object 생성
+                # 6-1. db에 저장할 object 생성
                 if collction_name == 'upload_character':
                     obj = {
                         "character_id" : col.count()+1, # auto_increase
                         "user_id" : request.form["user_id"],
                         "character_name" : filename,
-                        "reg_date": now.strftime('%Y-%m-%d %H:%M:%S'),
+                        "reg_date": time,
                         "character_url" : location
                     }
                 if collction_name == 'people':
@@ -150,82 +159,91 @@ def multiple_upload(db, collction_name):
                         "user_id" : request.form["user_id"],
                         "person_img_name" : filename,
                         "person_name" : request.values.get("person_name"),
-                        "reg_date": now.strftime('%Y-%m-%d %H:%M:%S'),
+                        "reg_date": time,
                         "person_img_url" : location
                     }
                 
-                # 5-3. db에 저장
+                # 6-2. db에 저장
                 dbResponse = col.insert_one(obj)
         
-            # 5. 버킷에 파일 저장 실패 시 진행
+            # 6. 버킷에 파일 저장 실패 시 진행
             else:
-                # 5-1. 실패 message return
+                # 6-1. 실패 message return
                 return False
             
-        # 6. 성공 message return
+        # 7. 성공 message return
         return True
     except Exception as ex:
             print("******************")
             print(ex)
             print("******************")
             return False
-
+    
 """
-* 인물 사진, 캐릭터 사진 가져오기
+* 일인 다중 파일 url 가져오기
 """
-def multiple_get(db, collction_name):
+def single_get(db, collction_name):
     try:
+        # 1. collction_name 확인 & user_id 가져오기
         if collction_name == "get_character": 
             col = db.upload_character
-            docs = col.find({"user_id" : request.form["user_id"]})
-
-            character_json = {}
-
-            count = 0
-
-            for x in docs:
-                
-                character_json[f'character_url_{count}'] = x['character_url']
-                count += 1
-
-            return character_json
-
-        elif collction_name == "get_people":
-            col = db.people
-
             userId = request.form["user_id"]
+        elif collction_name == "get_origin_character":
+            col = db.origin_character
+            userId = "origin_character"
+        else:
+            print("can't find collction name")
+            return False
+        
+        # 2. user_id에 해당하는 값 모두 가져오기
+        docs = col.find({"user_id" : userId})
 
-            person_list = col.distinct("person_name", {"user_id" : userId}) #user id에 해당하는 person_name을 중복 제거 하여 가져옴
+        # 3. json 형태로 매핑
+        col_json = {}
+        col_json[userId] = []
+        for x in docs:
+            col_json[userId].append(x['character_url'])
 
-            person_json = {}
-
-            for name in person_list:
-                person_json[name] = []
-                docs = col.find({"person_name" : name, "user_id" : userId})
-                for x in docs:
-                    person_json[name].append(x['person_img_url'])
-
-            return person_json
+        # 4. 다중 파일 json 반환
+        return col_json
     except Exception as ex:
         print('*********')
         print(ex)
         print('*********')
         return False
-        
-"""
-* 다수 인물 다중 파일 업로드
-"""
-'''
-프론트에서 작업해줘야 함
-사람들 갯수를 counting하고 그 수만큼 api와 통신하면서 진행!
 
-예)
-사람1 - 4장
-사람2 - 5장
-사람3 - 3장
+"""
+* 다인 다중 파일 url 가져오기
+"""
+def multiple_get(db, collction_name):
+    try:
+        # 1. collction_name 확인
+        if collction_name == "get_people":
+            col = db.people
+        else:
+            print("can't find collction name")
+            return False
 
-for(int i=0; i<3; i++)
-    // 여기서 video-modification에 post 반복
-    // param으로 사람이름 보내기 -> 동명이인 고려X
-        // 동명이인 정도는 사용자가 알아서 하겠찌,,,
-'''
+        # 2. user_id 가져오기
+        userId = request.form["user_id"]
+
+        # 3. user id에 해당하는 person_name을 중복 제거 하여 가져옴
+        col_list = col.distinct("person_name", {"user_id" : userId})
+
+        # 4. json 형태로 매핑
+        col_json = {}
+
+        for name in col_list:
+            col_json[name] = []
+            if collction_name == "get_people":
+                docs = col.find({"person_name" : name, "user_id" : userId})
+                for x in docs:
+                    col_json[name].append(x['person_img_url'])
+
+        # 5. 다중 파일 json 반환
+        return col_json
+    except Exception as ex:
+        print('*********')
+        print(ex)
+        print('*********')
+        return False
