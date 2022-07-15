@@ -97,23 +97,63 @@ def find_id(db):
         print('*********')
         return False
     
-"""
-* 비밀번호 찾기
-* TO-DO : 지금은 비밀번호를 찾아서 해시키로 넘겨줌
-"""
-def find_password(db):
-    idReceive = request.form["user_id"]
+
+'''
+* 정보검사 핸드폰번호와 아이디가 맞는 지 확인한다.
+'''
+
+def information_inspection(db):
     try:
+        idReceive = request.form["user_id"]
+        phoneNum=request.form["phone"]
+        
         findUser = db.member.find_one(
-            {"user_id" : request.form["user_id"]},
-            {"password":1, "_id":0}
-        )
-        if findUser == None:
+            {"$and":[{"user_id":idReceive}, {"phone":phoneNum}]}  
+         ) 
+        print(findUser)
+        if findUser == None:   
             return False
         else:
-           return findUser
+            return True
+
     except Exception as ex:
         print('*********')
         print(ex)
         print('*********')
         return False
+
+'''
+*수정날짜와 바뀐 비밀 번호 업데이트 
+'''
+
+def find_password(db):
+  
+    try:
+
+        idReceive = request.form["user_id"]
+        phoneNum=request.form["phone"]
+
+        now = datetime.now()
+        pwReceive = request.form["password"]
+        pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
+    
+        result = db.member.update_many(
+        {      
+            "user_id" : idReceive, 
+            "phone": phoneNum
+        }, 
+        {"$set" : 
+            {
+                "password" :  pwHash, 
+                "mod_date" : now.strftime('%Y-%m-%d %H:%M:%S')
+            }
+        })
+
+        return True
+
+    except Exception as ex:
+        print('*********')
+        print(ex)
+        print('*********')
+        return False
+    
