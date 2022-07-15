@@ -242,7 +242,7 @@ def multiple_get(db, collction_name):
             if collction_name == "get_people":
                 docs = col.find({"person_name" : name, "user_id" : userId})
                 for x in docs:
-                    col_json[name].append(x['person_img_url'])
+                    col_json[name].append(x['person_url'])
 
         # 5. 다중 파일 json 반환
         return col_json
