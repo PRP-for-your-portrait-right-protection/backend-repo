@@ -1,71 +1,116 @@
 from flask import request
 from bucket.m_connection import s3_connection
 from bucket.m_config import AWS_S3_BUCKET_NAME 
+from datetime import datetime
 import boto3 #버켓의 사진 삭제 
 
 """
-* 인물 삭제
-* 해당 인물 사진까지 삭제
+* 단일 삭제
 """
-def deleteTEMP(db, one_or_many):
-    if one_or_many == "one":
-        try: 
-            # 버켓 연결
-            s3 = s3_connection()
-
-            # 유저 아이디, 사진 URL 가져옴
-            userId = request.form["user_id"]
-            personImgUrl = request.form["person_img_url"]
-
-            # 컬렉션 연결
+def single_delete(db, collection_name):
+    try: 
+        # 컬렉션 설정 후 URL 가져옴 (인물, 비디오 결과, 업로드 캐릭터 모두 가능)
+        if collection_name == "people":
             col = db.people
+            url = request.form["url"]
+            url_string = "person_url"
+        elif collection_name == "video_modification":
+            col = db.video_modification
+            url = request.form["url"]
+            url_string = "video_modification_url"
+        elif collection_name == "character":
+            col = db.upload_character
+            url = request.form["url"]
+            url_string = "character_url"
+        
+        # 유저 아이디 가져옴
+        userId = request.form["user_id"]
 
-            # 버켓에서 삭제
-            # 문자열 처리 예시 : "https://s3.console.aws.amazon.com/s3/object/
-            # jhmys3bucket35?region=ap-northeast-2&prefix=images/image_0.jpg" -------------> image_0.jpg
-            s3Key = personImgUrl.split('/')[4]
-
-            # 버켓에서 삭제
-            # f스트링 예시 -> people/image_0.jpg
-            s3.delete_object(Bucket = AWS_S3_BUCKET_NAME, Key = f'people/{s3Key}')  
-
-            # DB에서 유저아이디 && url 일치하는 Document 삭제
-            col.delete_one({"user_id" : userId, "person_img_url" : personImgUrl}) 
-
-            return True
-        except:
+        # DB에서 유저아이디 && url 일치하는 Document -> activation_YN = N
+        col.update_one(
+            {
+                "user_id" : userId, 
+                "f'{url_string}'" : url
+            }, 
+            {"$set" : 
+                {
+                    "activation_YN" : "N"
+                }
+            }) 
+        return True
+    except Exception as ex:
             print('*********')
             print(ex)
             print('*********')
-            return False
-    if one_or_many == "many":
-        try:
-            # 버켓 연결
-            s3 = s3_connection()
+            return False    
 
-            # 유저 아이디, 사람 이름 가져옴
-            userId = request.form["user_id"]
-            personName = request.form["person_name"]
-
-            # 컬렉션 연결
+"""
+* 다중 삭제
+* 1. 특정 인물에 대한 사진 모두 삭제
+* 2. 특정 유저에 대한 비디오 결과 모두 삭제
+* 3. 특정 유저에 대한 캐릭터 모두 삭제
+"""       
+def multiple_delete(db, collection_name):
+    try:
+        # 컬렉션 설정 후 상황에 맞는 쿼리 설정
+            # 인물 -> user_id, person_name 필요
+            # 비디오 결과 -> user_id 필요
+            # 업로드 캐릭터 -> user_id 필요
+        if collection_name == "people":
             col = db.people
+            my_query = {
+                    "user_id" : request.form["user_id"],
+                    "person_name" : request.form["person_name"]
+                }
+        elif collection_name == "video_modification":
+            col = db.video_modification
+            my_query = {
+                    "user_id" : request.form["user_id"]
+                }
+        elif collection_name == "characters":
+            col = db.upload_character
+            my_query = {
+                    "user_id" : request.form["user_id"]
+                }
 
-            # URL 가져온 후 버켓에서 삭제
-            col.find
-
-            # 유저아이디 && 사람이름 일치하는 Document 모두 삭제
-            col.delete_many({"user_id" : userId, "person_name" : personName})
-
-            return True
-        except Exception as ex:
+        # 쿼리에 일치하는 Document 모두 -> activation_YN = N
+        col.update_many(
+            my_query,
+            {"$set" : 
+                {
+                    "activation_YN" : "N"
+                }
+            })
+        return True
+    except Exception as ex:
             print('*********')
             print(ex)
             print('*********')
-            return False
+            return False   
 
 """
-* 사람 이름 수정
+* 인물 이름 수정
 """
-def updateTEMP():
+def single_update(db):
+    try:
+        # 컬렉션 설정
+        col = db.people
 
-
+        # 주어진 user_id, person_name에 해당하는 Document 수정
+        col.update_many(
+            {
+                "user_id" : request.form["user_id"], 
+                "person_name" : request.form["person_name"]
+            }, 
+            {"$set" : 
+                {
+                    "person_name" : request.form["person_name_after"], 
+                    "mod_date" : datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                }
+            })
+        return True
+    except Exception as ex:
+        print('*********')
+        print(ex)
+        print('*********')
+        return False   

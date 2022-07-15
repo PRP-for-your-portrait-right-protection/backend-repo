@@ -501,5 +501,237 @@ def find_password():
         print(ex)
         print("******************")
 
+'''
+# 사진 한개 삭제하기 : 수정 필요
+# @form-data : user_id, url        << url로 DB에서 person_url에 해당하는 값을 주면 됨
+#
+'''
+# 삭제 메소드를 DELETE로 할지 PATCH로 할지 결정해야 함
+@app.route('/person', methods = ["DELETE"])
+def delete_person():
+    try:
+        if crud_module.single_delete(db, "people"):
+            return Response(
+                response = json.dumps(
+                    {
+                        "message" : status_code.filedelete_01_success
+                    }
+                ),
+                status = 200,
+                mimetype = "application/json"
+            )
+        else:
+            return Response(
+                response = json.dumps(
+                    {
+                        "message" : status_code.filedelete_02_fail
+                    }
+                ),
+                status = 200,
+                mimetype = "application/json"
+            )
+    except Exception as ex:
+        print("******************")
+        print(ex)
+        print("******************")
+
+'''
+# 특정 인물에 대한 사진 모두 삭제하기 : 수정 필요
+# @form-data : user_id, person_name
+#
+'''
+@app.route('/people', methods = ["DELETE"])
+def delete_people():
+    try:
+        if crud_module.multiple_delete(db, "people"):
+            return Response(
+                response = json.dumps(
+                    {
+                        "message" : status_code.filedelete_01_success
+                    }
+                ),
+                status = 200,
+                mimetype = "application/json"
+            )
+        else:
+            return Response(
+                response = json.dumps(
+                    {
+                        "message" : status_code.filedelete_02_fail
+                    }
+                ),
+                status = 200,
+                mimetype = "application/json"
+            )
+    except Exception as ex:
+        print("******************")
+        print(ex)
+        print("******************")
+
+'''
+# 인물 이름 수정 : 수정 필요
+# @form-data : user_id, person_name, person_name_after
+#
+'''
+@app.route('/person', methods = ["PATCH"])
+def update_person():
+    try:
+        if crud_module.single_update(db):
+            return Response(
+                response = json.dumps(
+                    {
+                        "message" : status_code.fileupdate_01_success
+                    }
+                ),
+                status = 200,
+                mimetype = "application/json"
+            )
+        else:
+            return Response(
+                response = json.dumps(
+                    {
+                        "message" : status_code.fileupdate_02_fail
+                    }
+                ),
+                status = 200,
+                mimetype = "application/json"
+            )
+    except Exception as ex:
+        print("******************")
+        print(ex)
+        print("******************")
+
+'''
+# 비디오 결과 한 개 삭제하기 : 수정 필요
+# @form-data : user_id, url
+#
+'''
+@app.route('/video_modification', methods = ["DELETE"])
+def delete_video_modification():
+    try:
+        if crud_module.single_delete(db, "video_modification"):
+            return Response(
+                response = json.dumps(
+                    {
+                        "message" : status_code.filedelete_01_success
+                    }
+                ),
+                status = 200,
+                mimetype = "application/json"
+            )
+        else:
+            return Response(
+                response = json.dumps(
+                    {
+                        "message" : status_code.filedelete_02_fail
+                    }
+                ),
+                status = 200,
+                mimetype = "application/json"
+            )
+    except Exception as ex:
+        print("******************")
+        print(ex)
+        print("******************")
+
+'''
+# 특정 유저에 대한 비디오 결과 모두 삭제하기 : 수정 필요
+# @form-data : user_id
+#
+'''
+@app.route('/video_modifications', methods = ["DELETE"])
+def delete_video_modifications():
+    try:
+        if crud_module.multiple_delete(db, "video_modification"):
+            return Response(
+                response = json.dumps(
+                    {
+                        "message" : status_code.filedelete_01_success
+                    }
+                ),
+                status = 200,
+                mimetype = "application/json"
+            )
+        else:
+            return Response(
+                response = json.dumps(
+                    {
+                        "message" : status_code.filedelete_02_fail
+                    }
+                ),
+                status = 200,
+                mimetype = "application/json"
+            )
+    except Exception as ex:
+        print("******************")
+        print(ex)
+        print("******************")
+
+'''
+# 캐릭터 한 개 삭제하기 : 수정 필요
+# @form-data : user_id, url
+#
+'''
+@app.route('/character', methods = ["DELETE"])
+def delete_character():
+    try:
+        if crud_module.single_delete(db, "character"):
+            return Response(
+                response = json.dumps(
+                    {
+                        "message" : status_code.filedelete_01_success
+                    }
+                ),
+                status = 200,
+                mimetype = "application/json"
+            )
+        else:
+            return Response(
+                response = json.dumps(
+                    {
+                        "message" : status_code.filedelete_02_fail
+                    }
+                ),
+                status = 200,
+                mimetype = "application/json"
+            )
+    except Exception as ex:
+        print("******************")
+        print(ex)
+        print("******************")
+
+'''
+# 특정 유저에 대한 캐릭터 모두 삭제하기 : 수정 필요
+# @form-data : user_id
+#
+'''
+@app.route('/characters', methods = ["DELETE"])
+def delete_characters():
+    try:
+        if crud_module.multiple_delete(db, "characters"):
+            return Response(
+                response = json.dumps(
+                    {
+                        "message" : status_code.filedelete_01_success
+                    }
+                ),
+                status = 200,
+                mimetype = "application/json"
+            )
+        else:
+            return Response(
+                response = json.dumps(
+                    {
+                        "message" : status_code.filedelete_02_fail
+                    }
+                ),
+                status = 200,
+                mimetype = "application/json"
+            )
+    except Exception as ex:
+        print("******************")
+        print(ex)
+        print("******************")
+
 if __name__ == "__main__":
     app.run(port=80, debug=True)
