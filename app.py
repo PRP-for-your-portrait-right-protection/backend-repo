@@ -472,6 +472,45 @@ def find_id():
         print("******************")
         
 '''
+# 정보 검증 : 수정 필요
+# @form-data : user_id, phone
+#
+'''
+
+
+@app.route('/check-info', methods=['POST'])
+def check_info():
+    try:
+        # result = member_module.information_inspection(db)
+        if  member_module.information_inspection(db):
+            return Response(
+                response = json.dumps({
+                        "message" : status_code.find_password_01_success,
+                }
+
+                ),
+                status = 200,
+                mimetype = "application/json"
+            
+            )
+        else:
+            return Response(
+                response = json.dumps({
+                        "message" :status_code.find_password_02_fail
+                }
+
+                ),
+                status = 200,
+                mimetype = "application/json"
+            )
+            
+    except Exception as ex:
+        print("******************")
+        print(ex)
+        print("******************")
+
+
+'''
 # 비밀번호 찾기 : 수정 필요
 # @form-data : user_id, phone
 #
@@ -482,7 +521,13 @@ def find_password():
         result = member_module.find_password(db)
         if result != False:
             return Response(
-                response = json.dumps(result),
+                response = json.dumps(
+                    {
+                          "message" : status_code.find_password_01_success
+
+                    }
+
+                    ),
                 status = 200,
                 mimetype = "application/json"
             )
@@ -500,6 +545,54 @@ def find_password():
         print("******************")
         print(ex)
         print("******************")
+
+
+
+'''
+# 비밀번호 찾기 : 수정 필요
+# @form-data : user_id, phone
+#
+'''
+"""
+@app.route('/find-password', methods=['POST'])
+def find_password():
+    try:
+        result = member_module.find_password(db,member_module.information_inspection(db))
+        if result != False:
+            return Response(
+                response = json.dumps(
+                    {
+                         "message" : "GOOD"
+                    }
+                    ),
+                status = 200,
+                mimetype = "application/json"
+            )
+        else:
+            return Response(
+                response = json.dumps(
+                    {
+                        "message" : status_code.find_password_02_fail
+                    }
+                ),
+                status = 200,
+                mimetype = "application/json"
+            )
+    except Exception as ex:
+        print("******************")
+        print(ex)
+        print("******************")
+"""
+
+
+
+
+
+
+
+
+
+
 
 '''
 # 사진 한개 삭제하기 : 수정 필요
@@ -540,6 +633,7 @@ def delete_person():
 # @form-data : user_id, person_name
 #
 '''
+
 @app.route('/people', methods = ["DELETE"])
 def delete_people():
     try:
