@@ -53,7 +53,8 @@ def single_upload(db, collction_name):
                     "user_id" : request.form["user_id"],
                     "character_name" : filename,
                     "reg_date": now.strftime('%Y-%m-%d %H:%M:%S'),
-                    "character_url" : location
+                    "character_url" : location,
+                    "activation_YN" : "Y"
                 }
             elif collction_name == 'video_origin':
                 obj = {
@@ -69,7 +70,8 @@ def single_upload(db, collction_name):
                     "user_id" : request.form["user_id"],
                     "video_name" : filename,
                     "reg_date": now.strftime('%Y-%m-%d %H:%M:%S'),
-                    "video_modification_url" : location
+                    "video_modification_url" : location,
+                    "activation_YN" : "Y"
                 }
                 
             # 6-2. db에 저장
@@ -151,7 +153,8 @@ def multiple_upload(db, collction_name):
                         "user_id" : request.form["user_id"],
                         "character_name" : filename,
                         "reg_date": time,
-                        "character_url" : location
+                        "character_url" : location,
+                        "activation_YN" : "Y"
                     }
                 if collction_name == 'people':
                     obj = {
@@ -160,7 +163,8 @@ def multiple_upload(db, collction_name):
                         "person_img_name" : filename,
                         "person_name" : request.values.get("person_name"),
                         "reg_date": time,
-                        "person_img_url" : location
+                        "person_url" : location,
+                        "activation_YN" : "Y"
                     }
                 
                 # 6-2. db에 저장

@@ -6,6 +6,14 @@ fileupload_02_fail = "file upload fail"
 filedownload_01_success = "file download successfully"
 filedownload_02_fail = "file download fail"
 
+# file delete code
+filedelete_01_success = "file delete successfully"
+filedelete_02_fail = "file delete fail"
+
+# file update code
+fileupdate_01_success = "file update successfully"
+fileupdate_02_fail = "file update fail"
+
 # id-check code
 id_check_01_success = "ID available"
 id_check_02_fail = "ID not available"
