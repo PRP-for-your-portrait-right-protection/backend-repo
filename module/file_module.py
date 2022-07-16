@@ -1,6 +1,6 @@
 from flask import request
 from bucket.m_connection import s3_connection, s3_put_object, s3_get_object
-from bucket.m_config import AWS_S3_BUCKET_NAME
+from bucket.m_config import AWS_S3_BUCKET_NAME, AWS_S3_BUCKET_URL
 from datetime import datetime
 import hashlib
 import os
@@ -26,19 +26,19 @@ def upload(s3, db, collction_name, f, user_id, name=""):
         # 4. 버킷에 파일 저장
         if collction_name == 'upload_character':
             ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, f.filename, f"upload_character/{filename}")
-            location = f'https://prpproject.s3.ap-northeast-2.amazonaws.com/upload_character/{filename}'
+            location = f'{AWS_S3_BUCKET_URL}/upload_character/{filename}'
             col = db.upload_character
         elif collction_name == 'video_origin':
             ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, f.filename, f"video_origin/{filename}")
-            location = f'https://prpproject.s3.ap-northeast-2.amazonaws.com/video_origin/{filename}'        
+            location = f'{AWS_S3_BUCKET_URL}/video_origin/{filename}'        
             col = db.video_origin
         elif collction_name == 'video_modification':
             ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, f.filename, f"video_modification/{filename}")
-            location = f'https://prpproject.s3.ap-northeast-2.amazonaws.com/video_modification/{filename}'
+            location = f'{AWS_S3_BUCKET_URL}/video_modification/{filename}'
             col = db.video_modification
         elif collction_name == 'people':
             ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, f.filename, f"people/{filename}")
-            location = f'https://prpproject.s3.ap-northeast-2.amazonaws.com/people/{filename}'
+            location = f'{AWS_S3_BUCKET_URL}/people/{filename}'
             col = db.people
         
         # 5. local에 저장된 파일 삭제
