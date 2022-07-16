@@ -113,7 +113,7 @@ def uploadCharacters():
 '''
 # 수정 전 비디오 파일 버킷에 저장
 # @form-data : file, user_id
-#
+# 필요 없어서 삭제해야되면 삭제하기
 '''
 @app.route('/video-origin', methods=['POST'])
 def oringinVideo():
@@ -271,7 +271,7 @@ def oringinCharacterDownload():
 """
 # 일인 다중 케릭터 사진 url 가져오기
 # @form-data : user_id
-# 
+# 수정 필요 없음
 """
 @app.route('/characters', methods = ["GET"])
 def characterDownload():
@@ -301,7 +301,7 @@ def characterDownload():
 """
 # 다인 다중 사람 사진 url 가져오기
 # @form-data : user_id
-#
+# 수정할 필요 없음
 """
 @app.route('/people', methods = ["GET"])
 def peopleDownload():
@@ -443,8 +443,8 @@ def login():
         
 '''
 # 아이디 찾기
-# @form-data : user_id, phone
-#
+# @form-data : name, phone
+# 수정할 필요 없음
 '''
 @app.route('/find-id', methods=['POST'])
 def find_id():
@@ -513,7 +513,7 @@ def check_info():
 '''
 # 비밀번호 찾기 : 수정 필요
 # @form-data : user_id, phone
-#
+# email로 쏴서 비밀번호를 받을 수 있을거 같다
 '''
 @app.route('/find-password', methods=['POST'])
 def find_password():

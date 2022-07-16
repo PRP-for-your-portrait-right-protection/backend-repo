@@ -36,6 +36,7 @@ def create_users(db):
             "name" : request.form["name"],
             "phone" : request.form["phone"],
             "reg_date" : now.strftime('%Y-%m-%d %H:%M:%S'),
+            "activation_YN" : "Y",
             "mod_date" : ""
         }
         db.member.insert_one(user)
