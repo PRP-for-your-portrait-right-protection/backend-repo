@@ -1,8 +1,5 @@
 from flask import request
-from bucket.m_connection import s3_connection
-from bucket.m_config import AWS_S3_BUCKET_NAME 
 from datetime import datetime
-import boto3 #버켓의 사진 삭제 
 
 """
 * 단일 삭제

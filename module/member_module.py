@@ -1,7 +1,7 @@
-from datetime import datetime, timedelta
-import hashlib
-import jwt
 from flask import request
+import jwt
+import hashlib
+from datetime import datetime, timedelta
 from module.module_config import SECRET_KEY, TOKEN_EXPIRED
 
 """
