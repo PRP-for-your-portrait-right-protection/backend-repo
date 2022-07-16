@@ -19,7 +19,7 @@ def upload(s3, db, collction_name, f, user_id, name=""):
         # 3. 현재시간으로 파일명 secure
         # 3-1. 현재시간 string으로 가져옴
         now = datetime.now()
-        time = now.strftime('%Y-%m-%d %H:%M:%S')
+        time = now.strftime('%Y-%m-%d %H:%M:%S') + f.filename
         # 3-2. 파일명 암호화
         filename = hashlib.sha256(time.encode("utf-8")).hexdigest() + os.path.splitext(f.filename)[1]
         
