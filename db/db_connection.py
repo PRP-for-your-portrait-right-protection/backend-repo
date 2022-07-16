@@ -77,6 +77,9 @@ def init_collection(db):
                     },
                     "reg_date": {
                         'bsonType': 'string'
+                    },
+                    "mod_date": {
+                        'bsonType': 'string'
                     }
                 }
             }
@@ -103,6 +106,9 @@ def init_collection(db):
                     },
                     "reg_date": {
                         'bsonType': 'string',
+                    },
+                    "mod_date": {
+                        'bsonType': 'string'
                     }
                 }
             }
@@ -131,6 +137,9 @@ def init_collection(db):
                         'bsonType': 'string'
                     },
                     "reg_date": {
+                        'bsonType': 'string'
+                    },
+                    "mod_date": {
                         'bsonType': 'string'
                     }
                 }
@@ -176,3 +185,4 @@ def init_collection(db):
         }
     )
     print(member)
+    
