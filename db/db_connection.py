@@ -17,6 +17,7 @@ def db_connection():
         print("ERROR - Cannot connect to db")
         print(ex)
         print("******************")
+        
 def init_collection(db):
     people_result = db.create_collection("people", validator={
             '$jsonSchema': {
@@ -143,6 +144,9 @@ def init_collection(db):
                 'additionalProperties': True,
                 'required': ['user_id', 'password', 'name', 'phone', 'activation_YN', 'reg_date'],
                 'properties': {
+                    "member_id" : {
+                        'bsonType': 'number'
+                    },
                     "user_id" : {
                         'bsonType': 'string'
                     },

@@ -1,7 +1,7 @@
-from datetime import datetime, timedelta
-import hashlib
-import jwt
 from flask import request
+import jwt
+import hashlib
+from datetime import datetime, timedelta
 from module.module_config import SECRET_KEY, TOKEN_EXPIRED
 
 """
@@ -98,11 +98,9 @@ def find_id(db):
         print('*********')
         return False
     
-
 '''
 * 정보검사 핸드폰번호와 아이디가 맞는 지 확인한다.
 '''
-
 def information_inspection(db):
     try:
         idReceive = request.form["user_id"]
@@ -116,7 +114,6 @@ def information_inspection(db):
             return False
         else:
             return True
-
     except Exception as ex:
         print('*********')
         print(ex)
@@ -126,11 +123,8 @@ def information_inspection(db):
 '''
 *수정날짜와 바뀐 비밀 번호 업데이트 
 '''
-
-def find_password(db):
-  
+def update_password(db):
     try:
-
         idReceive = request.form["user_id"]
         phoneNum=request.form["phone"]
 
@@ -138,20 +132,19 @@ def find_password(db):
         pwReceive = request.form["password"]
         pwHash = hashlib.sha256(pwReceive.encode('utf-8')).hexdigest()
     
-        result = db.member.update_many(
+        db.member.update_many(
         {      
             "user_id" : idReceive, 
             "phone": phoneNum
         }, 
-        {"$set" : 
+        {
+            "$set" : 
             {
                 "password" :  pwHash, 
                 "mod_date" : now.strftime('%Y-%m-%d %H:%M:%S')
             }
         })
-
         return True
-
     except Exception as ex:
         print('*********')
         print(ex)
