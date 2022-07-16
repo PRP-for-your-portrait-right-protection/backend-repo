@@ -15,7 +15,7 @@ db = db_connection.db_connection()
 '''
 # 여러 사람 여러 사진 버킷에 저장
 # @form-data : user_id, file[], name[]
-#
+# @return : {file : [file_url, file_url, file_url]}
 '''
 @app.route('/people', methods=['POST'])
 def upload_people():
@@ -45,7 +45,15 @@ def upload_people():
 """
 # 여러 사람 여러 사진 url 가져오기
 # @form-data : user_id
-#
+# @return : 
+#   {
+#       person_name : [
+#           file_url, file_url, file_url
+#       ], 
+#       person_name : [
+#           file_url, file_url, file_url
+#       ]
+#   }
 """
 @app.route('/people', methods = ["GET"])
 def get_people():
@@ -74,9 +82,9 @@ def get_people():
         
 ####################################특정인물 사진 여러 개#######################################
 '''
-# 특정 인물 이름 수정 : 수정 필요
+# 특정 인물 이름 수정
 # @form-data : user_id, person_name, person_name_after
-#
+# @return : message
 '''
 @app.route('/person-all', methods = ["PATCH"])
 def update_person_all():
@@ -107,15 +115,9 @@ def update_person_all():
         print("******************")
         
 '''
-<<<<<<< Updated upstream
-# 수정 전 비디오 파일 버킷에 저장
-# @form-data : file, user_id
-# 필요 없어서 삭제해야되면 삭제하기
-=======
 # 특정 인물에 대한 사진 모두 삭제하기
 # @form-data : user_id, person_name
-#
->>>>>>> Stashed changes
+# @return : message
 '''
 @app.route('/person-all', methods = ["DELETE"])
 def delete_person_all():
@@ -147,9 +149,9 @@ def delete_person_all():
 
 ####################################특정인물 사진 한 개#######################################        
 '''
-# 특정 인물 사진 한개 삭제하기 : 수정 필요
-# @form-data : user_id, url        << url로 DB에서 person_url에 해당하는 값을 주면 됨
-#
+# 특정 인물 사진 한개 삭제하기
+# @form-data : user_id, url  << url로 DB에서 person_url에 해당하는 값을 주면 됨
+# @return : message
 '''
 @app.route('/person-single', methods = ["DELETE"])
 def delete_person_single():
@@ -183,7 +185,7 @@ def delete_person_single():
 """
 # 기존 케릭터 사진 url 가져오기
 # @form-data : 없음
-# 
+# @return : {file : [file_url, file_url, file_url]}
 """
 @app.route('/origin-characters', methods = ["GET"])
 def get_oringin_characters():
@@ -214,7 +216,7 @@ def get_oringin_characters():
 '''
 # 케릭터 한 개 버킷에 저장
 # @form-data : user_id, file
-#
+# @return : {file : file_url}
 '''
 @app.route('/character', methods=['POST'])
 def upload_character():
@@ -244,7 +246,7 @@ def upload_character():
 '''
 # 캐릭터 한 개 삭제
 # @form-data : user_id, url
-#
+# @return : message
 '''
 @app.route('/character', methods = ["DELETE"])
 def delete_character():
@@ -278,7 +280,7 @@ def delete_character():
 '''
 # 케릭터 여러 개 버킷에 저장
 # @form-data : user_id, file[]
-#
+# @return : {file : [file_url, file_url, file_url]}
 '''
 @app.route('/characters', methods=['POST'])
 def upload_characters():
@@ -308,11 +310,7 @@ def upload_characters():
 """
 # 케릭터 여러 개 url 가져오기
 # @form-data : user_id
-<<<<<<< Updated upstream
-# 수정할 필요 없음
-=======
-# 
->>>>>>> Stashed changes
+# @return : {file : [file_url, file_url, file_url]}
 """
 @app.route('/characters', methods = ["GET"])
 def get_characters():
@@ -340,9 +338,9 @@ def get_characters():
         print("******************")
         
 '''
-# 특정 유저에 대한 캐릭터 모두 삭제하기 : 수정 필요
+# 특정 유저에 대한 캐릭터 모두 삭제하기
 # @form-data : user_id
-#
+# @return : message
 '''
 @app.route('/characters', methods = ["DELETE"])
 def delete_characters():
@@ -376,7 +374,7 @@ def delete_characters():
 '''
 # 수정 전 비디오 파일 버킷에 저장
 # @form-data : user_id, file
-#
+# @return : {file : file_url}
 '''
 @app.route('/video-origin', methods=['POST'])
 def upload_video_origin():
@@ -407,7 +405,7 @@ def upload_video_origin():
 '''
 # 수정 후 비디오 파일 버킷에 저장 후 링크 return
 # @form-data : user_id, file
-#
+# @return : {file : file_url}
 '''
 @app.route('/video-modification', methods=['POST'])
 def upload_video_modification():
@@ -435,9 +433,9 @@ def upload_video_modification():
         print("******************")
 
 """
-# 수정 후 비디오 파일 다운로드
+# 수정 후 비디오 파일 다운로드 : 자동 다운로드
 # @form-data : user_id, filename
-#
+# @return : message
 """
 @app.route('/video-modification', methods=['GET'])
 def get_video_modification():
@@ -468,9 +466,9 @@ def get_video_modification():
         print("******************")
         
 '''
-# 수정 후 비디오 파일 한 개 삭제하기 : 수정 필요
+# 수정 후 비디오 파일 한 개 삭제하기
 # @form-data : user_id, url
-#
+# @retutrn : message
 '''
 @app.route('/video-modification', methods = ["DELETE"])
 def delete_video_modification():
@@ -502,9 +500,9 @@ def delete_video_modification():
 
 ####################################수정 후 비디오 여러 개#######################################
 '''
-# 특정 유저에 대한 비디오 결과 모두 삭제하기 : 수정 필요
+# 특정 유저에 대한 비디오 결과 모두 삭제하기
 # @form-data : user_id
-#
+# @return : message
 '''
 @app.route('/video-modifications', methods = ["DELETE"])
 def delete_video_modifications():
@@ -571,7 +569,7 @@ def ai():
 '''
 # 아이디 중복체크
 # @form-data : user_id
-#
+# @return : message
 '''
 @app.route('/id-check', methods=['POST'])
 def id_check():
@@ -604,7 +602,7 @@ def id_check():
 '''
 # 회원가입
 # @form-data : user_id, password, name, phone
-#
+# @return : message
 '''
 @app.route('/signup', methods=['POST'])
 def create_user():
@@ -639,7 +637,7 @@ def create_user():
 '''
 # 로그인
 # @form-data : user_id, password
-# 
+# @return : message, token
 '''
 @app.route('/login', methods=['POST'])
 def login():
@@ -684,7 +682,7 @@ def login():
 '''
 # 아이디 찾기
 # @form-data : name, phone
-#
+# @return : {user_id : "user_id"}
 '''
 @app.route('/find-id', methods=['POST'])
 def find_id():
@@ -712,9 +710,9 @@ def find_id():
         print("******************")
 
 '''
-# 비밀번호 수정 전 정보 검증 : 수정 필요
+# 비밀번호 수정 전 정보 검증
 # @form-data : user_id, phone
-#
+# @return : message
 '''
 @app.route('/check-info', methods=['POST'])
 def check_info():
@@ -745,15 +743,14 @@ def check_info():
         print("******************")
 
 '''
-# 비밀번호 수정 : 수정 필요
+# 비밀번호 수정
 # @form-data : user_id, phone, password
-#
+# @return : message
 '''
 @app.route('/password', methods=['PATCH'])
 def password():
     try:
-        result = member_module.update_password(db)
-        if result != False:
+        if member_module.update_password(db):
             return Response(
                 response = json.dumps(
                     {

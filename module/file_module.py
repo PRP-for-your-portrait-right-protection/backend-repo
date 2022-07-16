@@ -276,9 +276,9 @@ def single_get(db, collction_name):
 
         # 3. json 형태로 매핑
         col_json = {}
-        col_json[userId] = []
+        col_json["file"] = []
         for x in docs:
-            col_json[userId].append(x['character_url'])
+            col_json["file"].append(x['character_url'])
 
         # 4. 다중 파일 json 반환
         return col_json
