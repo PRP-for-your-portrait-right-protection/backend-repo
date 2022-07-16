@@ -1,36 +1,51 @@
+#######################FILE#######################
 # file save code
-fileupload_01_success = "file upload successfully"
-fileupload_02_fail = "file upload fail"
+file_save_01_success = "FS01"
+file_save_02_fail = "FS02"
 
 # file down code
-filedownload_01_success = "file download successfully"
-filedownload_02_fail = "file download fail"
-
-# file delete code
-filedelete_01_success = "file delete successfully"
-filedelete_02_fail = "file delete fail"
+file_download_01_success = "FD01"
+file_download_02_fail = "FD02"
 
 # file update code
-fileupdate_01_success = "file update successfully"
-fileupdate_02_fail = "file update fail"
+file_update_01_success = "FU01"
+file_update_02_fail = "FU02"
 
+# file delete code
+file_remove_01_success = "FR01"
+file_remove_02_fail = "FR02"
+
+########################AI########################
+# post ai code
+post_ai_01_success = "PI01"
+post_ai_02_fail = "PI02"
+
+######################MEMBER######################
 # id-check code
-id_check_01_success = "ID available"
-id_check_02_fail = "ID not available"
+member_id_check_01_success = "MC01"
+member_id_check_02_fail = "MC02"
+
+# signup code
+member_signup_01_success = "MS01"
+member_signup_02_fail = "MS02"
 
 # login code
-login_01_success=" login success"
-login_02_notmatch="no id or password"
-login_03_fail="fail to login"
-
-# register code
-create_01_success="success create"
-create_02_fail="can not create users"
+member_login_01_success = " ML01"
+member_login_02_notmatch = "ML02"
+member_login_03_fail = "ML03"
 
 # find id code
-find_id_01_success="find id success"
-find_id_02_fail="find id fail"
+member_find_id_01_success = "MI01"
+member_find_id_02_fail = "MI02"
 
 # find password code
-find_password_01_success="find password success"
-find_password_02_fail="find password fail"
+member_find_password_01_success = "MP01"
+member_find_password_02_fail = "MP02"
+
+# replace password code
+member_replace_password_01_success = "MR01"
+member_replace_password_02_fail = "MR02"
+
+# delete member code
+member_delete_01_success = "MD01"
+member_delete_01_fail = "MD02"

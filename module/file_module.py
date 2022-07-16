@@ -201,42 +201,6 @@ def people_multiple_upload(db, collction_name):
             print(ex)
             print("******************")
             return False
-        
-"""
-* 다인 다중 파일 url 가져오기
-"""
-def multiple_get(db, collction_name):
-    try:
-        # 1. collction_name 확인
-        if collction_name == "get_people":
-            col = db.people
-        else:
-            print("can't find collction name")
-            return False
-
-        # 2. user_id 가져오기
-        userId = request.form["user_id"]
-
-        # 3. user id에 해당하는 person_name을 중복 제거 하여 가져옴
-        col_list = col.distinct("person_name", {"user_id" : userId})
-
-        # 4. json 형태로 매핑
-        col_json = {}
-
-        for name in col_list:
-            col_json[name] = []
-            if collction_name == "get_people":
-                docs = col.find({"person_name" : name, "user_id" : userId})
-                for x in docs:
-                    col_json[name].append(x['person_url'])
-
-        # 5. 다중 파일 json 반환
-        return col_json
-    except Exception as ex:
-        print('*********')
-        print(ex)
-        print('*********')
-        return False
 
 """
 * 단일 파일 다운로드 - 동영상 다운로드에서만 사용
@@ -253,38 +217,5 @@ def single_download(db, collction_name):
     if ret :
         return True
     else:
-        return False
-
-"""
-* 일인 다중 파일 url 가져오기
-"""
-def single_get(db, collction_name):
-    try:
-        # 1. collction_name 확인 & user_id 가져오기
-        if collction_name == "get_character": 
-            col = db.upload_character
-            userId = request.form["user_id"]
-        elif collction_name == "get_origin_character":
-            col = db.origin_character
-            userId = "origin_character"
-        else:
-            print("can't find collction name")
-            return False
-        
-        # 2. user_id에 해당하는 값 모두 가져오기
-        docs = col.find({"user_id" : userId})
-
-        # 3. json 형태로 매핑
-        col_json = {}
-        col_json["file"] = []
-        for x in docs:
-            col_json["file"].append(x['character_url'])
-
-        # 4. 다중 파일 json 반환
-        return col_json
-    except Exception as ex:
-        print('*********')
-        print(ex)
-        print('*********')
         return False
 

@@ -57,8 +57,8 @@ def login_modules(db):
     try:
         findUser = db.member.find_one(
             {
-            "user_id" : idReceive,
-            "password" : pwHash
+                "user_id" : idReceive,
+                "password" : pwHash
             }
         )
         if findUser is not None:
@@ -86,7 +86,10 @@ def find_id(db):
                 "name" : request.form["name"],
                 "phone" : request.form["phone"]
             },
-            {"user_id":1, "_id":0}
+            {
+                "user_id":1, 
+                "_id":0
+            }
         )
         if findUser == None:
             return False
@@ -99,7 +102,7 @@ def find_id(db):
         return False
     
 '''
-* 정보검사 핸드폰번호와 아이디가 맞는 지 확인한다.
+* 비밀번호 찾기 전 확인
 '''
 def information_inspection(db):
     try:
@@ -121,7 +124,7 @@ def information_inspection(db):
         return False
 
 '''
-*수정날짜와 바뀐 비밀 번호 업데이트 
+* 비밀 번호 변경
 '''
 def update_password(db):
     try:
@@ -144,6 +147,37 @@ def update_password(db):
                 "mod_date" : now.strftime('%Y-%m-%d %H:%M:%S')
             }
         })
+        return True
+    except Exception as ex:
+        print('*********')
+        print(ex)
+        print('*********')
+        return False
+
+'''
+* 회원탈퇴
+'''
+def delete_member(db):
+    try:
+        # 1. 컬렉션 설정
+        col = db.member
+        
+        # 2. 유저 아이디와 url 가져옴
+        userId = request.form["user_id"]
+
+        # 3. DB에서 유저아이디 일치하는 Document -> activation_YN = N
+        col.update_one(
+            {
+                "user_id" : userId, 
+            }, 
+            {
+                "$set" : 
+                    {
+                        "activation_YN" : "N",
+                        "mod_date" : datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    }
+            }
+        )
         return True
     except Exception as ex:
         print('*********')

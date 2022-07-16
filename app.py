@@ -31,10 +31,10 @@ def upload_people():
             return Response(
                 response=json.dumps(
                     {
-                        "message":status_code.fileupload_02_fail,
+                        "message":status_code.file_download_02_fail,
                     }
                 ),
-                status=200,
+                status=404,
                 mimetype="application/json"
             )
     except Exception as ex:
@@ -58,7 +58,7 @@ def upload_people():
 @app.route('/people', methods = ["GET"])
 def get_people():
     try:
-        result = file_module.multiple_get(db, "get_people")
+        result = crud_module.multiple_get(db, "get_people")
         if result != False:
             return Response(
                 response = json.dumps(result),
@@ -69,10 +69,10 @@ def get_people():
             return Response(
                 response=json.dumps(
                     {
-                        "message":status_code.filedownload_02_fail
+                        "message":status_code.file_download_02_fail
                     }
                 ),
-                status=200,
+                status=404,
                 mimetype="application/json"
             )
     except Exception as ex:
@@ -93,7 +93,7 @@ def update_person_all():
             return Response(
                 response = json.dumps(
                     {
-                        "message" : status_code.fileupdate_01_success
+                        "message" : status_code.file_update_01_success
                     }
                 ),
                 status = 200,
@@ -103,10 +103,10 @@ def update_person_all():
             return Response(
                 response = json.dumps(
                     {
-                        "message" : status_code.fileupdate_02_fail
+                        "message" : status_code.file_update_02_fail
                     }
                 ),
-                status = 200,
+                status = 404,
                 mimetype = "application/json"
             )
     except Exception as ex:
@@ -126,7 +126,7 @@ def delete_person_all():
             return Response(
                 response = json.dumps(
                     {
-                        "message" : status_code.filedelete_01_success
+                        "message" : status_code.file_remove_01_success
                     }
                 ),
                 status = 200,
@@ -136,10 +136,10 @@ def delete_person_all():
             return Response(
                 response = json.dumps(
                     {
-                        "message" : status_code.filedelete_02_fail
+                        "message" : status_code.file_remove_02_fail
                     }
                 ),
-                status = 200,
+                status = 404,
                 mimetype = "application/json"
             )
     except Exception as ex:
@@ -160,7 +160,7 @@ def delete_person_single():
             return Response(
                 response = json.dumps(
                     {
-                        "message" : status_code.filedelete_01_success
+                        "message" : status_code.file_remove_01_success
                     }
                 ),
                 status = 200,
@@ -170,10 +170,10 @@ def delete_person_single():
             return Response(
                 response = json.dumps(
                     {
-                        "message" : status_code.filedelete_02_fail
+                        "message" : status_code.file_remove_02_fail
                     }
                 ),
-                status = 200,
+                status = 404,
                 mimetype = "application/json"
             )
     except Exception as ex:
@@ -190,7 +190,7 @@ def delete_person_single():
 @app.route('/origin-characters', methods = ["GET"])
 def get_oringin_characters():
     try:
-        result = file_module.single_get(db, "get_origin_character")
+        result = crud_module.single_get(db, "get_origin_character")
         if result != False:
             return Response(
                 response = json.dumps(result),
@@ -201,10 +201,10 @@ def get_oringin_characters():
             return Response(
                 response=json.dumps(
                     {
-                        "message":status_code.filedownload_02_fail,
+                        "message":status_code.file_download_02_fail,
                     }
                 ),
-                status=200,
+                status=404,
                 mimetype="application/json"
             )
     except Exception as ex:
@@ -232,10 +232,10 @@ def upload_character():
             return Response(
                 response=json.dumps(
                     {
-                        "message":status_code.fileupload_02_fail,
+                        "message":status_code.file_save_02_fail,
                     }
                 ),
-                status=200,
+                status=404,
                 mimetype="application/json"
             )
     except Exception as ex:
@@ -255,7 +255,7 @@ def delete_character():
             return Response(
                 response = json.dumps(
                     {
-                        "message" : status_code.filedelete_01_success
+                        "message" : status_code.file_remove_01_success
                     }
                 ),
                 status = 200,
@@ -265,10 +265,10 @@ def delete_character():
             return Response(
                 response = json.dumps(
                     {
-                        "message" : status_code.filedelete_02_fail
+                        "message" : status_code.file_remove_02_fail
                     }
                 ),
-                status = 200,
+                status = 404,
                 mimetype = "application/json"
             )
     except Exception as ex:
@@ -296,10 +296,10 @@ def upload_characters():
             return Response(
                 response=json.dumps(
                     {
-                        "message":status_code.fileupload_02_fail,
+                        "message":status_code.file_save_02_fail,
                     }
                 ),
-                status=200,
+                status=404,
                 mimetype="application/json"
             )
     except Exception as ex:
@@ -315,7 +315,7 @@ def upload_characters():
 @app.route('/characters', methods = ["GET"])
 def get_characters():
     try:
-        result = file_module.single_get(db, "get_character")
+        result = crud_module.single_get(db, "get_character")
         if result != False:
             return Response(
                 response = json.dumps(result),
@@ -326,10 +326,10 @@ def get_characters():
             return Response(
                 response=json.dumps(
                     {
-                        "message":status_code.filedownload_02_fail,
+                        "message":status_code.file_download_02_fail,
                     }
                 ),
-                status=200,
+                status=404,
                 mimetype="application/json"
             )
     except Exception as ex:
@@ -349,7 +349,7 @@ def delete_characters():
             return Response(
                 response = json.dumps(
                     {
-                        "message" : status_code.filedelete_01_success
+                        "message" : status_code.file_remove_01_success
                     }
                 ),
                 status = 200,
@@ -359,10 +359,10 @@ def delete_characters():
             return Response(
                 response = json.dumps(
                     {
-                        "message" : status_code.filedelete_02_fail
+                        "message" : status_code.file_remove_02_fail
                     }
                 ),
-                status = 200,
+                status = 404,
                 mimetype = "application/json"
             )
     except Exception as ex:
@@ -390,10 +390,10 @@ def upload_video_origin():
             return Response(
                 response=json.dumps(
                     {
-                        "message":status_code.fileupload_02_fail,
+                        "message":status_code.file_save_02_fail,
                     }
                 ),
-                status=200,
+                status=404,
                 mimetype="application/json"
             )
     except Exception as ex:
@@ -421,10 +421,10 @@ def upload_video_modification():
             return Response(
                 response=json.dumps(
                     {
-                        "message":status_code.fileupload_02_fail,
+                        "message":status_code.file_save_02_fail,
                     }
                 ),
-                status=200,
+                status=404,
                 mimetype="application/json"
             )
     except Exception as ex:
@@ -444,7 +444,7 @@ def get_video_modification():
             return Response(
                 response=json.dumps(
                     {
-                        "message":status_code.filedownload_01_success,
+                        "message":status_code.file_download_01_success,
                     }
                 ),
                 status=200,
@@ -454,10 +454,10 @@ def get_video_modification():
             return Response(
                 response=json.dumps(
                     {
-                        "message":status_code.filedownload_02_fail,
+                        "message":status_code.file_download_02_fail,
                     }
                 ),
-                status=200,
+                status=404,
                 mimetype="application/json"
             )
     except Exception as ex:
@@ -477,7 +477,7 @@ def delete_video_modification():
             return Response(
                 response = json.dumps(
                     {
-                        "message" : status_code.filedelete_01_success
+                        "message" : status_code.file_remove_01_success
                     }
                 ),
                 status = 200,
@@ -487,10 +487,10 @@ def delete_video_modification():
             return Response(
                 response = json.dumps(
                     {
-                        "message" : status_code.filedelete_02_fail
+                        "message" : status_code.file_remove_02_fail
                     }
                 ),
-                status = 200,
+                status = 404,
                 mimetype = "application/json"
             )
     except Exception as ex:
@@ -499,6 +499,36 @@ def delete_video_modification():
         print("******************")
 
 ####################################수정 후 비디오 여러 개#######################################
+'''
+# 특정 유저에 대한 비디오 결과 모두 조회하기
+# @form-data : user_id
+# @return : {file : [file_url, file_url, file_url]}
+'''
+@app.route('/video-modifications', methods = ["GET"])
+def get_video_modifications():
+    try:
+        result = crud_module.single_get(db, "get_video_modification")
+        if result != False:
+            return Response(
+                response = json.dumps(result),
+                status = 200,
+                mimetype = "application/json"
+            )
+        else:
+            return Response(
+                response = json.dumps(
+                    {
+                        "message" : status_code.file_remove_02_fail
+                    }
+                ),
+                status = 404,
+                mimetype = "application/json"
+            )
+    except Exception as ex:
+        print("******************")
+        print(ex)
+        print("******************")
+        
 '''
 # 특정 유저에 대한 비디오 결과 모두 삭제하기
 # @form-data : user_id
@@ -511,7 +541,7 @@ def delete_video_modifications():
             return Response(
                 response = json.dumps(
                     {
-                        "message" : status_code.filedelete_01_success
+                        "message" : status_code.file_remove_01_success
                     }
                 ),
                 status = 200,
@@ -521,10 +551,10 @@ def delete_video_modifications():
             return Response(
                 response = json.dumps(
                     {
-                        "message" : status_code.filedelete_02_fail
+                        "message" : status_code.file_remove_02_fail
                     }
                 ),
-                status = 200,
+                status = 404,
                 mimetype = "application/json"
             )
     except Exception as ex:
@@ -532,34 +562,58 @@ def delete_video_modifications():
         print(ex)
         print("******************")
         
-####################################AI에 전달 - 수정필요#######################################
+####################################AI에 전달 - AI 함수로 전달하는 부분 수정필요#######################################
 '''
 # AI에 파일 링크 한 번에 던지기 : 원본 파일명, 케릭터 파일명, 모자이크 안 할 대상들 파일명
-# @form-data : origin_video_name, mod_method, user_id
-# 
+# @form-data : user_id, files[], video, mode_method, character_new_YN(선택), file(선택)
+# @return : AI 함수
 '''
 @app.route('/ai', methods=['POST'])
 def ai():
     try:
-        result = file_module.multiple_get(db, "get_people")
-        if result != False:
-            result["origin_video_name"] = request.form["origin_video_name"]
-            result["mod_method"] = request.form["mod_method"]
-            return Response(
-                response = json.dumps(result),
-                status = 200,
-                mimetype = "application/json"
-            )
-        else:
-            return Response(
-                response=json.dumps(
-                    {
-                        "message":status_code.filedownload_02_fail
-                    }
-                ),
-                status=200,
-                mimetype="application/json"
-            )
+        # 1. ai에 전송할 json 생성
+        col_json = {}
+        
+        # 2. json에 추가
+        # 2-1. 모자이크 제외할 사람 얼굴 사진 링크
+        col_json["file"] = []
+        fs = request.files.getlist("files")
+        for f in fs:
+            col_json["file"].append(f)
+        
+        # 2-2. user_id
+        user_id = request.form["user_id"]
+        col_json["user_id"] = user_id
+        
+        # 2-3. video
+        video = request.form["video"]
+        col_json["video"] = video
+        
+        # 3. 모자이크화 할 것인지 케릭터화 할 것인지 확인
+        mode_method = request.form["mode_method"]
+        
+        # 3-1. 모자이크
+        if mode_method == "mosaic":
+            # 모자이크 기능 함수로 json 보냄 > ai 함수에서 수정완료 > '수정 후 비디오 저장 API'로 라우팅
+            return col_json
+        
+        # 3-2. 케릭터화
+        elif mode_method == "character ":
+            # 케릭터 사진이 새로운 사진인지 검사
+            character_new_YN = request.form["character_new_YN"]
+            
+            # 새로운 사진
+            if character_new_YN == "Y":
+                # 새로운 사진 파일 버킷과 db에 저장 후 url 받아옴
+                character_file = file_module.single_upload(db, "upload_character")
+                col_json["character_file"] = character_file
+                return col_json
+            # 존재하던 사진
+            elif character_new_YN == "N":
+                # 존재하던 사진 url 받아와서 json에 추가
+                character_file = request.form["file"]
+                col_json["character_file"] = character_file
+                return col_json
     except Exception as ex:
         print("******************")
         print(ex)
@@ -578,7 +632,7 @@ def id_check():
             return Response(
                 response = json.dumps(
                     {
-                        "result" : status_code.id_check_01_success,
+                        "result" : status_code.member_id_check_01_success,
                     }
                 ),
                 status = 200,
@@ -588,10 +642,10 @@ def id_check():
             return Response(
                 response = json.dumps(
                     {
-                        "message" : status_code.id_check_02_fail
+                        "message" : status_code.member_id_check_02_fail
                     }
                 ),
-                status = 200,
+                status = 404,
                 mimetype = "application/json"
             )
     except Exception as ex:
@@ -612,7 +666,7 @@ def create_user():
             return Response(
                 response = json.dumps(
                     {
-                        "result" : status_code.create_01_success,
+                        "result" : status_code.member_signup_01_success,
                         "id" : idReceive,
                     }
                 ),
@@ -623,10 +677,10 @@ def create_user():
             return Response(
                 response = json.dumps(
                     {
-                        "message" : status_code.create_02_fail
+                        "message" : status_code.member_signup_02_fail
                     }
                 ),
-                status = 200,
+                status = 404,
                 mimetype = "application/json"
             )
     except Exception as ex:
@@ -647,17 +701,17 @@ def login():
             return Response(
                 response=json.dumps(
                     {
-                        "message":status_code.login_02_notmatch,
+                        "message":status_code.member_login_02_notmatch,
                     }
                 ),
-                status=200,
+                status=404,
                 mimetype="application/json"
             )
         elif token == 2:
             return Response(
                 response=json.dumps(
                     {
-                        "message":status_code.login_03_fail,
+                        "message":status_code.member_login_03_fail,
                     }
                 ),
                 status=424, #이전 요청이 실패하였기 때문에 지금의 요청도 실패
@@ -667,7 +721,7 @@ def login():
              return Response(
                 response=json.dumps(
                     {
-                        "message":status_code.login_01_success,
+                        "message":status_code.member_login_01_success,
                         "token" : token
                     }
                 ),
@@ -698,10 +752,10 @@ def find_id():
             return Response(
                 response = json.dumps(
                     {
-                        "message" : status_code.find_id_02_fail
+                        "message" : status_code.member_find_id_02_fail
                     }
                 ),
-                status = 200,
+                status = 404,
                 mimetype = "application/json"
             )
     except Exception as ex:
@@ -710,7 +764,7 @@ def find_id():
         print("******************")
 
 '''
-# 비밀번호 수정 전 정보 검증
+# 비밀번호 찾기 전 정보 검증
 # @form-data : user_id, phone
 # @return : message
 '''
@@ -721,7 +775,7 @@ def check_info():
             return Response(
                 response = json.dumps(
                     {
-                        "message" : status_code.find_password_01_success,
+                        "message" : status_code.member_find_password_01_success,
                     }
                 ),
                 status = 200,
@@ -731,10 +785,10 @@ def check_info():
             return Response(
                 response = json.dumps(
                     {
-                        "message" :status_code.find_password_02_fail
+                        "message" :status_code.member_find_password_02_fail
                     }
                 ),
-                status = 200,
+                status = 404,
                 mimetype = "application/json"
             )
     except Exception as ex:
@@ -743,7 +797,7 @@ def check_info():
         print("******************")
 
 '''
-# 비밀번호 수정
+# 비밀번호 찾기(변경할 비밀번호 정보 받아와서 비밀번호 변경)
 # @form-data : user_id, phone, password
 # @return : message
 '''
@@ -754,7 +808,7 @@ def password():
             return Response(
                 response = json.dumps(
                     {
-                        "message" : status_code.find_password_01_success
+                        "message" : status_code.member_replace_password_01_success
                     }
                 ),
                 status = 200,
@@ -764,10 +818,10 @@ def password():
             return Response(
                 response = json.dumps(
                     {
-                        "message" : status_code.find_password_02_fail
+                        "message" : status_code.member_replace_password_02_fail
                     }
                 ),
-                status = 200,
+                status = 404,
                 mimetype = "application/json"
             )
     except Exception as ex:
@@ -775,5 +829,38 @@ def password():
         print(ex)
         print("******************")
 
+'''
+# 회원탈퇴
+# @form-data : user_id
+# @return : message
+'''
+@app.route('/member', methods=['DELETE'])
+def delete_member():
+    try:
+        if member_module.delete_member(db):
+            return Response(
+                response = json.dumps(
+                    {
+                        "message" : status_code.member_delete_01_success
+                    }
+                ),
+                status = 200,
+                mimetype = "application/json"
+            )
+        else:
+            return Response(
+                response = json.dumps(
+                    {
+                        "message" : status_code.member_delete_01_fail
+                    }
+                ),
+                status = 404,
+                mimetype = "application/json"
+            )
+    except Exception as ex:
+        print("******************")
+        print(ex)
+        print("******************")
+        
 if __name__ == "__main__":
     app.run(port=80, debug=True)
