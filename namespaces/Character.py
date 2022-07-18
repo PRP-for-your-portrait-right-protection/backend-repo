@@ -14,17 +14,13 @@ OriginCharacter = Namespace(
 )
 
 parser = OriginCharacter.parser()
-parser.add_argument('user_id', location='form', required=False)
-parser.add_argument('name', location='form', required=False)
-parser.add_argument('file', type=FileStorage, location='files', required=False)
 
 @OriginCharacter.route('')
-@OriginCharacter.expect(parser)
 @OriginCharacter.doc(responses={200: 'Success'})
 @OriginCharacter.doc(responses={404: 'Failed'})
 class OriginCharacterClass(Resource):
 
-    def get():
+    def get(self):
         """
         # 기존 케릭터 사진 url 가져오기
         # @form-data : 없음
@@ -62,17 +58,15 @@ Character = Namespace(
 )
 
 parser = Character.parser()
-parser.add_argument('user_id', location='form', required=False)
-parser.add_argument('name', location='form', required=False)
-parser.add_argument('file', type=FileStorage, location='files', required=False)
+parser.add_argument('file', location='form', required=False)
 
-@Character.route('')
-@Character.expect(parser)
+@Character.route('/<user_id>')
 @Character.doc(responses={200: 'Success'})
 @Character.doc(responses={404: 'Failed'})
 class CharacterClass(Resource):
     
-    def post():
+    @Character.expect(parser)#post에서 formdata 사용하기 때문
+    def post(self,user_id):
         '''
         # 케릭터 한 개 버킷에 저장
         # @form-data : user_id, file
@@ -80,7 +74,7 @@ class CharacterClass(Resource):
         '''
         try:
             db = db_connection.db_connection()
-            result = file_module.single_upload(db, "upload_character")
+            result = file_module.single_upload(db, "upload_character","file",user_id)
             if result != False:
                 return Response(
                     response=json.dumps(result),
@@ -101,16 +95,17 @@ class CharacterClass(Resource):
                 print("******************")
                 print(ex)
                 print("******************")
-
-    def delete():
+    
+    def delete(self,user_id):
         '''
         # 캐릭터 한 개 삭제
         # @form-data : user_id, url
         # @return : message
         '''
         try:
+            url=request.args.get('url', type = str)#  form data 아닐때
             db = db_connection.db_connection()
-            if crud_module.single_delete(db, "character"):
+            if crud_module.single_delete(db, "character",user_id,url):
                 return Response(
                     response = json.dumps(
                         {
@@ -143,17 +138,16 @@ Characters = Namespace(
 )
 
 parser = Characters.parser()
-parser.add_argument('user_id', location='form', required=False)
-parser.add_argument('name', location='form', required=False)
 parser.add_argument('file', type=FileStorage, location='files', required=False)
 
-@Characters.route('')
-@Characters.expect(parser)
+@Characters.route('/<user_id>')
+
 @Characters.doc(responses={200: 'Success'})
 @Characters.doc(responses={404: 'Failed'})
 class CharactersClass(Resource):
-    
-    def post():
+
+    @Characters.expect(parser)
+    def post(self,user_id):
         '''
         # 케릭터 여러 개 버킷에 저장
         # @form-data : user_id, file[]
@@ -161,7 +155,7 @@ class CharactersClass(Resource):
         '''
         try:
             db = db_connection.db_connection()
-            result = file_module.multiple_upload(db, "upload_character")
+            result = file_module.multiple_upload(db, "upload_character","file",user_id)
             if result != False:
                 return Response(
                     response=json.dumps(result),
@@ -183,7 +177,7 @@ class CharactersClass(Resource):
             print(ex)
             print("******************")
         
-    def get():
+    def get(self,user_id):
         """
         # 케릭터 여러 개 url 가져오기
         # @form-data : user_id
@@ -191,7 +185,7 @@ class CharactersClass(Resource):
         """
         try:
             db = db_connection.db_connection()
-            result = crud_module.single_get(db, "get_character")
+            result = crud_module.single_get(db, "get_character",user_id)
             if result != False:
                 return Response(
                     response = json.dumps(result),
@@ -213,7 +207,7 @@ class CharactersClass(Resource):
             print(ex)
             print("******************")
 
-    def delete():
+    def delete(self,user_id):
         '''
         # 특정 유저에 대한 캐릭터 모두 삭제하기
         # @form-data : user_id
@@ -221,7 +215,8 @@ class CharactersClass(Resource):
         '''
         try:
             db = db_connection.db_connection()
-            if crud_module.multiple_delete(db, "characters"):
+            person_name=request.args.get('person_name', type = str)
+            if crud_module.multiple_delete(db, "characters",user_id,person_name):
                 return Response(
                     response = json.dumps(
                         {

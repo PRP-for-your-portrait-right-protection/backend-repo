@@ -14,25 +14,25 @@ People = Namespace(
 )
 
 parser = People.parser()
-parser.add_argument('user_id', location='form', required=False)
-parser.add_argument('name', location='form', required=False)
 parser.add_argument('file', type=FileStorage, location='files', required=False)
 
-@People.route('')
-@People.expect(parser)
+@People.route('/<user_id>')
+
 @People.doc(responses={200: 'Success'})
 @People.doc(responses={404: 'Failed'})
 class PeopleClass(Resource):
     
-    def post(self):
+    @People.expect(parser)
+    def post(self,user_id):
         '''
         # 여러 사람 여러 사진 버킷에 저장
         # @form-data : user_id, file[], name[]
         # @return : {file : [file_url, file_url, file_url]}
         '''
         try:
+           
             db = db_connection.db_connection()
-            result = file_module.people_multiple_upload(db, "people")
+            result = file_module.people_multiple_upload(db, "people",user_id)
             if result != False:
                 return Response(
                     response=json.dumps(result),
@@ -54,7 +54,7 @@ class PeopleClass(Resource):
             print(ex)
             print("******************")
 
-    def get(self):
+    def get(self,user_id):
         """
         # 여러 사람 여러 사진 url 가져오기
         # @form-data : user_id
@@ -70,7 +70,7 @@ class PeopleClass(Resource):
         """
         try:
             db = db_connection.db_connection()
-            result = crud_module.multiple_get(db, "get_people")
+            result = crud_module.multiple_get(db, "get_people",user_id)
             if result != False:
                 return Response(
                     response = json.dumps(result),
