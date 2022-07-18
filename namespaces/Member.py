@@ -7,17 +7,23 @@ from flask_restx import Resource, Api, Namespace
 from werkzeug.datastructures import FileStorage
 from namespaces import People
 
-db = db_connection.db_connection()
+
 
 ####################################회원#######################################
+Member = Namespace(
+    name="OriginCharacter",
+    description="OriginCharacter CRUD를 작성하기 위해 사용하는 API.",
+)
+
 '''
 # 아이디 중복체크
 # @form-data : user_id
 # @return : message
 '''
-@app.route('/id-check', methods=['POST'])
+@Member.route('/id-check', methods=['POST'])
 def id_check():
     try:
+        db = db_connection.db_connection()
         if member_module.id_duplicate_check(db):
             return Response(
                 response = json.dumps(
@@ -48,9 +54,10 @@ def id_check():
 # @form-data : user_id, password, name, phone
 # @return : message
 '''
-@app.route('/signup', methods=['POST'])
+@Member.route('/signup', methods=['POST'])
 def create_user():
     try:
+        db = db_connection.db_connection()
         idReceive = member_module.create_users(db)
         if idReceive != None:
             return Response(
@@ -83,9 +90,10 @@ def create_user():
 # @form-data : user_id, password
 # @return : message, token
 '''
-@app.route('/login', methods=['POST'])
+@Member.route('/login', methods=['POST'])
 def login():
     try:
+        db = db_connection.db_connection()
         token = member_module.login_modules(db)
         if token == 1:
             return Response(
@@ -128,9 +136,10 @@ def login():
 # @form-data : name, phone
 # @return : {user_id : "user_id"}
 '''
-@app.route('/find-id', methods=['POST'])
+@Member.route('/find-id', methods=['POST'])
 def find_id():
     try:
+        db = db_connection.db_connection()
         result = member_module.find_id(db)
         if result != None:
             return Response(
@@ -158,9 +167,10 @@ def find_id():
 # @form-data : user_id, phone
 # @return : message
 '''
-@app.route('/check-info', methods=['POST'])
+@Member.route('/check-info', methods=['POST'])
 def check_info():
     try:
+        db = db_connection.db_connection()
         if member_module.information_inspection(db):
             return Response(
                 response = json.dumps(
@@ -191,9 +201,10 @@ def check_info():
 # @form-data : user_id, phone, password
 # @return : message
 '''
-@app.route('/password', methods=['PATCH'])
+@Member.route('/password', methods=['POST'])
 def password():
     try:
+        db = db_connection.db_connection()
         if member_module.update_password(db):
             return Response(
                 response = json.dumps(
@@ -224,9 +235,10 @@ def password():
 # @form-data : user_id
 # @return : message
 '''
-@app.route('/member', methods=['DELETE'])
+@Member.route('/member', methods=['POST'])
 def delete_member():
     try:
+        db = db_connection.db_connection()
         if member_module.delete_member(db):
             return Response(
                 response = json.dumps(
