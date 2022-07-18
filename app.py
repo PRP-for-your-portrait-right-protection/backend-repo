@@ -1,7 +1,6 @@
 from flask import Flask
 from db import db_connection
 from flask_restx import Api
-from werkzeug.datastructures import FileStorage
 from namespaces import People, Character, AI, Video
 
 # 스키마 생성

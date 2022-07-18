@@ -26,13 +26,9 @@ def upload(s3, db, collction_name, f, user_id, name=""):
         time = now.strftime('%Y-%m-%d %H:%M:%S')
         fileTime = now.strftime('%Y-%m-%d')
 
-        # 3-2. 파일명 암호화
+        # 3-2. 파일명 암호화 : 파일명 암호화 필요한가?
         # filename = hashlib.sha256(f.filename.encode("utf-8")).hexdigest() + hashlib.sha256(.encode("utf-8")).hexdigest() + os.path.splitext(f.filename)[1]
-        # 파일명 암호화 필요한가??????????????????????????????????????????????????
-        # 수정필요
-
         name, ext = os.path.splitext(f.filename)
-
         filename = user_id + "_" + name + "_" + fileTime + ext
 
         # 4. 버킷에 파일 저장
@@ -115,7 +111,6 @@ def upload(s3, db, collction_name, f, user_id, name=""):
         
         # 6. 버킷에 파일 저장 실패 시 진행 (ret == False 일 경우)
         else:
-            # 6-1. 실패 message return
             return False
     except Exception as ex:
         print("******************")
@@ -126,7 +121,7 @@ def upload(s3, db, collction_name, f, user_id, name=""):
 """                                  
 * 단일 파일 업로드
 """
-def single_upload(db, collction_name, file_key):
+def single_upload(db, collction_name, file_key, user_id):
     if db == None:
         print("Can't connect to DB")
         return False
@@ -135,34 +130,27 @@ def single_upload(db, collction_name, file_key):
         # 1. 버킷 연결
         s3 = s3_connection()
 
-        if s3 == False:
-            print("Can't connect to S3")
-            return False
-
-        # 2. 아이디 가져옴
-        userId = request.form['user_id']
-
-        # 3. return할 url json 형태로 생성
+        # 2. return할 url json 형태로 생성
         colJson = {}
   
-        # 4. 파일 가져옴
+        # 3. 파일 가져옴
         f = request.files[file_key]
         
-        # 5. 파일 저장
-        result = upload(s3, db, collction_name, f, userId)
+        # 4. 파일 저장
+        result = upload(s3, db, collction_name, f, user_id)
         
         if result == False:
             print("file upload failed")
             return False
 
-        # 6. json에 url 넣기
+        # 5. json에 url 넣기
         colJson[file_key] = result
         
         if colJson == None:
             print("colJson is None")
             return False
             
-        # 7. 성공 시 url json return
+        # 6. 성공 시 url json return
         else:
             return colJson
     except Exception as ex:
@@ -174,7 +162,7 @@ def single_upload(db, collction_name, file_key):
 """                                  
 * 다중 파일 업로드 : front에 리스트로 묶어서 보내주기
 """
-def multiple_upload(db, collction_name, file_key):
+def multiple_upload(db, collction_name, file_key, user_id):
     if db == None:
         print("Can't connect to DB")
         return False
@@ -183,26 +171,23 @@ def multiple_upload(db, collction_name, file_key):
         # 1. 버킷 연결
         s3 = s3_connection()
         
-        # 2. 아이디 가져옴
-        userId = request.form['user_id']
-
-        # 4. return할 url json 형태로 생성
+        # 2. return할 url json 형태로 생성
         colJson = {}
         colJson[file_key] = []
         
         fs = request.files.getlist(file_key)
 
-        # 6. 이름에 해당하는 파일 반복
+        # 3. 이름에 해당하는 파일 반복
         for f in fs:
-            # 7. 파일 하나씩 저장
-            result = upload(s3, db, collction_name, f, userId)
+            # 3-1. 파일 하나씩 저장
+            result = upload(s3, db, collction_name, f, user_id)
             if result == None or result == False:
                 print("Error occurred in uploading file")
                 return False
-            # 8. json에 url 넣기
+            # 3-2. json에 url 넣기
             colJson[file_key].append(result)
             
-        # 7. 성공 시 url json return
+        # 4. 성공 시 url json return
         return colJson
     except Exception as ex:
             print("******************")
@@ -213,7 +198,7 @@ def multiple_upload(db, collction_name, file_key):
 """                                  
 * 사람 다중 파일 업로드 : front에 리스트로 묶어서 보내주기
 """
-def people_multiple_upload(db, collction_name):
+def people_multiple_upload(db, collction_name, user_id):
     if db == None:
         print("Can't connect to DB")
         return False
@@ -222,10 +207,7 @@ def people_multiple_upload(db, collction_name):
         # 1. 버킷 연결
         s3 = s3_connection()
         
-        # 2. 아이디 가져옴
-        userId = request.form['user_id']
-        
-        # 3. 이름 가져옴
+        # 2. 이름 가져옴
         names = request.form.getlist('name')
 
         for name in names:
@@ -233,26 +215,26 @@ def people_multiple_upload(db, collction_name):
                 print("Can't find name")
                 return False
         
-        # 4. return할 url json 형태로 생성
+        # 3. return할 url json 형태로 생성
         colJson = {}
         colJson["file"] = []
         
-        # 5. 이름에 해당하는 파일 가져옴
+        # 4. 이름에 해당하는 파일 가져옴
         for name in names:
+            # 여기서 에러 검출 불가 : names 안에 없는 값이 들어오는 경우에 대한 에러 검출 안함
             fs = request.files.getlist(name)
-            # 여기서 에러 검출 불가
 
-            # 6. 이름에 해당하는 파일 반복
+            # 5. 이름에 해당하는 파일 반복
             for f in fs:
-                # 7. 파일 하나씩 저장
-                result = upload(s3, db, collction_name, f, userId, name)
+                # 5-1. 파일 하나씩 저장
+                result = upload(s3, db, collction_name, f, user_id, name)
                 if result == None or result == False:
                     print("Error occurred in file uploading")
                     return False
-                # 8. json에 url 넣기
+                # 5-2. json에 url 넣기
                 colJson["file"].append(result)
 
-        # 7. 성공 시 url json return
+        # 6. 성공 시 url json return
         return colJson
     except Exception as ex:
             print("******************")
@@ -263,10 +245,8 @@ def people_multiple_upload(db, collction_name):
 """
 * 단일 파일 다운로드 - 동영상 다운로드에서만 사용
 """
-def single_download(db, collction_name):
+def single_download(db, collction_name, user_id, filename):
     s3 = s3_connection()
-
-    filename = request.form["filename"]
 
     if collction_name == 'video_modification':
         ret = s3_get_object(s3, AWS_S3_BUCKET_NAME, f"video_modification/{filename}", filename)
