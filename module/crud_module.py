@@ -49,7 +49,7 @@ def single_get(db, collction_name):
             docs = col.find({"user_id" : userId})
             url = "character_url"
         elif collction_name == "get_video_modification": 
-            col = db.upload_character
+            col = db.video_modification
             userId = request.form["user_id"]
             docs = col.find({"user_id" : userId})
             url = "video_modification_url"
