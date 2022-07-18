@@ -41,7 +41,7 @@ def multiple_get(db, collction_name, user_id):
         for name in colList:
             colJson[name] = []
             # if collction_name == "get_people": 
-            docs = col.find({"person_name" : name, "user_id" : user_id})
+            docs = col.find({"person_name" : name, "user_id" : user_id, "activation_YN" : "Y"})
             for x in docs:
                 colJson[name].append(x['person_url'])
 
@@ -69,11 +69,11 @@ def single_get(db, collction_name, user_id=""):
         # 1. collction_name 확인 & db에서 url 가져옴
         if collction_name == "get_character": 
             col = db.upload_character
-            docs = col.find({"user_id" : user_id})
+            docs = col.find({"user_id" : user_id, "activation_YN" : "Y"})
             url = "character_url"
         elif collction_name == "get_video_modification": 
             col = db.video_modification
-            docs = col.find({"user_id" : user_id})
+            docs = col.find({"user_id" : user_id, "activation_YN" : "Y"})
             url = "video_modification_url"
         elif collction_name == "get_origin_character":
             col = db.origin_character
