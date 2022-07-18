@@ -33,7 +33,7 @@ def upload(s3, db, collction_name, f, user_id, name=""):
 
         name, ext = os.path.splitext(f.filename)
 
-        filename = user_id + "_" + name + "_" + fileTime + os.path.splitext(f.filename)[1]
+        filename = user_id + "_" + name + "_" + fileTime + ext
 
         # 4. 버킷에 파일 저장
         if collction_name == 'upload_character':
