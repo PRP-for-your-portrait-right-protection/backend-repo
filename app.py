@@ -221,7 +221,7 @@ def get_oringin_characters():
 @app.route('/character', methods=['POST'])
 def upload_character():
     try:
-        result = file_module.single_upload(db, "upload_character")
+        result = file_module.single_upload(db, "upload_character", "character")
         if result != False:
             return Response(
                 response=json.dumps(result),
@@ -285,7 +285,7 @@ def delete_character():
 @app.route('/characters', methods=['POST'])
 def upload_characters():
     try:
-        result = file_module.multiple_upload(db, "upload_character")
+        result = file_module.multiple_upload(db, "upload_character", "character")
         if result != False:
             return Response(
                 response=json.dumps(result),
