@@ -18,7 +18,8 @@ api = Api(
     license="MIT"
 )
 
-api.add_namespace(Member, '/member')
+
+api.add_namespace(Member.Member, '/member')
 
 api.add_namespace(People.People, '/people')
 api.add_namespace(People.PersonAll, '/person-all')
