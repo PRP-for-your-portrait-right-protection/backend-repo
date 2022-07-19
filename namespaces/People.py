@@ -99,17 +99,17 @@ PersonAll = Namespace(
     description="PersonAll CRUD를 작성하기 위해 사용하는 API."
 )
 
-# parser = PersonAll.parser()
-# parser.add_argument('user_id', location='form', required=False)
-# parser.add_argument('name', location='form', required=False)
-# parser.add_argument('file', type=FileStorage, location='files', required=False)
-
 @PersonAll.route('/<user_id>')
-# @PersonAll.expect(parser)
 @PersonAll.doc(responses={200: 'Success'})
 @PersonAll.doc(responses={404: 'Failed'})
 class PersonAllClass(Resource):
 
+    @PersonAll.doc(params=
+        {
+            'person_name': {'description': 'person name', 'type': 'string'},
+            'person_name_after': {'description': 'person name after', 'type': 'string'}
+        }
+    )
     def patch(self, user_id):
         '''
         # 특정 인물 이름 수정
@@ -145,7 +145,7 @@ class PersonAllClass(Resource):
             print(ex)
             print("******************")
             
-    
+    @PersonAll.doc(params={'person_name': {'description': 'person name', 'type': 'string'}})   
     def delete(self, user_id):
         '''
         # 특정 인물에 대한 사진 모두 삭제하기
@@ -187,17 +187,12 @@ PersonSingle = Namespace(
     description="PersonSingle CRUD를 작성하기 위해 사용하는 API.",
 )
 
-# parser = PersonSingle.parser()
-# parser.add_argument('user_id', location='form', required=False)
-# parser.add_argument('name', location='form', required=False)
-# parser.add_argument('file', type=FileStorage, location='files', required=False)
-
 @PersonSingle.route('/<user_id>')
-# @PersonSingle.expect(parser)
 @PersonSingle.doc(responses={200: 'Success'})
 @PersonSingle.doc(responses={404: 'Failed'})
 class PersonSingleClass(Resource):
 
+    @PersonSingle.doc(params={'url': {'description': 'url', 'type': 'string'}})   
     def delete(self, user_id):
         '''
         # 특정 인물 사진 한개 삭제하기

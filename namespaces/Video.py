@@ -98,8 +98,7 @@ class VideoModificationClass(Resource):
             print(ex)
             print("******************")
 
-    @VideoModification.doc(params={'file_name': {'description': 'abcd',
-                                'type': 'string'}})
+    @VideoModification.doc(params={'filename': {'description': 'file name', 'type': 'string'}})
     def get(self, user_id):
         """
         # 수정 후 비디오 파일 다운로드 : 자동 다운로드
@@ -134,7 +133,7 @@ class VideoModificationClass(Resource):
             print(ex)
             print("******************")
         
-
+    @VideoModification.doc(params={'url': {'description': 'url', 'type': 'string'}})
     def delete(self, user_id):
         '''
         # 수정 후 비디오 파일 한 개 삭제하기
@@ -176,13 +175,7 @@ VideoModifications = Namespace(
     description="VideoModifications CRUD를 작성하기 위해 사용하는 API.",
 )
 
-# parserVideoModifications = VideoModifications.parser()
-# parserVideoModifications.add_argument('user_id', location='form', required=False)
-# parserVideoModifications.add_argument('name', location='form', required=False)
-# parserVideoModifications.add_argument('file', type=FileStorage, location='files', required=False)
-
 @VideoModifications.route('/<user_id>')
-# @VideoModifications.expect(parserVideoModifications)
 @VideoModifications.doc(responses={200: 'Success'})
 @VideoModifications.doc(responses={404: 'Failed'})
 class VideoModificationsClass(Resource):
@@ -216,7 +209,8 @@ class VideoModificationsClass(Resource):
             print("******************")
             print(ex)
             print("******************")
-        
+    
+    @VideoModifications.doc(params={'person_name': {'description': 'person name', 'type': 'string'}})
     def delete(self, user_id):
         '''
         # 특정 유저에 대한 비디오 결과 모두 삭제하기
