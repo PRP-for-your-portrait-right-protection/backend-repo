@@ -133,7 +133,7 @@ def single_update(db, user_id, person_name, person_name_after):
         )
 
         # 3. 수정이 성공적인지 검사
-        if dbResponse.modified_count == 1:
+        if dbResponse.modified_count != 0:
             return True
         else:
             print("Can't be modified")

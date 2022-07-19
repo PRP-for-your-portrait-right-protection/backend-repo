@@ -13,8 +13,6 @@ OriginCharacter = Namespace(
     description="OriginCharacter CRUD를 작성하기 위해 사용하는 API.",
 )
 
-parser = OriginCharacter.parser()
-
 @OriginCharacter.route('')
 @OriginCharacter.doc(responses={200: 'Success'})
 @OriginCharacter.doc(responses={404: 'Failed'})
@@ -96,6 +94,7 @@ class CharacterClass(Resource):
                 print(ex)
                 print("******************")
     
+    @Character.doc(params={'url': {'description': 'url', 'type': 'string'}})   
     def delete(self,user_id):
         '''
         # 캐릭터 한 개 삭제
@@ -176,7 +175,7 @@ class CharactersClass(Resource):
             print("******************")
             print(ex)
             print("******************")
-        
+    
     def get(self,user_id):
         """
         # 케릭터 여러 개 url 가져오기
@@ -240,4 +239,3 @@ class CharactersClass(Resource):
             print("******************")
             print(ex)
             print("******************")
-
