@@ -10,21 +10,19 @@ from werkzeug.datastructures import FileStorage
 
 VideoOrigin = Namespace(
     name="VideoOrigin",
-    description="VideoOrigin CRUD를 작성하기 위해 사용하는 API.",
+    description="VideoOrigin CRUD를 작성하기 위해 사용하는 API."
 )
 
-parser = VideoOrigin.parser()
-parser.add_argument('user_id', location='form', required=False)
-parser.add_argument('name', location='form', required=False)
-parser.add_argument('file', type=FileStorage, location='files', required=False)
+parserVideoOrigin = VideoOrigin.parser()
+parserVideoOrigin.add_argument('file', type=FileStorage, location='files', required=False)
 
-@VideoOrigin.route('')
-@VideoOrigin.expect(parser)
+@VideoOrigin.route('/<user_id>')
+@VideoOrigin.expect(parserVideoOrigin)
 @VideoOrigin.doc(responses={200: 'Success'})
 @VideoOrigin.doc(responses={404: 'Failed'})
 class VideoOriginClass(Resource):
 
-    def post():
+    def post(self, user_id):
         '''
         # 수정 전 비디오 파일 버킷에 저장
         # @form-data : user_id, file
@@ -32,7 +30,7 @@ class VideoOriginClass(Resource):
         '''
         try:
             db = db_connection.db_connection()
-            result = file_module.single_upload(db, "video_origin")
+            result = file_module.single_upload(db, "video_origin", "video_origin", user_id)
             if result != False:
                 return Response(
                     response=json.dumps(result),
@@ -61,26 +59,24 @@ VideoModification = Namespace(
     description="VideoModification CRUD를 작성하기 위해 사용하는 API.",
 )
 
-parser = VideoModification.parser()
-parser.add_argument('user_id', location='form', required=False)
-parser.add_argument('name', location='form', required=False)
-parser.add_argument('file', type=FileStorage, location='files', required=False)
+parserVideoModification = VideoOrigin.parser()
+parserVideoModification.add_argument('file', type=FileStorage, location='files', required=False)
 
-@VideoModification.route('')
-@VideoModification.expect(parser)
+@VideoModification.route('/<user_id>')
 @VideoModification.doc(responses={200: 'Success'})
 @VideoModification.doc(responses={404: 'Failed'})
 class VideoModificationClass(Resource):
-
-    def post():
+    @VideoModification.expect(parserVideoModification)
+    def post(self, user_id):
         '''
         # 수정 후 비디오 파일 버킷에 저장 후 링크 return
         # @form-data : user_id, file
         # @return : {file : file_url}
         '''
+        
         try:
             db = db_connection.db_connection()
-            result = file_module.single_upload(db, "video_modification")
+            result = file_module.single_upload(db, "video_modification", "video_modification", user_id)
             if result != False:
                 return Response(
                     response = json.dumps(result),
@@ -102,16 +98,18 @@ class VideoModificationClass(Resource):
             print(ex)
             print("******************")
 
-
-    def get():
+    @VideoModification.doc(params={'file_name': {'description': 'abcd',
+                                'type': 'string'}})
+    def get(self, user_id):
         """
         # 수정 후 비디오 파일 다운로드 : 자동 다운로드
         # @form-data : user_id, filename
         # @return : message
         """
         try:
+            file_name = request.args.get('filename', type = str)
             db = db_connection.db_connection()
-            if file_module.single_download(db, "video_modification") :
+            if file_module.single_download(db, "video_modification", user_id, file_name) :
                 return Response(
                     response=json.dumps(
                         {
@@ -137,15 +135,16 @@ class VideoModificationClass(Resource):
             print("******************")
         
 
-    def delete():
+    def delete(self, user_id):
         '''
         # 수정 후 비디오 파일 한 개 삭제하기
         # @form-data : user_id, url
         # @retutrn : message
         '''
         try:
+            url = request.args.get('url', type = str)
             db = db_connection.db_connection()
-            if crud_module.single_delete(db, "video_modification"):
+            if crud_module.single_delete(db, "video_modification", user_id, url):
                 return Response(
                     response = json.dumps(
                         {
@@ -177,18 +176,18 @@ VideoModifications = Namespace(
     description="VideoModifications CRUD를 작성하기 위해 사용하는 API.",
 )
 
-parser = VideoModifications.parser()
-parser.add_argument('user_id', location='form', required=False)
-parser.add_argument('name', location='form', required=False)
-parser.add_argument('file', type=FileStorage, location='files', required=False)
+# parserVideoModifications = VideoModifications.parser()
+# parserVideoModifications.add_argument('user_id', location='form', required=False)
+# parserVideoModifications.add_argument('name', location='form', required=False)
+# parserVideoModifications.add_argument('file', type=FileStorage, location='files', required=False)
 
-@VideoModifications.route('')
-@VideoModifications.expect(parser)
+@VideoModifications.route('/<user_id>')
+# @VideoModifications.expect(parserVideoModifications)
 @VideoModifications.doc(responses={200: 'Success'})
 @VideoModifications.doc(responses={404: 'Failed'})
 class VideoModificationsClass(Resource):
 
-    def get():
+    def get(self, user_id):
         '''
         # 특정 유저에 대한 비디오 결과 모두 조회하기
         # @form-data : user_id
@@ -196,7 +195,7 @@ class VideoModificationsClass(Resource):
         '''
         try:
             db = db_connection.db_connection()
-            result = crud_module.single_get(db, "get_video_modification")
+            result = crud_module.single_get(db, "get_video_modification", user_id)
             if result != False:
                 return Response(
                     response = json.dumps(result),
@@ -218,15 +217,16 @@ class VideoModificationsClass(Resource):
             print(ex)
             print("******************")
         
-    def delete():
+    def delete(self, user_id):
         '''
         # 특정 유저에 대한 비디오 결과 모두 삭제하기
-        # @form-data : user_id
+        # @form-data : user_id, person_name <<
         # @return : message
         '''
         try:
+            person_name = request.args.get('person_name', type = str)
             db = db_connection.db_connection()
-            if crud_module.multiple_delete(db, "video_modification"):
+            if crud_module.multiple_delete(db, "video_modification", user_id, person_name):
                 return Response(
                     response = json.dumps(
                         {
