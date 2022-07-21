@@ -2,7 +2,6 @@ from flask import Flask, Response, request
 import json
 from static import status_code
 from module import file_module, member_module, crud_module
-from db import db_connection
 from flask_restx import Resource, Api, Namespace
 from werkzeug.datastructures import FileStorage
 
@@ -29,8 +28,7 @@ class VideoOriginClass(Resource):
         # @return : {file : file_url}
         '''
         try:
-            db = db_connection.db_connection()
-            result = file_module.single_upload(db, "video_origin", "video_origin", user_id)
+            result = file_module.single_upload("video_origin", "video_origin", user_id)
             if result != False:
                 return Response(
                     response=json.dumps(result),
@@ -73,10 +71,8 @@ class VideoModificationClass(Resource):
         # @form-data : user_id, file
         # @return : {file : file_url}
         '''
-        
         try:
-            db = db_connection.db_connection()
-            result = file_module.single_upload(db, "video_modification", "video_modification", user_id)
+            result = file_module.single_upload("video_modification", "video_modification", user_id)
             if result != False:
                 return Response(
                     response = json.dumps(result),
@@ -107,8 +103,7 @@ class VideoModificationClass(Resource):
         """
         try:
             file_name = request.args.get('filename', type = str)
-            db = db_connection.db_connection()
-            if file_module.single_download(db, "video_modification", user_id, file_name) :
+            if file_module.single_download("video_modification", user_id, file_name) :
                 return Response(
                     response=json.dumps(
                         {
@@ -142,8 +137,7 @@ class VideoModificationClass(Resource):
         '''
         try:
             url = request.args.get('url', type = str)
-            db = db_connection.db_connection()
-            if crud_module.single_delete(db, "video_modification", user_id, url):
+            if crud_module.single_delete("video_modification", user_id, url):
                 return Response(
                     response = json.dumps(
                         {
@@ -187,8 +181,7 @@ class VideoModificationsClass(Resource):
         # @return : {file : [file_url, file_url, file_url]}
         '''
         try:
-            db = db_connection.db_connection()
-            result = crud_module.single_get(db, "get_video_modification", user_id)
+            result = crud_module.single_get("get_video_modification", user_id)
             if result != False:
                 return Response(
                     response = json.dumps(result),
@@ -219,8 +212,7 @@ class VideoModificationsClass(Resource):
         '''
         try:
             person_name = request.args.get('person_name', type = str)
-            db = db_connection.db_connection()
-            if crud_module.multiple_delete(db, "video_modification", user_id, person_name):
+            if crud_module.multiple_delete("video_modification", user_id, person_name):
                 return Response(
                     response = json.dumps(
                         {

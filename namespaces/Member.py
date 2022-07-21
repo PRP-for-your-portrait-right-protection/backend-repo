@@ -2,7 +2,6 @@ from flask import Flask, Response, request
 import json
 from static import status_code
 from module import file_module, member_module, crud_module
-from db import db_connection
 from flask_restx import Resource, Api, Namespace
 from werkzeug.datastructures import FileStorage
 from namespaces import People
@@ -31,8 +30,7 @@ class MemberIdCheck(Resource):
         # @return : message
         '''
         try:
-            db = db_connection.db_connection()
-            if member_module.id_duplicate_check(db):
+            if member_module.id_duplicate_check():
                 return Response(
                     response = json.dumps(
                         {
@@ -55,7 +53,7 @@ class MemberIdCheck(Resource):
         except Exception as ex:
             print("******************")
             print(ex)
-            print("******************")
+            print("******************") 
 
 @Member.route('/sign-up')
 @Member.doc(response={200: 'SUCCESS'})
@@ -69,8 +67,7 @@ class MemberSignUp(Resource):
         # @return : message
         '''
         try:
-            db = db_connection.db_connection()
-            idReceive = member_module.create_users(db)
+            idReceive = member_module.create_users()
             if idReceive != None:
                 return Response(
                     response = json.dumps(
@@ -105,12 +102,11 @@ class MemberLogin(Resource):
     def post(self):
         '''
         # 로그인
-        # @form-data : user_id, password
+        # @form-data : user_id, password 
         # @return : message, token
         '''
         try:
-            db = db_connection.db_connection()
-            token = member_module.login_modules(db)
+            token = member_module.login_modules()
             if token == 1:
                 return Response(
                     response=json.dumps(
@@ -159,8 +155,7 @@ class memberFindIdClass(Resource):
         # @return : {user_id : "user_id"}
         '''
         try:
-            db = db_connection.db_connection()
-            result = member_module.find_id(db)
+            result = member_module.find_id()
             if result != None:
                 return Response(
                     response = json.dumps(result),
@@ -194,9 +189,7 @@ class memberInformationInspectionClass(Resource):
         # @return : message
         '''
         try:
-            db = db_connection.db_connection()
-            phone=request.args.get('phone', type = str)
-            if member_module.information_inspection(db):
+            if member_module.information_inspection():
                 return Response(
                     response = json.dumps(
                         {
@@ -233,8 +226,7 @@ class memberUpdatePasswordClass(Resource):
         # @return : message
         '''
         try:
-            db = db_connection.db_connection()
-            if member_module.update_password(db):
+            if member_module.update_password():
                 return Response(
                     response = json.dumps(
                         {
@@ -271,8 +263,7 @@ class memberDeleteClass(Resource):
         # @return : message
         '''
         try:
-            db = db_connection.db_connection()
-            if member_module.delete_member(db):
+            if member_module.delete_member():
                 return Response(
                     response = json.dumps(
                         {

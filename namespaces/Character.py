@@ -1,7 +1,6 @@
 from flask import Response, request
 import json
 from static import status_code
-from db import db_connection
 from module import file_module, crud_module
 from flask_restx import Resource, Api, Namespace
 from werkzeug.datastructures import FileStorage
@@ -25,8 +24,7 @@ class OriginCharacterClass(Resource):
         # @return : {file : [file_url, file_url, file_url]}
         """
         try:
-            db = db_connection.db_connection()
-            result = crud_module.single_get(db, "get_origin_character")
+            result = crud_module.single_get("get_origin_character")
             if result != False:
                 return Response(
                     response = json.dumps(result),
@@ -71,8 +69,7 @@ class CharacterClass(Resource):
         # @return : {file : file_url}
         '''
         try:
-            db = db_connection.db_connection()
-            result = file_module.single_upload(db, "upload_character","file",user_id)
+            result = file_module.single_upload("upload_character", "file", user_id)
             if result != False:
                 return Response(
                     response=json.dumps(result),
@@ -94,6 +91,8 @@ class CharacterClass(Resource):
                 print(ex)
                 print("******************")
     
+    # 암호화, 유효아이디, 인증 401 - 로그인을 했는지, 인가 403(권한이 있는지) - 사용자가 정말 이 동영상을 소유하고 있는지 검사
+    
     @Character.doc(params={'url': {'description': 'url', 'type': 'string'}})   
     def delete(self,user_id):
         '''
@@ -103,8 +102,7 @@ class CharacterClass(Resource):
         '''
         try:
             url=request.args.get('url', type = str)#  form data 아닐때
-            db = db_connection.db_connection()
-            if crud_module.single_delete(db, "character",user_id,url):
+            if crud_module.single_delete("character",user_id,url):
                 return Response(
                     response = json.dumps(
                         {
@@ -138,23 +136,64 @@ Characters = Namespace(
 
 parser = Characters.parser()
 parser.add_argument('file', type=FileStorage, location='files', required=False)
+parser.add_argument('token', location='headers')
 
-@Characters.route('/<user_id>')
-
+@Characters.route('')
 @Characters.doc(responses={200: 'Success'})
 @Characters.doc(responses={404: 'Failed'})
 class CharactersClass(Resource):
 
+    # @Characters.expect(parser)
+    # def post(self,user_id):
+    #     '''
+    #     # 케릭터 여러 개 버킷에 저장
+    #     # @form-data : user_id, file[]
+    #     # @return : {file : [file_url, file_url, file_url]}
+    #     '''
+    #     try:
+    #         result = file_module.multiple_upload("upload_character","file",user_id)
+    #         if result != False:
+    #             return Response(
+    #                 response=json.dumps(result),
+    #                 status=200,
+    #                 mimetype="application/json"
+    #             )
+    #         else:
+    #             return Response(
+    #                 response=json.dumps(
+    #                     {
+    #                         "message":status_code.file_save_02_fail,
+    #                     }
+    #                 ),
+    #                 status=404,
+    #                 mimetype="application/json"
+    #             )
+    #     except Exception as ex:
+    #         print("******************")
+    #         print(ex)
+    #         print("******************")
+    
     @Characters.expect(parser)
-    def post(self,user_id):
+    # @Characters.header('token', 'Some class header')
+    def post(self):
         '''
-        # 케릭터 여러 개 버킷에 저장
+        # 신규 케릭터 여러 개 버킷에 저장, 선택된 케릭터가 신규라면 url 반환
         # @form-data : user_id, file[]
-        # @return : {file : [file_url, file_url, file_url]}
+        # @return : {file : file_url}
         '''
         try:
-            db = db_connection.db_connection()
-            result = file_module.multiple_upload(db, "upload_character","file",user_id)
+            token = request.headers.get('token')
+            selected = request.form["seleted_YN"]
+            notSelected = request.form["notSelected_YN"]
+            
+            print(selected)
+            print(notSelected)
+            if notSelected == "Y":
+                result = file_module.multiple_upload("upload_character", "notSelected", user_id)
+                if result != False :
+                    result = {"message":status_code.file_save_01_success}
+            if selected == "Y":
+                result = file_module.single_upload("upload_character", "seleted", user_id)
             if result != False:
                 return Response(
                     response=json.dumps(result),
@@ -176,15 +215,14 @@ class CharactersClass(Resource):
             print(ex)
             print("******************")
     
-    def get(self,user_id):
+    def get(self):
         """
         # 케릭터 여러 개 url 가져오기
         # @form-data : user_id
         # @return : {file : [file_url, file_url, file_url]}
         """
         try:
-            db = db_connection.db_connection()
-            result = crud_module.single_get(db, "get_character",user_id)
+            result = crud_module.single_get("get_character",user_id)
             if result != False:
                 return Response(
                     response = json.dumps(result),
@@ -213,9 +251,8 @@ class CharactersClass(Resource):
         # @return : message
         '''
         try:
-            db = db_connection.db_connection()
             person_name=request.args.get('person_name', type = str)
-            if crud_module.multiple_delete(db, "characters",user_id,person_name):
+            if crud_module.multiple_delete("characters",user_id,person_name):
                 return Response(
                     response = json.dumps(
                         {

@@ -1,5 +1,4 @@
 flask
-flask_restful
 pymongo
 flask_restx
 boto3
@@ -7,3 +6,7 @@ werkzeug
 awscli
 Werkzeug
 PyJWT
+flask_migrate
+celery
+mongoengine
+flask_mongoengine

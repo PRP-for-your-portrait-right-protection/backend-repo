@@ -1,7 +1,6 @@
 from flask import Response, request
 import json
 from static import status_code
-from db import db_connection
 from module import file_module, crud_module
 from flask_restx import Resource, Api, Namespace
 from werkzeug.datastructures import FileStorage
@@ -30,9 +29,7 @@ class PeopleClass(Resource):
         # @return : {file : [file_url, file_url, file_url]}
         '''
         try:
-           
-            db = db_connection.db_connection()
-            result = file_module.people_multiple_upload(db, "people",user_id)
+            result = file_module.people_multiple_upload("people",user_id)
             if result != False:
                 return Response(
                     response=json.dumps(result),
@@ -69,8 +66,7 @@ class PeopleClass(Resource):
         #   }
         """
         try:
-            db = db_connection.db_connection()
-            result = crud_module.multiple_get(db, "get_people",user_id)
+            result = crud_module.multiple_get("get_people",user_id)
             if result != False:
                 return Response(
                     response = json.dumps(result),
@@ -119,8 +115,7 @@ class PersonAllClass(Resource):
         try:
             person_name = request.args.get('person_name', type = str)
             person_name_after = request.args.get('person_name_after', type = str)
-            db = db_connection.db_connection()
-            if crud_module.single_update(db, user_id, person_name, person_name_after):
+            if crud_module.single_update(user_id, person_name, person_name_after):
                 return Response(
                     response = json.dumps(
                         {
@@ -154,8 +149,7 @@ class PersonAllClass(Resource):
         '''
         try:
             person_name = request.args.get('person_name', type = str)
-            db = db_connection.db_connection()
-            if crud_module.multiple_delete(db, "people", user_id, person_name):
+            if crud_module.multiple_delete("people", user_id, person_name):
                 return Response(
                     response = json.dumps(
                         {
@@ -201,8 +195,7 @@ class PersonSingleClass(Resource):
         '''
         try:
             url = request.args.get('url', type = str)
-            db = db_connection.db_connection()
-            if crud_module.single_delete(db, "people", user_id, url):
+            if crud_module.single_delete("people", user_id, url):
                 return Response(
                     response = json.dumps(
                         {

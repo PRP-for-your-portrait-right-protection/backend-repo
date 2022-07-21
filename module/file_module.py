@@ -4,15 +4,12 @@ from bucket.m_config import AWS_S3_BUCKET_NAME, AWS_S3_BUCKET_URL
 from datetime import datetime
 import hashlib
 import os
+from db import schema
 
 """
 * 파일 업로드
 """
-def upload(s3, db, collction_name, f, user_id, name=""):
-    if db == None:
-        print("Can't connect to DB")
-        return False
-
+def upload(s3, collction_name, f, user_id, name=""):
     try:
         # 1. 파일 가져옴
         # f = request.files[file_name]
@@ -35,19 +32,21 @@ def upload(s3, db, collction_name, f, user_id, name=""):
         if collction_name == 'upload_character':
             ret = s3_put_object(s3, AWS_S3_BUCKET_NAME, f.filename, f"upload_character/{filename}")
             location = f'{AWS_S3_BUCKET_URL}/upload_character/{filename}'
-            col = db.upload_character
+            upload_schema = schema.UploadCharacter(user_id, filename, location, "Y", now.strftime('%Y-%m-%d %H:%M:%S'))
+            upload_schema.save()
         elif collction_name == 'video_origin':
             ret = s3_put_object(s3, AWS_S3_BUCKET_NAME, f.filename, f"video_origin/{filename}")
             location = f'{AWS_S3_BUCKET_URL}/video_origin/{filename}'        
-            col = db.video_origin
         elif collction_name == 'video_modification':
             ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, f.filename, f"video_modification/{filename}")
             location = f'{AWS_S3_BUCKET_URL}/video_modification/{filename}'
-            col = db.video_modification
+            upload_schema - schema.VideoModification(user_id, filename, location, "Y", now.strftime('%Y-%m-%d %H:%M:%S'))
+            upload_schema.save()
         elif collction_name == 'people':
             ret =s3_put_object(s3, AWS_S3_BUCKET_NAME, f.filename, f"people/{filename}")
             location = f'{AWS_S3_BUCKET_URL}/people/{filename}'
-            col = db.people
+            upload_schema = schema.People(user_id, filename, name, location, "Y", now.strftime('%Y-%m-%d %H:%M:%S'))
+            upload_schema.save()
         else:
             print("Can't find collection")
             return False
@@ -58,50 +57,6 @@ def upload(s3, db, collction_name, f, user_id, name=""):
         # 6. 버킷에 파일 저장 성공 시 진행
         if ret :
             
-            # 6-1. obj 생성
-            if collction_name == 'upload_character':
-                obj = {
-                    "character_id" : 1, # auto_increase
-                    "user_id" : user_id,
-                    "character_name" : filename,
-                    "character_url" : location,
-                    "activation_YN" : "Y",
-                    "reg_date": now.strftime('%Y-%m-%d %H:%M:%S')
-                }
-            elif collction_name == 'video_origin':
-                obj = {
-                    "video_id" : 1, # auto_increase
-                    "user_id" : user_id,
-                    "video_name" : filename,
-                    "video_url" : location,
-                    "reg_date": now.strftime('%Y-%m-%d %H:%M:%S')
-                }
-            elif collction_name == 'video_modification':
-                obj = {
-                    "video_id" : 1, # auto_increase
-                    "user_id" : user_id,
-                    "video_name" : filename,
-                    "video_modification_url" : location,
-                    "activation_YN" : "Y",
-                    "reg_date": now.strftime('%Y-%m-%d %H:%M:%S'),
-                }
-            elif collction_name == 'people':
-                obj = {
-                    "person_id" : 1, # auto_increase
-                    "user_id" : user_id,
-                    "person_img_name" : filename,
-                    "person_name" : name,
-                    "person_url" : location,
-                    "activation_YN" : "Y",
-                    "reg_date": time
-                }
-            else:
-                print("Can't find collection")
-                return False
-                
-            # 6-2. db에 저장
-            col.insert_one(obj)
-
             # 6-3. 성공 message return
             if location != None:
                 return location
@@ -121,11 +76,7 @@ def upload(s3, db, collction_name, f, user_id, name=""):
 """                                  
 * 단일 파일 업로드
 """
-def single_upload(db, collction_name, file_key, user_id):
-    if db == None:
-        print("Can't connect to DB")
-        return False
-
+def single_upload(collction_name, file_key, user_id):
     try:
         # 1. 버킷 연결
         s3 = s3_connection()
@@ -137,7 +88,7 @@ def single_upload(db, collction_name, file_key, user_id):
         f = request.files[file_key]
         
         # 4. 파일 저장
-        result = upload(s3, db, collction_name, f, user_id)
+        result = upload(s3, collction_name, f, user_id)
         
         if result == False:
             print("file upload failed")
@@ -162,11 +113,7 @@ def single_upload(db, collction_name, file_key, user_id):
 """                                  
 * 다중 파일 업로드 : front에 리스트로 묶어서 보내주기
 """
-def multiple_upload(db, collction_name, file_key, user_id):
-    if db == None:
-        print("Can't connect to DB")
-        return False
-
+def multiple_upload(collction_name, file_key, user_id):
     try:
         # 1. 버킷 연결
         s3 = s3_connection()
@@ -180,7 +127,7 @@ def multiple_upload(db, collction_name, file_key, user_id):
         # 3. 이름에 해당하는 파일 반복
         for f in fs:
             # 3-1. 파일 하나씩 저장
-            result = upload(s3, db, collction_name, f, user_id)
+            result = upload(s3, collction_name, f, user_id)
             if result == None or result == False:
                 print("Error occurred in uploading file")
                 return False
@@ -198,11 +145,7 @@ def multiple_upload(db, collction_name, file_key, user_id):
 """                                  
 * 사람 다중 파일 업로드 : front에 리스트로 묶어서 보내주기
 """
-def people_multiple_upload(db, collction_name, user_id):
-    if db == None:
-        print("Can't connect to DB")
-        return False
-
+def people_multiple_upload(collction_name, user_id):
     try:
         # 1. 버킷 연결
         s3 = s3_connection()
@@ -227,7 +170,7 @@ def people_multiple_upload(db, collction_name, user_id):
             # 5. 이름에 해당하는 파일 반복
             for f in fs:
                 # 5-1. 파일 하나씩 저장
-                result = upload(s3, db, collction_name, f, user_id, name)
+                result = upload(s3, collction_name, f, user_id, name)
                 if result == None or result == False:
                     print("Error occurred in file uploading")
                     return False

@@ -1,23 +1,31 @@
 from flask import Flask
-from db import db_connection
+from flask_mongoengine import MongoEngine
+from db.db_config import HOST, PORT
 from flask_restx import Api
+from flask_migrate import Migrate
 from namespaces import People, Character, AI, Video, Member
-
-# 스키마 생성
-# db_connection.init_collection(db)
 
 app = Flask(__name__)
 
+app.config['MONGODB_SETTINGS'] = {
+    "host" : HOST,
+    "port" : PORT,
+    "db": "silicon",
+}
+db = MongoEngine(app)
+migrate = Migrate(app, db)
+print(db)
+
 api = Api(
     app,
-    version='0.1',
+    version='v1',
     title="Silicon Project's API Server",
     description="PRP!",
     terms_url="/",
     contact="vivian0304@naver.com",
-    license="MIT"
+    license="MIT",
+    prefix='/api/v1'
 )
-
 
 api.add_namespace(Member.Member, '/member')
 
