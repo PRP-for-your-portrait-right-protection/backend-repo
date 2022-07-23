@@ -1,9 +1,9 @@
 FROM python:latest
 
-RUN mkdir /backend-repo
-WORKDIR /backend-repo
+RUN mkdir /backend
+WORKDIR /backend
 
-COPY . /backend-repo/
+COPY . /backend/
 
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
