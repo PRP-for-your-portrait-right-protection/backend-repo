@@ -10,3 +10,4 @@ flask_migrate
 celery
 mongoengine
 flask_mongoengine
+gunicorn
