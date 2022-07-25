@@ -2,9 +2,8 @@ flask
 pymongo
 flask_restx
 boto3
-werkzeug
 awscli
-Werkzeug
+Werkzeug==2.1.2
 PyJWT
 flask_migrate
 celery

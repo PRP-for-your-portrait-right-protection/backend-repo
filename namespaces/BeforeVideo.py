@@ -1,7 +1,7 @@
 from flask import Flask, Response, request
 import json
 from static import status_code
-from module import file_module, member_module, crud_module
+from module import file_module, user_module, crud_module
 from flask_restx import Resource, Api, Namespace
 from werkzeug.datastructures import FileStorage
 
