@@ -1,20 +1,11 @@
 from flask import Flask
-from flask_mongoengine import MongoEngine
-from db.db_config import HOST, PORT
 from flask_restx import Api
-from flask_migrate import Migrate
-from namespaces import People, Character, AI, Video, Member
+from db.db_connection import db_connection
+from namespaces import Face, OriginCharacter, UserCharacter, BeforeVideo, AfterVideo, User
 
 app = Flask(__name__)
 
-app.config['MONGODB_SETTINGS'] = {
-    "host" : HOST,
-    "port" : PORT,
-    "db": "silicon",
-}
-db = MongoEngine(app)
-migrate = Migrate(app, db)
-print(db)
+db_connection(app)
 
 api = Api(
     app,
@@ -27,21 +18,13 @@ api = Api(
     prefix='/api/v1'
 )
 
-api.add_namespace(Member.Member, '/member')
-
-api.add_namespace(People.People, '/people')
-api.add_namespace(People.PersonAll, '/person-all')
-api.add_namespace(People.PersonSingle, '/person-single')
-
-api.add_namespace(Character.Character, '/character')
-api.add_namespace(Character.Characters, '/characters')
-api.add_namespace(Character.OriginCharacter, '/origin-character')
-
-api.add_namespace(Video.VideoOrigin, '/video-origin')
-api.add_namespace(Video.VideoModification, '/video-modification')
-api.add_namespace(Video.VideoModifications, '/video-modifications')
-
-api.add_namespace(AI.AI, '/ai')
+api.add_namespace(User.Users, '/users')
+api.add_namespace(User.Auth, '/auth')
+api.add_namespace(Face.Faces, '/faces')
+api.add_namespace(OriginCharacter.OriginCharacters, '/origin-characters')
+api.add_namespace(UserCharacter.UserCharacters, '/user-characters')
+api.add_namespace(BeforeVideo.BeforeVideos, '/before-videos')
+api.add_namespace(AfterVideo.AfterVideos, '/after-videos')
 
 if __name__ == "__main__":
     app.run(port=80, debug=True)

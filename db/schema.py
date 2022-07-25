@@ -1,103 +1,27 @@
-# import mongoengine as me
 import mongoengine
-# from flask_mongoengine import BaseQuerySet
-# from mongoengine import Document
 from flask_mongoengine import Document, MongoEngine, BaseQuerySet
+from db.enum_classes import ScopeClass, StatusClass, FaceTypeClass
 
 db = mongoengine
 
-class People(db.Document):
+class User(db.Document):
     _id = db.ObjectIdField()
-    person_id = db.IntField(required=True)
-    user_id = db.StringField(required=True)
-    person_img_name = db.StringField(required=True)
-    person_name = db.StringField(required=True)
-    person_url = db.StringField(required=True)
-    activation_YN = db.StringField(required=True, max_length=1)
-    reg_date = db.StringField(required=True)
-    mod_date = db.StringField()
-
-    def __init__(self, user_id, person_img_name, person_name, person_url, activation_YN, reg_date, *args, **kwargs):
-        super(People, self).__init__(*args, **kwargs)
-        self.user_id = user_id
-        self.person_img_name = person_img_name
-        self.person_name = person_name
-        self.person_url = person_url
-        self.activation_YN = activation_YN
-        self.reg_date = reg_date
-        
-class OriginCharacter(db.Document):
-    _id = db.ObjectIdField()
-    character_id = db.IntField(required=True)
-    character_name = db.StringField(required=True)
-    character_url = db.StringField(required=True)
-    activation_YN = db.StringField(required=True, max_length=1)
-    reg_date = db.StringField(required=True)
-    mod_date = db.StringField()
-    meta = { 'collection': 'tags', 'queryset_class': BaseQuerySet}  
-
-class UploadCharacter(db.Document):
-    _id = db.ObjectIdField()
-    user_id = db.StringField(required=True)
-    character_name = db.StringField(required=True)
-    character_url = db.StringField(required=True)
-    activation_YN = db.StringField(required=True, max_length=1)
-    reg_date = db.StringField(required=True)
-    mod_date = db.StringField()
-    
-    def __init__(self, user_id, character_name, character_url, activation_YN, reg_date, *args, **kwargs):
-        super(UploadCharacter, self).__init__(*args, **kwargs)
-        self.user_id = user_id
-        self.character_name = character_name
-        self.character_url = character_url
-        self.activation_YN = activation_YN
-        self.reg_date = reg_date
-
-# class VideoOrigin(me.Document):
-#     user_id = me.StringField(required=True)
-#     video_name = me.StringField(required=True)
-#     video_url = me.StringField(required=True)
-#     activation_YN = me.StringField(max_length=1)
-#     reg_date = me.StringField(required=True)
-#     mod_date = me.StringField()
-    
-class VideoModification(db.Document):
-    _id = db.ObjectIdField()
-    user_id = db.StringField(required=True)
-    video_name = db.StringField(required=True)
-    video_modification_url = db.StringField(required=True)
-    activation_YN = db.StringField(max_length=1)
-    reg_date = db.StringField(required=True)
-    mod_date = db.StringField()
-    meta = { 'collection': 'tags', 'queryset_class': BaseQuerySet}  
-    
-    def __init__(self, user_id, video_name, video_modification_url, activation_YN, reg_date, *args, **kwargs):
-        super(People, self).__init__(*args, **kwargs)
-        self.user_id = user_id
-        self.video_name = video_name
-        self.video_modification_url = video_modification_url
-        self.activation_YN = activation_YN
-        self.reg_date = reg_date
-    
-class Member(db.Document):
-    _id = db.ObjectIdField()
-    user_id = db.StringField(required=True)
+    email = db.StringField(required=True)
     password = db.StringField(required=True)
     name = db.StringField(required=True)
-    phone = db.StringField(max_length=11)
-    token = db.StringField()
-    activation_YN = db.StringField(max_length=1)
-    reg_date = db.StringField(required=True)
-    mod_date = db.StringField()
+    phone = db.StringField(required=True, max_length=11)
+    is_deleted = db.BooleanField(required=True)
+    created_at = db.StringField(required=True)
+    updated_at = db.StringField()
     
-    def __init__(self, user_id, password, name, phone, activation_YN, reg_date, *args, **kwargs):
-        super(Member, self).__init__(*args, **kwargs)
-        self.user_id = user_id
+    def __init__(self, email, password, name, phone, is_deleted, created_at, *args, **kwargs):
+        super(User, self).__init__(*args, **kwargs)
+        self.email = email
         self.password = password
         self.name = name
         self.phone = phone
-        self.activation_YN = activation_YN
-        self.reg_date = reg_date
+        self.is_deleted = is_deleted
+        self.created_at = created_at
 
     def is_authenticated(self):
         return True
@@ -109,7 +33,77 @@ class Member(db.Document):
         return False
 
     def get_userid(self):
-        return self.user_id
+        return self.email
     
     def get_id(self):
         return self._id
+    
+class WhitelistFace(db.Document):
+    _id = db.ObjectIdField()
+    user_id = db.ReferenceField(User, required=True)
+    name = db.StringField(required=True)
+    is_deleted = db.BooleanField(required=True)
+    created_at = db.DateField(required=True)
+    updated_at = db.DateField()
+
+    def __init__(self, user_id, name, is_deleted, created_at, *args, **kwargs):
+        super(WhitelistFace, self).__init__(*args, **kwargs)
+        self.user_id = user_id
+        self.name = name
+        self.is_deleted = is_deleted
+        self.created_at = created_at
+        
+class WhitelistFaceImage(db.Document):
+    _id = db.ObjectIdField()
+    whitelist_face_id = db.ReferenceField(WhitelistFace, required=True)
+    url = db.StringField(required=True)
+    is_deleted = db.BooleanField(required=True)
+    created_at = db.DateField(required=True)
+    updated_at = db.DateField()
+    
+    def __init__(self, whitelist_face_id, url, is_deleted, created_at, *args, **kwargs):
+        super(WhitelistFaceImage, self).__init__(*args, **kwargs)
+        self.whitelist_face_id = whitelist_face_id
+        self.url = url
+        self.is_deleted = is_deleted
+        self.created_at = created_at
+
+class BlockCharacter(db.Document):
+    _id = db.ObjectIdField()
+    user_id = db.ReferenceField(User, required=True)
+    url = db.StringField(required=True)
+    scope = db.EnumField(ScopeClass, requried=True)      
+    is_deleted = db.BooleanField(required=True)
+    created_at = db.DateField(required=True)
+    updated_at = db.DateField()
+    
+    def __init__(self, user_id, url, scope, is_deleted, created_at, *args, **kwargs):
+        super(BlockCharacter, self).__init__(*args, **kwargs)
+        self.user_id = user_id
+        self.url = url
+        self.scope = scope
+        self.is_deleted = is_deleted
+        self.created_at = created_at
+
+class Video(db.Document):
+    _id = db.ObjectIdField()
+    user_id = db.ReferenceField(User, required=True)
+    origin_url = db.StringField(required=True)
+    processed_url = db.StringField()
+    status = db.EnumField(StatusClass, required=True)
+    face_type = db.EnumField(FaceTypeClass, required=True)
+    block_character_id = db.ReferenceField(BlockCharacter)
+    whitelist_faces = db.ListField(db.StringField())
+    created_at = db.DateField(required=True)
+    completed_at = db.DateField()
+    updated_at = db.DateField()
+    
+    def __init__(self, user_id, origin_url, status, created_at, *args, **kwargs):
+        super(Video, self).__init__(*args, **kwargs)
+        self.user_id = user_id
+        self.origin_url = origin_url
+        self.status = status
+        self.created_at = created_at
+        
+    def setBlockCharacterId(self, block_character_id):
+        self.block_character_id = block_character_id

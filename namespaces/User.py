@@ -4,31 +4,31 @@ from static import status_code
 from module import file_module, member_module, crud_module
 from flask_restx import Resource, Api, Namespace
 from werkzeug.datastructures import FileStorage
-from namespaces import People
 
 ####################################회원#######################################
-Member = Namespace(
-    name= "Member",
-    description="OriginCharacter CRUD를 작성하기 위해 사용하는 API.",
+Users = Namespace(
+    name= "Users",
+    description="Users CRUD를 작성하기 위해 사용하는 API.",
 )
 
-parser = Member.parser()
-parser.add_argument('user_id', location='form', required=False)
+parser = Users.parser()
+parser.add_argument('eamil', location='form', required=False)
 parser.add_argument('password', location='form', required=False)
 parser.add_argument('name', location='form', required=False)
 parser.add_argument('phone', location='form', required=False)
 
-@Member.route('/id-check')
-@Member.doc(response={200: 'SUCCESS'})
-@Member.doc(response={404: 'Failed'})
-class MemberIdCheck(Resource):
-    @Member.expect(parser)
+@Users.route('/email/validaion')
+@Users.expect(parser)
+@Users.doc(response={200: 'SUCCESS'})
+@Users.doc(response={404: 'Failed'})
+class UserEmailValidaionClass(Resource):
+    
     def post(self):
-        '''
+        """
         # 아이디 중복체크
-        # @form-data : user_id
-        # @return : message
-        '''
+        # @form-data : email
+        # @return : 200 or 409
+        """
         try:
             if member_module.id_duplicate_check():
                 return Response(
@@ -47,7 +47,7 @@ class MemberIdCheck(Resource):
                             "message" : status_code.member_id_check_02_fail
                         }
                     ),
-                    status = 404,
+                    status = 409,
                     mimetype = "application/json"
                 )
         except Exception as ex:
@@ -55,17 +55,18 @@ class MemberIdCheck(Resource):
             print(ex)
             print("******************") 
 
-@Member.route('/sign-up')
-@Member.doc(response={200: 'SUCCESS'})
-@Member.doc(response={404: 'Failed'})
-class MemberSignUp(Resource):
-    @Member.expect(parser)
+@Users.route('')
+@Users.expect(parser)
+@Users.doc(response={200: 'SUCCESS'})
+@Users.doc(response={404: 'Failed'})
+class UsersClass(Resource):
+    
     def post(self):
-        '''
+        """
         # 회원가입
-        # @form-data : user_id, password, name, phone
-        # @return : message
-        '''
+        # @form-data : email, password, name, phone
+        # @return : 200 or 404
+        """
         try:
             idReceive = member_module.create_users()
             if idReceive != None:
@@ -94,17 +95,138 @@ class MemberSignUp(Resource):
             print(ex)
             print("******************")
 
-@Member.route('/login')
-@Member.doc(response={200: 'SUCCESS'})
-@Member.doc(response={404: 'Failed'})
-class MemberLogin(Resource):
-    @Member.expect(parser)
+@Users.route('/email')
+@Users.expect(parser)
+@Users.doc(responses={200: 'Success'})
+@Users.doc(responses={404: 'Failed'})
+class UserEmailClass(Resource):
+    
     def post(self):
-        '''
+        """
+        # 아이디 찾기
+        # @form-data : name, phone
+        # @return : {eamil: "eamil"}
+        """
+        try:
+            result = member_module.find_id()
+            if result != None:
+                return Response(
+                    response = json.dumps(result),
+                    status = 200,
+                    mimetype = "application/json"
+                )
+            else:
+                return Response(
+                    response = json.dumps(
+                        {
+                            "message" : status_code.member_find_id_02_fail
+                        }
+                    ),
+                    status = 404,
+                    mimetype = "application/json"
+                )
+        except Exception as ex:
+            print("******************")
+            print(ex)
+            print("******************")
+
+@Users.route('/password/validation')
+@Users.expect(parser)
+@Users.doc(responses={200: 'Success'})
+@Users.doc(responses={404: 'Failed'})
+class UserPasswordValidationClass(Resource):
+    
+    def post(self):
+        """
+        # 비밀번호 찾기 전 정보 검증
+        # @form-data : email, phone
+        # @return : message
+        """
+        try:
+            if member_module.information_inspection():
+                return Response(
+                    response = json.dumps(
+                        {
+                            "message" : status_code.member_find_password_01_success,
+                        }
+                    ),
+                    status = 200,
+                    mimetype = "application/json"
+                )
+            else:
+                return Response(
+                    response = json.dumps(
+                        {
+                            "message" :status_code.member_find_password_02_fail
+                        }
+                    ),
+                    status = 404,
+                    mimetype = "application/json"
+                )
+        except Exception as ex:
+            print("******************")
+            print(ex)
+            print("******************")
+
+@Users.route('/password')
+@Users.expect(parser)
+@Users.doc(responses={200: 'Success'})
+@Users.doc(responses={404: 'Failed'})
+class UserUpdatePasswordClass(Resource):
+    
+    def patch(self):
+        """
+        # 비밀번호 변경(변경할 비밀번호 정보 받아와서 비밀번호 변경)
+        # @form-data : email, phone, password
+        # @return : message
+        """
+        try:
+            if member_module.update_password():
+                return Response(
+                    response = json.dumps(
+                        {
+                            "message" : status_code.member_replace_password_01_success
+                        }
+                    ),
+                    status = 200,
+                    mimetype = "application/json"
+                )
+            else:
+                return Response(
+                    response = json.dumps(
+                        {
+                            "message" : status_code.member_replace_password_02_fail
+                        }
+                    ),
+                    status = 404,
+                    mimetype = "application/json"
+                )
+        except Exception as ex:
+            print("******************")
+            print(ex)
+            print("******************")
+
+Auth = Namespace(
+    name= "Auth",
+    description="User의 Auth를 작성하기 위해 사용하는 API.",
+)
+
+parser = Auth.parser()
+parser.add_argument('eamil', location='form')
+parser.add_argument('password', location='form')
+
+@Auth.route('')
+@Auth.expect(parser)
+@Auth.doc(response={200: 'SUCCESS'})
+@Auth.doc(response={404: 'Failed'})
+class AuthClass(Resource):
+    
+    def post(self):
+        """
         # 로그인
-        # @form-data : user_id, password 
-        # @return : message, token
-        '''
+        # @form-data : email, password 
+        # @return : token
+        """
         try:
             token = member_module.login_modules()
             if token == 1:
@@ -137,151 +259,6 @@ class MemberLogin(Resource):
                     ),
                     status=200,
                     mimetype="application/json"
-                )
-        except Exception as ex:
-            print("******************")
-            print(ex)
-            print("******************")
-
-@Member.route('/id-find')
-@Member.doc(responses={200: 'Success'})
-@Member.doc(responses={404: 'Failed'})
-class memberFindIdClass(Resource):
-    @Member.expect(parser)
-    def post(self):
-        '''
-        # 아이디 찾기
-        # @form-data : name, phone
-        # @return : {user_id : "user_id"}
-        '''
-        try:
-            result = member_module.find_id()
-            if result != None:
-                return Response(
-                    response = json.dumps(result),
-                    status = 200,
-                    mimetype = "application/json"
-                )
-            else:
-                return Response(
-                    response = json.dumps(
-                        {
-                            "message" : status_code.member_find_id_02_fail
-                        }
-                    ),
-                    status = 404,
-                    mimetype = "application/json"
-                )
-        except Exception as ex:
-            print("******************")
-            print(ex)
-            print("******************")
-
-@Member.route('/check-info')
-@Member.doc(responses={200: 'Success'})
-@Member.doc(responses={404: 'Failed'})
-class memberInformationInspectionClass(Resource):
-    @Member.expect(parser)
-    def post(self):
-        '''
-        # 비밀번호 찾기 전 정보 검증
-        # @form-data : user_id, phone
-        # @return : message
-        '''
-        try:
-            if member_module.information_inspection():
-                return Response(
-                    response = json.dumps(
-                        {
-                            "message" : status_code.member_find_password_01_success,
-                        }
-                    ),
-                    status = 200,
-                    mimetype = "application/json"
-                )
-            else:
-                return Response(
-                    response = json.dumps(
-                        {
-                            "message" :status_code.member_find_password_02_fail
-                        }
-                    ),
-                    status = 404,
-                    mimetype = "application/json"
-                )
-        except Exception as ex:
-            print("******************")
-            print(ex)
-            print("******************")
-
-@Member.route('/find-password')
-@Member.doc(responses={200: 'Success'})
-@Member.doc(responses={404: 'Failed'})
-class memberUpdatePasswordClass(Resource):
-    @Member.expect(parser)
-    def post(self):
-        '''
-        # 비밀번호 찾기(변경할 비밀번호 정보 받아와서 비밀번호 변경)
-        # @form-data : user_id, phone, password
-        # @return : message
-        '''
-        try:
-            if member_module.update_password():
-                return Response(
-                    response = json.dumps(
-                        {
-                            "message" : status_code.member_replace_password_01_success
-                        }
-                    ),
-                    status = 200,
-                    mimetype = "application/json"
-                )
-            else:
-                return Response(
-                    response = json.dumps(
-                        {
-                            "message" : status_code.member_replace_password_02_fail
-                        }
-                    ),
-                    status = 404,
-                    mimetype = "application/json"
-                )
-        except Exception as ex:
-            print("******************")
-            print(ex)
-            print("******************")
-
-@Member.route('/delete')
-@Member.doc(responses={200: 'Success'})
-@Member.doc(responses={404: 'Failed'})
-class memberDeleteClass(Resource):
-    @Member.expect(parser)
-    def post(self):
-        '''
-        # 회원탈퇴
-        # @form-data : user_id
-        # @return : message
-        '''
-        try:
-            if member_module.delete_member():
-                return Response(
-                    response = json.dumps(
-                        {
-                            "message" : status_code.member_delete_01_success
-                        }
-                    ),
-                    status = 200,
-                    mimetype = "application/json"
-                )
-            else:
-                return Response(
-                    response = json.dumps(
-                        {
-                            "message" : status_code.member_delete_01_fail
-                        }
-                    ),
-                    status = 404,
-                    mimetype = "application/json"
                 )
         except Exception as ex:
             print("******************")
