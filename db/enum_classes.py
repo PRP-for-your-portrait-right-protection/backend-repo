@@ -10,6 +10,9 @@ class StatusClass(enum.Enum):
     processed = "processed"
     fail = "fail"
     deleted = "deleted"
+    success = "SUCCESS"
+    failure = "FAILURE"
+    pending = "PENDING"
 
 class FaceTypeClass(enum.Enum):
     mosic = "mosic"

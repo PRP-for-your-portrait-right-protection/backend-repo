@@ -27,4 +27,4 @@ api.add_namespace(BeforeVideo.BeforeVideos, '/before-videos')
 api.add_namespace(AfterVideo.AfterVideos, '/after-videos')
 
 if __name__ == "__main__":
-    app.run(port=80, debug=True)
+    app.run(port=5000, debug=True)

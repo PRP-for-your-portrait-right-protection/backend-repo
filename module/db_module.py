@@ -3,6 +3,8 @@ from db.enum_classes import ScopeClass, StatusClass, FaceTypeClass
 import os
 from db import schema
 
+########## CREATE #############
+
 """
 * WhitelistFace create
 """
@@ -31,16 +33,30 @@ def create_video(user, location):
     video = schema.Video(user, location, StatusClass.origin, datetime.now())
     video.save()
 
+############# READ #################
+"""
+* read video url
+* 
+"""
+def read_video_url(videoId):
+    video = schema.Video.objects(
+        _id = _id,
+        user_id = user
+    )
+
+
+############# UPDATE ###############
+
 """
 * Video db update
 """
-def update_db_video(_id, user, faceType, blockCharacterId="", whitelistFace):
+def update_db_video(_id, user, faceType, whitelistFace, blockCharacterId=""):
     if faceType not in FaceTypeClass:
         print("Can't find face type") 
         return False
     processedVideo = schema.Video.objects(
                                             _id = _id,
-                                            user_id = user._id
+                                            user_id = user
                                         ).update(
                                             status = StatusClass.processed, 
                                             face_type = faceType, 
