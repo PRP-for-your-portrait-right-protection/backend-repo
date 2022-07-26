@@ -81,7 +81,6 @@ def get_user(my_token):
         
         if payload != None:
             user = schema.User.objects(_id = ObjectId(payload['user_id'])).first()
-
             return user._id
         else:
             return False
@@ -90,9 +89,10 @@ def get_user(my_token):
         print("***********")
         print(ex)
         print("***********")
+        return False
     except Exception as ex:
         print("***********")
         print(ex)
         print("***********")
-
+        return False
  

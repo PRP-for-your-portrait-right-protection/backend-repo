@@ -2,6 +2,7 @@ from flask import request
 import hashlib
 from datetime import datetime
 from module.token import create_token
+from module.db_module import create_whitelist_face
 from db import schema
 
 """
@@ -12,8 +13,7 @@ def email_validation():
         email = request.form["email"]
         
         user = schema.User.objects(email = email)
-        
-        if user != None:
+        if user.count() != 0:
             print("This email is already exist")
             return False
         else:
@@ -35,7 +35,8 @@ def create_users():
     pwHash = hashlib.sha256(password.encode('utf-8')).hexdigest()
     try:
         user = schema.User(email, pwHash, name, phone, False, datetime.now())
-        user.save()
+        result = schema.User.objects().insert(user)
+        create_whitelist_face(result._id, name)
         return user.email
     except Exception as ex:
         print('*********')
@@ -47,12 +48,12 @@ def create_users():
 * 로그인
 """
 def login():
-    email = request.form["eamil"]
+    email = request.form["email"]
     password = request.form["password"]
 
     pwHash = hashlib.sha256(password.encode("utf-8")).hexdigest()
     try:
-        userId = str(schema.User.objects(eamil = email, password = pwHash).first().get_id())
+        userId = str(schema.User.objects(email = email, password = pwHash).first().get_id())
         token = create_token(userId)
         return token    
     except Exception as ex:
@@ -69,7 +70,7 @@ def find_email():
         name = request.form["name"]
         phone = request.form["phone"]
 
-        user = schema.User.objects(name = name, phone = phone)
+        user = schema.User.objects(name = name, phone = phone).first()
         if user == None:
             print("Can't find user")
             return False
@@ -89,8 +90,8 @@ def password_validation():
         email = request.form["email"]
         phone = request.form["phone"]
         
-        user = schema.User.objects(email = email, phone = phone)
-        if user == None: 
+        user = schema.User.objects(email = email, phone = phone).first()
+        if user == None:
             print("Can't find user")  
             return False
         else:

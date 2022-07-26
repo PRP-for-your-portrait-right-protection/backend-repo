@@ -1,7 +1,7 @@
 from flask import Flask, Response, request
 import json
 from static import status_code
-from module import file_module, member_module, crud_module
+from module import user_module
 from flask_restx import Resource, Api, Namespace
 from werkzeug.datastructures import FileStorage
 
@@ -12,12 +12,12 @@ Users = Namespace(
 )
 
 parser = Users.parser()
-parser.add_argument('eamil', location='form', required=False)
+parser.add_argument('email', location='form', required=False)
 parser.add_argument('password', location='form', required=False)
 parser.add_argument('name', location='form', required=False)
 parser.add_argument('phone', location='form', required=False)
 
-@Users.route('/email/validaion')
+@Users.route('/email/validation')
 @Users.expect(parser)
 @Users.doc(response={200: 'SUCCESS'})
 @Users.doc(response={404: 'Failed'})
@@ -30,7 +30,7 @@ class UserEmailValidaionClass(Resource):
         # @return : 200 or 409
         """
         try:
-            if member_module.id_duplicate_check():
+            if user_module.email_validation():
                 return Response(
                     response = json.dumps(
                         {
@@ -68,7 +68,7 @@ class UsersClass(Resource):
         # @return : 200 or 404
         """
         try:
-            idReceive = member_module.create_users()
+            idReceive = user_module.create_users()
             if idReceive != None:
                 return Response(
                     response = json.dumps(
@@ -105,10 +105,10 @@ class UserEmailClass(Resource):
         """
         # 아이디 찾기
         # @form-data : name, phone
-        # @return : {eamil: "eamil"}
+        # @return : {email: "email"}
         """
         try:
-            result = member_module.find_id()
+            result = user_module.find_email()
             if result != None:
                 return Response(
                     response = json.dumps(result),
@@ -143,7 +143,7 @@ class UserPasswordValidationClass(Resource):
         # @return : message
         """
         try:
-            if member_module.information_inspection():
+            if user_module.password_validation():
                 return Response(
                     response = json.dumps(
                         {
@@ -181,7 +181,7 @@ class UserUpdatePasswordClass(Resource):
         # @return : message
         """
         try:
-            if member_module.update_password():
+            if user_module.update_password():
                 return Response(
                     response = json.dumps(
                         {
@@ -212,7 +212,7 @@ Auth = Namespace(
 )
 
 parser = Auth.parser()
-parser.add_argument('eamil', location='form')
+parser.add_argument('email', location='form')
 parser.add_argument('password', location='form')
 
 @Auth.route('')
@@ -228,7 +228,7 @@ class AuthClass(Resource):
         # @return : token
         """
         try:
-            token = member_module.login_modules()
+            token = user_module.login()
             if token == 1:
                 return Response(
                     response=json.dumps(

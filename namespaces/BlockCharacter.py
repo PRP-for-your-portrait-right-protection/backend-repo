@@ -5,34 +5,79 @@ from module import crud_module
 from flask_restx import Resource, Namespace
 from werkzeug.datastructures import FileStorage
 
-####################################유저 캐릭터#######################################
+####################################기존 캐릭터#######################################
 
-UserCharacters = Namespace(
-    name="UserCharacters",
-    description="UserCharacters CRUD를 작성하기 위해 사용하는 API.",
+BlockCharacters = Namespace(
+    name="Characters",
+    description="Characters CRUD를 작성하기 위해 사용하는 API.",
 )
 
-parser = UserCharacters.parser()
+parser = BlockCharacters.parser()
 parser.add_argument('token', location='headers')
 parser.add_argument('file', type=FileStorage, location='files', required=False)
-parser.add_argument('selectedYN', location='form', required=False)
-parser.add_argument('notSelectedYN', location='form', required=False)
 
-@UserCharacters.route('')
-@UserCharacters.expect(parser)
-@UserCharacters.doc(responses={200: 'Success'})
-@UserCharacters.doc(responses={404: 'Failed'})
-class UserCharactersClass(Resource):
-
-    def post(self):
+@BlockCharacters.route('/origin')
+@BlockCharacters.expect(parser)
+@BlockCharacters.doc(responses={200: 'Success'})
+@BlockCharacters.doc(responses={404: 'Failed'})
+class OriginBlockCharactersClass(Resource):
+    def get(self):
         """
-        # 케릭터 한 개 버킷에 저장 후 DB INSERT
+        # 기존 케릭터 사진 url 가져오기
         # @header : token
-        # @form-data : <file>
-        # @return : 200 or 404
+        # @return 
+            {
+                data: [
+                    {
+                        id: "id", 
+                        url: "url",
+                    },
+                    {
+                        id: "id", 
+                        url: "url",
+                    },
+                ]
+            }
         """
         try:
-            result = crud_module.single_get("get_origin_character")
+            result = crud_module.get_origin_block_character()
+            if result != False:
+                return Response(
+                    response = json.dumps(result),
+                    status = 200,
+                    mimetype = "application/json"
+                )
+            else:
+                return Response(
+                    response=json.dumps(
+                        {
+                            "message":status_code.file_download_02_fail,
+                        }
+                    ),
+                    status=404,
+                    mimetype="application/json"
+                )
+        except Exception as ex:
+            print("******************")
+            print(ex)
+            print("******************")
+
+####################################유저 캐릭터#######################################
+
+@BlockCharacters.route('/user')
+@BlockCharacters.expect(parser)
+@BlockCharacters.doc(responses={200: 'Success'})
+@BlockCharacters.doc(responses={404: 'Failed'})
+class UserBlockCharactersClass(Resource):
+    def post(self):
+        '''
+        # 케릭터 한 개 버킷에 저장
+        # @form-data : {file: <file>}
+        # @header : token
+        # @return : {id:"", url: ""}
+        '''
+        try:
+            result = crud_module.upload_user_block_character()
             if result != False:
                 return Response(
                     response = json.dumps(result),
@@ -56,25 +101,24 @@ class UserCharactersClass(Resource):
 
     def get(self):
         """
-        # 케릭터 여러 개 url 가져오기
+        # 유저 케릭터 여러 개 url 가져오기
         # @header : token
         # @return : 
             {
-                data: 
-                    [
-                        {
-                            id: "id", 
-                            url: "url",
-                        },
-                        {
-                            id: "id", 
-                            url: "url",
-                        },
-                    ]
+                data: [
+                    {
+                        id: "id", 
+                        url: "url",
+                    },
+                    {
+                        id: "id", 
+                        url: "url",
+                    },
+                ]
             }
         """
         try:
-            result = crud_module.single_get("get_origin_character")
+            result = crud_module.get_user_block_character() 
             if result != False:
                 return Response(
                     response = json.dumps(result),
@@ -96,62 +140,21 @@ class UserCharactersClass(Resource):
             print(ex)
             print("******************")
 
-@UserCharacters.route('/bulk')
-@UserCharacters.expect(parser)
-@UserCharacters.doc(responses={200: 'Success'})
-@UserCharacters.doc(responses={404: 'Failed'})
-class UserCharactersBulkClass(Resource):
-    
-    def post(self):
-        """
-        # 케릭터 여러 개 버킷에 저장 후 DB INSERT
-        # @header : token
-        # @form-data :
-            {
-                "selectedYN": "Y" or "N",
-                "notSelectedYN": "Y" or "N",
-                "selectedCharacter": <file>,
-                "notSelectedCharacters": [<file>, <file>, ...]
-            }
-        # @return : {userCharacterUrls  : "selected character's url" or NULL}
-        """
-        try:
-            result = crud_module.single_get("get_origin_character")
-            if result != False:
-                return Response(
-                    response = json.dumps(result),
-                    status = 200,
-                    mimetype = "application/json"
-                )
-            else:
-                return Response(
-                    response=json.dumps(
-                        {
-                            "message":status_code.file_download_02_fail,
-                        }
-                    ),
-                    status=404,
-                    mimetype="application/json"
-                )
-        except Exception as ex:
-            print("******************")
-            print(ex)
-            print("******************")
 
-@UserCharacters.route('/user/<characterId>')
-@UserCharacters.expect(parser)
-@UserCharacters.doc(responses={200: 'Success'})
-@UserCharacters.doc(responses={404: 'Failed'})
-class UserCharactersBulkClass(Resource):
+@BlockCharacters.route('/user/<characterId>')
+@BlockCharacters.expect(parser)
+@BlockCharacters.doc(responses={200: 'Success'})
+@BlockCharacters.doc(responses={404: 'Failed'})
+class UserBlockCharactersIdClass(Resource):
     
-    def delete(self,characterId):
+    def delete(self ,characterId):
         """
         # 캐릭터 한 개 삭제
         # @header : token
         # @return : 200 or 404
         """
         try:
-            result = crud_module.delete_block_character_single(characterId)
+            result = crud_module.delete_user_block_character(characterId)
             if result != False:
                 return Response(
                     response = json.dumps(result),

@@ -5,11 +5,11 @@ class ScopeClass(enum.Enum):
     origin = "origin"
     
 class StatusClass(enum.Enum):
-    
-    origin = "origin"
-    processed = "processed"
-    fail = "fail"
-    deleted = "deleted"
+    success = "SUCCESS"
+    origin = "ORIGIN"
+    processed = "PROCCESSED"
+    fail = "FAIL"
+    deleted = "DELETED"
 
 class FaceTypeClass(enum.Enum):
     mosic = "mosic"

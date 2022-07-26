@@ -1,33 +1,36 @@
-from flask import Response, request
+from flask import Flask, Response, request
 import json
 from static import status_code
 from module import crud_module
-from flask_restx import Resource, Namespace
+from flask_restx import Resource, Api, Namespace
+from werkzeug.datastructures import FileStorage
 
-####################################기존 캐릭터#######################################
+####################################수정 전 비디오#######################################
 
-OriginCharacters = Namespace(
-    name="OriginCharacters",
-    description="OriginCharacters CRUD를 작성하기 위해 사용하는 API.",
+OriginVideos = Namespace(
+    name="OriginVideos",
+    description="OriginVideos CRUD를 작성하기 위해 사용하는 API.",
 )
 
-parser = OriginCharacters.parser()
+parser = OriginVideos.parser()
 parser.add_argument('token', location='headers')
+parser.add_argument('file', type=FileStorage, location='files', required=False)
 
-@OriginCharacters.route('')
-@OriginCharacters.expect(parser)
-@OriginCharacters.doc(responses={200: 'Success'})
-@OriginCharacters.doc(responses={404: 'Failed'})
-class OriginCharactersClass(Resource):
+@OriginVideos.route('')
+@OriginVideos.expect(parser)
+@OriginVideos.doc(responses={200: 'Success'})
+@OriginVideos.doc(responses={404: 'Failed'})
+class OriginVideosClass(Resource):
 
-    def get(self):
+    def post(self):
         """
-        # 기존 케릭터 사진 url 가져오기
+        # 수정 전 비디오 파일 버킷에 저장 후 DB INSERT
         # @header : token
-        # @return : {originCharacterUrls : [file_url, file_url,  file_url]}
+        # @form-data : <file>
+        # @return : {id : "id"}
         """
         try:
-            result = crud_module.single_get("get_origin_character")
+            result = crud_module.origin_video_upload()
             if result != False:
                 return Response(
                     response = json.dumps(result),

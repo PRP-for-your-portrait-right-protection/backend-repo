@@ -13,8 +13,8 @@ def file_upload(user, collctionName, f):
         
         # 2. 파일명 설정
         name, ext = os.path.splitext(f.filename)
-        fileTime = datetime.now.strftime('%Y-%m-%d')
-        filename = user._id + "_" + name + "_" + fileTime + ext
+        fileTime = datetime.now().strftime('%Y-%m-%d')
+        filename = str(user) + "_" + name + "_" + fileTime + ext
         
         # 3. 버킷 연결
         s3 = s3_connection()

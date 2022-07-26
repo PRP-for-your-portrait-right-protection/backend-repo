@@ -11,8 +11,8 @@ class User(db.Document):
     name = db.StringField(required=True)
     phone = db.StringField(required=True, max_length=11)
     is_deleted = db.BooleanField(required=True)
-    created_at = db.StringField(required=True)
-    updated_at = db.StringField()
+    created_at = db.DateField(required=True)
+    updated_at = db.DateField()
     
     def __init__(self, email, password, name, phone, is_deleted, created_at, *args, **kwargs):
         super(User, self).__init__(*args, **kwargs)
@@ -85,12 +85,20 @@ class BlockCharacter(db.Document):
         self.is_deleted = is_deleted
         self.created_at = created_at
 
+class Celery(db.Document):
+    _id = db.ObjectIdField()
+    status = db.StringField()
+    result = db.StringField()
+    traceback = db.StringField()
+    children = db.ListField()
+    date_done = db.DateField()
+
 class Video(db.Document):
     _id = db.ObjectIdField()
     user_id = db.ReferenceField(User, required=True)
     origin_url = db.StringField(required=True)
-    processed_url_id = db.ReferenceField()
-    status = db.EnumField(StatusClass, required=True)
+    processed_url_id = db.ReferenceField(Celery)
+    status = db.StringField(required=True)
     face_type = db.EnumField(FaceTypeClass, required=True)
     block_character_id = db.ReferenceField(BlockCharacter)
     whitelist_faces = db.ListField(db.StringField())

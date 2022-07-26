@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restx import Api
 from db.db_connection import db_connection
-from namespaces import Face, OriginCharacter, UserCharacter, BeforeVideo, AfterVideo, User
+from namespaces import BlockCharacter, OriginVideo, ProccessedVideo, User, WhitelistFace
 
 app = Flask(__name__)
 
@@ -20,11 +20,10 @@ api = Api(
 
 api.add_namespace(User.Users, '/users')
 api.add_namespace(User.Auth, '/auth')
-api.add_namespace(Face.Faces, '/faces')
-api.add_namespace(OriginCharacter.OriginCharacters, '/origin-characters')
-api.add_namespace(UserCharacter.UserCharacters, '/user-characters')
-api.add_namespace(BeforeVideo.BeforeVideos, '/before-videos')
-api.add_namespace(AfterVideo.AfterVideos, '/after-videos')
+api.add_namespace(WhitelistFace.WhitelistFaces, '/whitelist-faces')
+api.add_namespace(BlockCharacter.BlockCharacters, '/block-characters')
+api.add_namespace(OriginVideo.OriginVideos, '/origin-videos')
+api.add_namespace(ProccessedVideo.ProccessedVideos, '/processed-videos')
 
 if __name__ == "__main__":
-    app.run(port=80, debug=True)
+    app.run(port=5001, debug=True)
