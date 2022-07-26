@@ -3,3 +3,5 @@ module/module_config.py
 db/db_config.py
 
 __pycache__
+
+migrations

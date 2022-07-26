@@ -1,39 +1,29 @@
 from flask import Flask
-from db import db_connection
 from flask_restx import Api
-from namespaces import People, Character, AI, Video, Member
-
-# 스키마 생성
-# db_connection.init_collection(db)
+from db.db_connection import db_connection
+from namespaces import BlockCharacter, OriginVideo, ProccessedVideo, User, WhitelistFace
 
 app = Flask(__name__)
 
+db_connection(app)
+
 api = Api(
     app,
-    version='0.1',
+    version='v1',
     title="Silicon Project's API Server",
     description="PRP!",
     terms_url="/",
     contact="vivian0304@naver.com",
-    license="MIT"
+    license="MIT",
+    prefix='/api/v1'
 )
 
-
-api.add_namespace(Member.Member, '/member')
-
-api.add_namespace(People.People, '/people')
-api.add_namespace(People.PersonAll, '/person-all')
-api.add_namespace(People.PersonSingle, '/person-single')
-
-api.add_namespace(Character.Character, '/character')
-api.add_namespace(Character.Characters, '/characters')
-api.add_namespace(Character.OriginCharacter, '/origin-character')
-
-api.add_namespace(Video.VideoOrigin, '/video-origin')
-api.add_namespace(Video.VideoModification, '/video-modification')
-api.add_namespace(Video.VideoModifications, '/video-modifications')
-
-api.add_namespace(AI.AI, '/ai')
+api.add_namespace(User.Users, '/users')
+api.add_namespace(User.Auth, '/auth')
+api.add_namespace(WhitelistFace.WhitelistFaces, '/whitelist-faces')
+api.add_namespace(BlockCharacter.BlockCharacters, '/block-characters')
+api.add_namespace(OriginVideo.OriginVideos, '/origin-videos')
+api.add_namespace(ProccessedVideo.ProccessedVideos, '/processed-videos')
 
 if __name__ == "__main__":
-    app.run(port=80, debug=True)
+    app.run(port=5001, debug=True)
