@@ -1,4 +1,4 @@
-from flask import request
+from flask import request, jsonify
 from datetime import datetime
 from db.enum_classes import ScopeClass, StatusClass, FaceTypeClass, SchemaName
 # import module이 인식이 안되서 바꿈 -> 해결방법?
@@ -74,11 +74,14 @@ def update_video_upload():
     # module의 token과 이름이 겹쳐서, token_으로 하였음
     token_ = request.headers.get('Token')
 
+    # user_id (Object_id) 가져옴 -> 정확히는 오브젝트를 가져옴 -> 도트연산자 접근
+    user = token.get_user(token_)
+
     # video id가져옴
     videoId = request.form["videoId"]
 
-    # user_id (Object_id) 가져옴
-    user = token.get_user(token_)
+    # video url 찾기
+    videoUrl = db_module.read_video_url(videoId, user)
 
     # faceType 가져옴
     faceType = request.form['faceType']
@@ -88,7 +91,7 @@ def update_video_upload():
         blockCharacterId = request.form['blockCharacterId'] 
     else:
         blockCharacterId = None
-        whitelistFaceId = request.form["whitelist_face_id"]
+        whitelistFaceId = request.form.getlist["whitelist_face_id"]
         whitelistFace = request.form.getlist['whitelist_face_image_url']
 
     # True or False 리턴
@@ -102,13 +105,83 @@ def update_video_upload():
                 'b' : faceType, # 모자이크 또는 캐릭터
                 'c' : whitelistFace, # url 리스트
                 'd' : blockCharacterId, # url로 가져와야함
-                'a' : video_id,
-                'e' : video_url 
+                # 'a' : video_id,
+                'e' : videoUrl
             })
-        # task_id리턴
+        # taskId 리턴
+
+        db_module.update_celeryId_video(videoId, user, task.id, task.status)
+
         return task.id
     else:
         return False
+
+"""
+* update video before after s3
+* 버켓에 저장하고 난뒤 vid
+"""
+################################### READ ######################################
+
+"""
+* 여러 사람 여러 사진 url 가져오기
+"""
+def get_multiple_id_img():
+    token_ = request.headers.get("Token")
+    userId = token.get_user(token_)
+
+    result = db_module.read_whitelistFaceIdAndUrl(userId)
+
+    if result != None:
+        return result
+
+"""
+* 기존 캐릭터 사진 url 가져오기
+"""
+def get_origin_character():
+    token_ = request.headers.get("Token")
+    userId = token.get_user(token_)
+
+    result = db_module.read_origin_character_url(userId)
+
+    if result != None:
+        return result
+
+"""
+* 유저 캐릭터 여러 개 url 가져오기
+"""
+def get_multiple_user_character():
+    token_ = request.headers.get("Token")
+    userId = token.get_user(token_)
+
+    result = db_module.read_multiple_user_character(userId)
+
+    if result != None:
+        return result
+"""
+* 셀러리 id를 통해 상태 체크
+"""
+def get_after_video_status(taskId):
+    token_ = request.headers.get("Token")
+    userId = token.get_user(token_)
+
+    result = db_module.get_after_video_status(userId, taskId)
+
+    if result != None:
+        return result
+    
+
+"""
+* 특정 유저에 대한 비디오 결과 모두 조회하기
+"""
+def get_multiple_after_video():
+    token_ = request.headers.get("Token")
+    userId = token.get_user(token_)
+    
+    result = db_module.read_multiple_after_video(userId)
+
+    if result != None:
+        return result
+
 """
 * read celery task status
 """
@@ -119,18 +192,3 @@ def read_celery_task_status(taskId):
         return result
     else:
         return status
-
-"""
-* update video after save s3
-"""
-def update_video_upload(taskId, video_id, location, status):
-    location = celery.AsyncResult(taskId).result
-    status = celery.AsyncResult(taskId).status
-    token_ = request.headers.get('Token')
-    user = token.get_user(token_)
-
-    # 여기서 보내는 status가 셀러리의 status가 맞는지?
-    # 리턴값 -> True of False
-    result = db_module.update_location_video(video_id, user, location, status)
-    if result == True:
-        return True

@@ -74,7 +74,7 @@ class UserCharactersClass(Resource):
             }
         """
         try:
-            result = crud_module.single_get("get_origin_character")
+            result = crud_module.get_multiple_user_character()
             if result != False:
                 return Response(
                     response = json.dumps(result),

@@ -1,3 +1,4 @@
+from django.forms import DateTimeField
 import mongoengine
 from flask_mongoengine import Document, MongoEngine, BaseQuerySet
 from db.enum_classes import ScopeClass, StatusClass, FaceTypeClass
@@ -85,11 +86,19 @@ class BlockCharacter(db.Document):
         self.is_deleted = is_deleted
         self.created_at = created_at
 
+class Celery(db.Document):
+    _id = db.ObjectIdField()
+    status = db.StringField()
+    result = db.StringField()
+    traceback = db.StringField()
+    children = db.ListField()
+    date_done = DateTimeField()
+
 class Video(db.Document):
     _id = db.ObjectIdField()
     user_id = db.ReferenceField(User, required=True)
     origin_url = db.StringField(required=True)
-    processed_url = db.StringField()
+    processed_url_id = db.ReferenceField(Celery)
     status = db.EnumField(StatusClass, required=True)
     face_type = db.EnumField(FaceTypeClass, required=True)
     block_character_id = db.ReferenceField(BlockCharacter)
@@ -107,3 +116,4 @@ class Video(db.Document):
         
     def setBlockCharacterId(self, block_character_id):
         self.block_character_id = block_character_id
+

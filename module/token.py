@@ -80,7 +80,7 @@ def get_user(my_token):
         
         if payload != None:
             user = schema.User.objects(_id = payload['user_id']).first()
-            return user
+            return user._id
         else:
             return False
         

@@ -27,7 +27,7 @@ class OriginCharactersClass(Resource):
         # @return : {originCharacterUrls : [file_url, file_url,  file_url]}
         """
         try:
-            result = crud_module.single_get("get_origin_character")
+            result = crud_module.get_origin_character()
             if result != False:
                 return Response(
                     response = json.dumps(result),
