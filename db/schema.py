@@ -89,7 +89,7 @@ class Video(db.Document):
     _id = db.ObjectIdField()
     user_id = db.ReferenceField(User, required=True)
     origin_url = db.StringField(required=True)
-    processed_url = db.StringField()
+    processed_url_id = db.ReferenceField()
     status = db.EnumField(StatusClass, required=True)
     face_type = db.EnumField(FaceTypeClass, required=True)
     block_character_id = db.ReferenceField(BlockCharacter)

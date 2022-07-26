@@ -38,7 +38,7 @@ class FacesClass(Resource):
         # @return : {faceImageUrls : [file_url, file_url, file_url]}
         """
         try:
-            result = crud_module.single_get("get_origin_character")
+            result = crud_module.whitelist_face_image_multi_upload()
             if result != False:
                 return Response(
                     response = json.dumps(result),
@@ -193,7 +193,7 @@ class FacesSpecificPersonIamgeOneClass(Resource):
         # @return : 200 or 404
         """
         try:
-            result = crud_module.single_get("get_origin_character")
+            result = crud_module.whitelist_face_image_single_upload()
             if result != False:
                 return Response(
                     response = json.dumps(result),
