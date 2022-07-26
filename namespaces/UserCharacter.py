@@ -138,20 +138,20 @@ class UserCharactersBulkClass(Resource):
             print(ex)
             print("******************")
 
-@UserCharacters.route('/<characterId>')
+@UserCharacters.route('/user/<characterId>')
 @UserCharacters.expect(parser)
 @UserCharacters.doc(responses={200: 'Success'})
 @UserCharacters.doc(responses={404: 'Failed'})
 class UserCharactersBulkClass(Resource):
     
-    def delete(self):
+    def delete(self,characterId):
         """
         # 캐릭터 한 개 삭제
         # @header : token
         # @return : 200 or 404
         """
         try:
-            result = crud_module.single_get("get_origin_character")
+            result = crud_module.delete_block_character_single(characterId)
             if result != False:
                 return Response(
                     response = json.dumps(result),
@@ -162,7 +162,7 @@ class UserCharactersBulkClass(Resource):
                 return Response(
                     response=json.dumps(
                         {
-                            "message":status_code.file_download_02_fail,
+                            "message":status_code.file_remove_02_fail,
                         }
                     ),
                     status=404,

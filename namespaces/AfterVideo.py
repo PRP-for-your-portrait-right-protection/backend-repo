@@ -130,14 +130,14 @@ class AfterVideosCeleryStatusCheckClass(Resource):
 @AfterVideos.doc(responses={404: 'Failed'})
 class AfterVideosOneCheckClass(Resource):
 
-    def delete(self):
+    def delete(self,videoId):
         """
         # '수정 후 비디오' 파일 한 개 삭제하기
         # @header : token
         # @return : 200 or 404
         """
         try:
-            result = crud_module.single_get("get_origin_character")
+            result = crud_module.delete_video(videoId)
             if result != False:
                 return Response(
                     response = json.dumps(result),
@@ -148,7 +148,7 @@ class AfterVideosOneCheckClass(Resource):
                 return Response(
                     response=json.dumps(
                         {
-                            "message":status_code.file_download_02_fail,
+                            "message":status_code.file_remove_02_fail,
                         }
                     ),
                     status=404,

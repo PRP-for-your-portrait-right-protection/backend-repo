@@ -114,7 +114,7 @@ class FacesClass(Resource):
             
 ####################################특정 인물 사진 여러 개#######################################
 
-@Faces.route('/<faceNameId>')
+@Faces.route('whitelist-faces/<faceNameId>')
 @Faces.expect(parser)
 @Faces.doc(responses={200: 'Success'})
 @Faces.doc(responses={404: 'Failed'})
@@ -149,14 +149,14 @@ class FacesSpecificPersonImageBulkClass(Resource):
             print(ex)
             print("******************")
             
-    def delete(self):
+    def delete(self,faceNameId):
         """
         # 특정 인물에 대한 사진 모두 삭제
         # @header : token 
         # @return : 200 or 404
         """
         try:
-            result = crud_module.single_get("get_origin_character")
+            result = crud_module.delete_whitelist_face(faceNameId)
             if result != False:
                 return Response(
                     response = json.dumps(result),
@@ -167,7 +167,7 @@ class FacesSpecificPersonImageBulkClass(Resource):
                 return Response(
                     response=json.dumps(
                         {
-                            "message":status_code.file_download_02_fail,
+                            "message":status_code.file_remove_02_fail,
                         }
                     ),
                     status=404,
@@ -186,14 +186,14 @@ class FacesSpecificPersonImageBulkClass(Resource):
 @Faces.doc(responses={404: 'Failed'})
 class FacesSpecificPersonIamgeOneClass(Resource):
 
-    def delete(self):
+    def delete(self,faceNameId,imageId):
         """
         # 특정 인물 사진 한 개 삭제
         # @header : token
         # @return : 200 or 404
         """
         try:
-            result = crud_module.whitelist_face_image_single_upload()
+            result = crud_module.delete_whitelist_face_image(imageId)
             if result != False:
                 return Response(
                     response = json.dumps(result),
@@ -204,7 +204,7 @@ class FacesSpecificPersonIamgeOneClass(Resource):
                 return Response(
                     response=json.dumps(
                         {
-                            "message":status_code.file_download_02_fail,
+                            "message":status_code.file_remove_02_fail,
                         }
                     ),
                     status=404,
