@@ -166,7 +166,7 @@ def origin_video_upload():
     if location == False:
         return False
     id = module.db_module.create_video(user, location)
-    return {"id" : id}
+    return {"id" : id, "url": location}
 
 """
 * update video before save s3
