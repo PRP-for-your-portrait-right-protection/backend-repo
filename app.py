@@ -1,9 +1,11 @@
 from flask import Flask
+from flask_cors import CORS
 from flask_restx import Api
 from db.db_connection import db_connection
 from namespaces import BlockCharacter, OriginVideo, ProccessedVideo, User, WhitelistFace
 
 app = Flask(__name__)
+CORS(app, resources={r'*': {'origins': 'http://localhost:3000'}})
 
 db_connection(app)
 
