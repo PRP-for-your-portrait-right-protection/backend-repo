@@ -200,7 +200,8 @@ def delete_video(_id):
     user = module.token.get_user(token)
     if user == False:
         return False
-    result=module.db_module.delete_video(user, _id)
+    # result=module.db_module.delete_video(user, _id)
+    result=db_module.delete_video(user, _id)
     if result == False:
         return False
     return result

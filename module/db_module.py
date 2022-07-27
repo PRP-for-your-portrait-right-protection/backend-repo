@@ -218,7 +218,8 @@ def update_video_celery(_id, user, taskId, status):
 * video delete
 """
 def delete_video(user, _id):
-    deleteVideo = schema.BlockCharacter.objects(_id = ObjectId(_id) , user_id = user).update(
+    # deleteVideo = schema.BlockCharacter.objects(_id = ObjectId(_id) , user_id = user).update(
+    deleteVideo = schema.Video.objects(_id = ObjectId(_id) , user_id = user).update(
         status = "deleted",
         updated_at = datetime.now()
     )
