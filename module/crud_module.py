@@ -231,20 +231,17 @@ def update_video_upload():
         return False
     
     # video id가져옴
-    videoId = request.form["videoId"]
+    videoId = request.form["video_id"]
 
     # video url 찾기
     videoUrl = db_module.read_origin_video(videoId, user)
 
     # faceType 가져옴
-    faceType = request.form['faceType']
-
-    print("AAAAABBBBBBAAAAAAA")
+    faceType = request.form['face_type']
 
     # blockCharacterId 선택적으로 가져옴
     if faceType == FaceTypeClass.character.value:
-        print("AAAAABBBBBB")
-        blockCharacterId = request.form['blockCharacterId']
+        blockCharacterId = request.form['block_character_id']
         blockCharacterImg = db_module.read_block_character_url(blockCharacterId)
         print(blockCharacterImg)
     else:
@@ -265,7 +262,6 @@ def update_video_upload():
                 'faceType' : faceType, # 모자이크 또는 캐릭터
                 'whitelistFaceImgList' : whitelistFaceImgList, # url 리스트
                 'blockCharacterImgUrl' : blockCharacterImg, # url로 가져와야함
-                # 'a' : video_id,
                 'videoUrl' : videoUrl,
                 "user" : str(user)
             })
