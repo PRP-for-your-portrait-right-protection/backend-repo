@@ -100,7 +100,7 @@ class ProccessedVideosClass(Resource):
 class ProccessedVideosCeleryStatusCheckClass(Resource):
     def get(self, taskId):
         """
-        # ai 작업 후 버킷 url을 돌려주면 db에 저장하는 과정 상태체크 후 현재상태 return
+        # 셀러리 id를 통해 상태 체크 후 SUCCESS 이면 video 컬렉션의 status를 SUCCESS로 바꾸고 리턴
         # @header : token
         # @return : {status: "status"}
         """

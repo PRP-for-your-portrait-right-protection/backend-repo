@@ -6,10 +6,23 @@ import module
 from module import db_module, file_module
 from celery import Celery
 
+
 celery = Celery('celery-repo',
-    broker = "amqp://admin:mypass@rabbitmq:5672",
-    backend = "mongodb://db:27017/silicon"
-) 
+    broker='amqp://localhost:5672',
+    result_backend='mongodb://localhost:27017/',
+    mongodb_backend_settings = {
+        'database': 'silicon',
+        'taskmeta_collection': 'celery'
+    }
+)
+# celery = Celery('celery-repo',
+#     broker='amqp://admin:mypass@rabbitmq:5672',
+#     result_backend='mongodb://db:27017/',
+#     mongodb_backend_settings = {
+#         'database': 'silicon',
+#         'taskmeta_collection': 'celery'
+#     }
+# )
 
 ################### WHITELIST FACE ###################
 
@@ -168,23 +181,23 @@ def origin_video_upload():
     id = module.db_module.create_video(user, location)
     return {"id" : id, "url": location}
 
-"""
-* update video before save s3
-"""
-def update_video_upload(video_id):
-    token = request.headers.get('Token')
-    user = module.token.get_user(token)
-    if user == False:
-        return False
-    faceType = request.form['faceType']
-    if faceType == FaceTypeClass.character:
-        blockCharacterId = request.form['blockCharacterId']
-    else:
-        blockCharacterId = None
-    whitelistFace = request.form['whitelistFace']
+# """
+# * update video before save s3
+# """
+# def update_video_upload(video_id):
+#     token = request.headers.get('Token')
+#     user = module.token.get_user(token)
+#     if user == False:
+#         return False
+#     faceType = request.form['faceType']
+#     if faceType == FaceTypeClass.character:
+#         blockCharacterId = request.form['block_character_id']
+#     else:
+#         blockCharacterId = None
+#     whitelistFace = request.form['whitelist_Face']
     
-    result = module.db_module.update_db_video(video_id, user, faceType, blockCharacterId, whitelistFace)
-    return result
+#     result = db_module.update_video(video_id, user, faceType, blockCharacterId, whitelistFace)
+#     return result
 
 """
 * update video after save s3
@@ -221,38 +234,45 @@ def update_video_upload():
     videoId = request.form["videoId"]
 
     # video url 찾기
-    videoUrl = module.db_module.read_video_url(videoId, user)
+    videoUrl = db_module.read_origin_video(videoId, user)
 
     # faceType 가져옴
     faceType = request.form['faceType']
 
+    print("AAAAABBBBBBAAAAAAA")
+
     # blockCharacterId 선택적으로 가져옴
-    if faceType == FaceTypeClass.character:
-        blockCharacterId = request.form['blockCharacterId'] 
+    if faceType == FaceTypeClass.character.value:
+        print("AAAAABBBBBB")
+        blockCharacterId = request.form['blockCharacterId']
+        blockCharacterImg = db_module.read_block_character_url(blockCharacterId)
+        print(blockCharacterImg)
     else:
+        blockCharacterImg = None
         blockCharacterId = None
     
-    whitelistFaceId = request.form.getlist["whitelist_face_id"]
-    
+    whitelistFaceId = request.form.getlist("whitelist_face_id") #이미지 없을경우 예외처리
+    whitelistFaceImgList = db_module.read_whitelist_face_url(user, whitelistFaceId)
+
     # True or False 리턴
-    result = module.db_module.update_video(videoId, user, faceType, blockCharacterId, whitelistFaceId)
+    result = db_module.update_video(videoId, user, faceType, whitelistFaceId, blockCharacterId) # ID를 받아와서 찾은다음에 url
 
     if result == True:
         # 키 이름은 나중에 수정 필요
         # ai에 요청하게 될 부분임
         task = celery.send_task('tasks.test_celery', kwargs=
             {
-                'b' : faceType, # 모자이크 또는 캐릭터
-                'c' : whitelistFace, # url 리스트
-                'd' : blockCharacterId, # url로 가져와야함
+                'faceType' : faceType, # 모자이크 또는 캐릭터
+                'whitelistFaceImgList' : whitelistFaceImgList, # url 리스트
+                'blockCharacterImgUrl' : blockCharacterImg, # url로 가져와야함
                 # 'a' : video_id,
-                'e' : videoUrl
+                'videoUrl' : videoUrl,
+                "user" : str(user)
             })
         # taskId 리턴
+        db_module.update_video_celery(videoId, user, task, task.status)
 
-        module.db_module.update_celeryId_video(videoId, user, task.id, task.status)
-
-        return task.id
+        return {"id" : str(task.id)}
     else:
         return False
 
@@ -261,23 +281,29 @@ def update_video_upload():
 """
 def get_after_video_status(taskId):
     token = request.headers.get("Token")
+
     user = module.token.get_user(token)
+
     if user == False:
         return False
-    result = module.db_module.get_after_video_status(user, taskId)
+
+    result = db_module.read_celery_status(user, taskId)
 
     if result != None:
-        return result
+        return {"status" : result}
     
 """
 * 특정 유저에 대한 비디오 결과 모두 조회하기
 """
 def get_multiple_after_video():
     token = request.headers.get("Token")
+
     user = module.token.get_user(token)
+
     if user == False:
         return False
-    result = module.db_module.read_multiple_after_video(user)
+
+    result = module.db_module.read_proccessed_video(user)
 
     if result != None:
         return result

@@ -86,7 +86,7 @@ class BlockCharacter(db.Document):
         self.created_at = created_at
 
 class Celery(db.Document):
-    _id = db.ObjectIdField()
+    _id = db.StringField()
     status = db.StringField()
     result = db.StringField()
     traceback = db.StringField()
@@ -97,7 +97,7 @@ class Video(db.Document):
     _id = db.ObjectIdField()
     user_id = db.ReferenceField(User, required=True)
     origin_url = db.StringField(required=True)
-    processed_url_id = db.ReferenceField(Celery)
+    processed_url_id = db.StringField()
     status = db.StringField(required=True)
     face_type = db.EnumField(FaceTypeClass, required=True)
     block_character_id = db.ReferenceField(BlockCharacter)

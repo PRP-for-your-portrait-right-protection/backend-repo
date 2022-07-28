@@ -12,7 +12,7 @@ class StatusClass(enum.Enum):
     deleted = "DELETED"
 
 class FaceTypeClass(enum.Enum):
-    mosic = "mosic"
+    mosaic = "mosaic"
     character = "character"
 
 class SchemaName(enum.Enum):
