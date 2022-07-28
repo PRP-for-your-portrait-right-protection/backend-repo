@@ -31,7 +31,7 @@ class ProccessedVideosClass(Resource):
             {
                 필수 : "video_id" : "id",
                 필수 : "whitelist_face_id" : ["id", "id"],
-                필수 : "faceType" : "character or mosaic",
+                필수 : "face_type" : "character or mosaic",
                 선택 : "block_character_id" : "id",
             }
         # @return : {celeryId : "id"}
