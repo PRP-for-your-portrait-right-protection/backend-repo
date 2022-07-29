@@ -44,7 +44,7 @@ class WhitelistFacesClass(Resource):
                 return Response(
                     response=json.dumps(
                         {
-                            "message":status_code.file_download_02_fail,
+                            "message":status_code.create_02_fail,
                         }
                     ),
                     status=404,
@@ -80,7 +80,7 @@ class WhitelistFacesIdClass(Resource):
                 return Response(
                     response=json.dumps(
                         {
-                            "message":status_code.file_download_02_fail,
+                            "message":status_code.update_02_fail,
                         }
                     ),
                     status=404,
@@ -109,7 +109,7 @@ class WhitelistFacesIdClass(Resource):
                 return Response(
                     response=json.dumps(
                         {
-                            "message":status_code.file_remove_02_fail,
+                            "message":status_code.delete_02_fail,
                         }
                     ),
                     status=404,
@@ -145,7 +145,7 @@ class WhitelistFacesImagesClass(Resource):
                 return Response(
                     response=json.dumps(
                         {
-                            "message":status_code.file_remove_02_fail,
+                            "message":status_code.create_02_fail,
                         }
                     ),
                     status=404,
@@ -212,7 +212,7 @@ class WhitelistFacesImagesClass(Resource):
                 return Response(
                     response=json.dumps(
                         {
-                            "message":status_code.file_remove_02_fail,
+                            "message":status_code.read_02_fail,
                         }
                     ),
                     status=404,
@@ -247,7 +247,7 @@ class WhitelistFacesImageIdClass(Resource):
                 return Response(
                     response=json.dumps(
                         {
-                            "message":status_code.file_remove_02_fail,
+                            "message":status_code.delete_02_fail,
                         }
                     ),
                     status=404,
