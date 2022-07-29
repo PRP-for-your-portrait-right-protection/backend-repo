@@ -22,7 +22,6 @@ parser.add_argument('phone', location='form', required=False)
 @Users.doc(response={200: 'SUCCESS'})
 @Users.doc(response={404: 'Failed'})
 class UserEmailValidaionClass(Resource):
-    
     def post(self):
         """
         # 아이디 중복체크
@@ -225,7 +224,7 @@ class AuthClass(Resource):
         """
         # 로그인
         # @form-data : email, password 
-        # @return : token
+        # @return : {"token": "token", "user_name": "user_name"}
         """
         try:
             token = user_module.login()
@@ -251,12 +250,7 @@ class AuthClass(Resource):
                 )
             elif token != None:
                 return Response(
-                    response=json.dumps(
-                        {
-                            "message":status_code.member_login_01_success,
-                            "token" : token
-                        }
-                    ),
+                    response=json.dumps(token),
                     status=200,
                     mimetype="application/json"
                 )
