@@ -27,8 +27,7 @@ def s3_put_object(s3, bucket, filepath, access_key):
     :return: 성공 시 True, 실패 시 False 반환
     '''
     try:
-        # s3.Object('jhmys3bucket35', access_key).put(Body=filepath)
-        s3.upload_file(filepath, bucket, access_key)
+        s3.upload_file(filepath, bucket, access_key, ExtraArgs={'ACL':'public-read'})
     except Exception as e:
         print(e)
         return False
