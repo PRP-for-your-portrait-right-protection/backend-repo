@@ -1,51 +1,55 @@
-#######################FILE#######################
-# file save code
-file_save_01_success = "FS01"
-file_save_02_fail = "FS02"
+#######################CRUD#######################
+# create code
+create_01_success = "CC01"
+create_02_fail = "CC02"
 
-# file down code
-file_download_01_success = "FD01"
-file_download_02_fail = "FD02"
+# read code
+read_01_success = "RC01"
+read_02_fail = "RC02"
 
-# file update code
-file_update_01_success = "FU01"
-file_update_02_fail = "FU02"
+# update code
+update_01_success = "UC01"
+update_02_fail = "UC02"
 
-# file delete code
-file_remove_01_success = "FR01"
-file_remove_02_fail = "FR02"
+# delete code
+delete_01_success = "DC01"
+delete_02_fail = "DC02"
 
-########################AI########################
-# post ai code
-post_ai_01_success = "PI01"
-post_ai_02_fail = "PI02"
+#######################AI#######################
+# push celery code
+celery_push_01_success = "CP01"
+celery_push_02_fail = "CP02"
 
-######################MEMBER######################
-# id-check code
-member_id_check_01_success = "MC01"
-member_id_check_02_fail = "MC02"
+# read code
+read_celery_status_01_success = "CSS01"
+read_celery_status_02_fail = "CS02"
+
+######################USER######################
+# email validation code
+user_email_validation_01_success = "UE01"
+user_email_validation_02_fail = "UE02"
 
 # signup code
-member_signup_01_success = "MS01"
-member_signup_02_fail = "MS02"
+user_signup_01_success = "US01"
+user_signup_02_fail = "US02"
 
-# login code
-member_login_01_success = " ML01"
-member_login_02_notmatch = "ML02"
-member_login_03_fail = "ML03"
+# auth code
+user_auth_01_success = "UA01"
+user_auth_02_notmatch = "UA02"
+user_auth_03_fail = "UA03"
 
-# find id code
-member_find_id_01_success = "MI01"
-member_find_id_02_fail = "MI02"
+# find email code
+user_find_email_01_success = "UF01"
+user_find_email_02_fail = "UF02"
 
-# find password code
-member_find_password_01_success = "MP01"
-member_find_password_02_fail = "MP02"
+# password validation code
+user_password_validation_01_success = "UP01"
+user_password_validation_02_fail = "UP02"
 
 # replace password code
-member_replace_password_01_success = "MR01"
-member_replace_password_02_fail = "MR02"
+user_replace_password_01_success = "UR01"
+user_replace_password_02_fail = "UR02"
 
-# delete member code
-member_delete_01_success = "MD01"
-member_delete_01_fail = "MD02"
+# delete user code
+user_delete_01_success = "UD01"
+user_delete_01_fail = "UD02"

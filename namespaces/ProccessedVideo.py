@@ -48,7 +48,7 @@ class ProccessedVideosClass(Resource):
                 return Response(
                     response=json.dumps(
                         {
-                            "message":status_code.file_download_02_fail,
+                            "message":status_code.celery_push_02_fail,
                         }
                     ),
                     status=404,
@@ -83,7 +83,7 @@ class ProccessedVideosClass(Resource):
                 return Response(
                     response=json.dumps(
                         {
-                            "message":status_code.file_download_02_fail,
+                            "message":status_code.read_02_fail,
                         }
                     ),
                     status=404,
@@ -116,7 +116,7 @@ class ProccessedVideosCeleryStatusCheckClass(Resource):
                 return Response(
                     response=json.dumps(
                         {
-                            "message":status_code.file_download_02_fail,
+                            "message":status_code.read_celery_status_02_fail,
                         }
                     ),
                     status=404,
@@ -149,7 +149,7 @@ class ProccessedVideosOneCheckClass(Resource):
                 return Response(
                     response=json.dumps(
                         {
-                            "message":status_code.file_remove_02_fail,
+                            "message":status_code.delete_02_fail,
                         }
                     ),
                     status=404,

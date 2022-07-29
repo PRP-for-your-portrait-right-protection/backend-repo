@@ -33,7 +33,7 @@ class UserEmailValidaionClass(Resource):
                 return Response(
                     response = json.dumps(
                         {
-                            "result" : status_code.member_id_check_01_success,
+                            "result" : status_code.user_email_validation_01_success,
                         }
                     ),
                     status = 200,
@@ -43,7 +43,7 @@ class UserEmailValidaionClass(Resource):
                 return Response(
                     response = json.dumps(
                         {
-                            "message" : status_code.member_id_check_02_fail
+                            "message" : status_code.user_email_validation_02_fail
                         }
                     ),
                     status = 409,
@@ -72,7 +72,7 @@ class UsersClass(Resource):
                 return Response(
                     response = json.dumps(
                         {
-                            "result" : status_code.member_signup_01_success,
+                            "result" : status_code.user_signup_01_success,
                             "id" : idReceive,
                         }
                     ),
@@ -83,7 +83,7 @@ class UsersClass(Resource):
                 return Response(
                     response = json.dumps(
                         {
-                            "message" : status_code.member_signup_02_fail
+                            "message" : status_code.user_signup_02_fail
                         }
                     ),
                     status = 404,
@@ -118,7 +118,7 @@ class UserEmailClass(Resource):
                 return Response(
                     response = json.dumps(
                         {
-                            "message" : status_code.member_find_id_02_fail
+                            "message" : status_code.user_find_email_02_fail
                         }
                     ),
                     status = 404,
@@ -146,7 +146,7 @@ class UserPasswordValidationClass(Resource):
                 return Response(
                     response = json.dumps(
                         {
-                            "message" : status_code.member_find_password_01_success,
+                            "message" : status_code.user_password_validation_01_success,
                         }
                     ),
                     status = 200,
@@ -156,7 +156,7 @@ class UserPasswordValidationClass(Resource):
                 return Response(
                     response = json.dumps(
                         {
-                            "message" :status_code.member_find_password_02_fail
+                            "message" :status_code.user_password_validation_02_fail
                         }
                     ),
                     status = 404,
@@ -184,7 +184,7 @@ class UserUpdatePasswordClass(Resource):
                 return Response(
                     response = json.dumps(
                         {
-                            "message" : status_code.member_replace_password_01_success
+                            "message" : status_code.user_replace_password_01_success
                         }
                     ),
                     status = 200,
@@ -194,7 +194,7 @@ class UserUpdatePasswordClass(Resource):
                 return Response(
                     response = json.dumps(
                         {
-                            "message" : status_code.member_replace_password_02_fail
+                            "message" : status_code.user_replace_password_02_fail
                         }
                     ),
                     status = 404,
@@ -232,7 +232,7 @@ class AuthClass(Resource):
                 return Response(
                     response=json.dumps(
                         {
-                            "message":status_code.member_login_02_notmatch,
+                            "message":status_code.user_auth_02_notmatch,
                         }
                     ),
                     status=404,
@@ -242,7 +242,7 @@ class AuthClass(Resource):
                 return Response(
                     response=json.dumps(
                         {
-                            "message":status_code.member_login_03_fail,
+                            "message":status_code.user_auth_03_fail,
                         }
                     ),
                     status=424, #이전 요청이 실패하였기 때문에 지금의 요청도 실패

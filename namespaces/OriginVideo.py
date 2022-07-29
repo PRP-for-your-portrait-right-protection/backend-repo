@@ -41,7 +41,7 @@ class OriginVideosClass(Resource):
                 return Response(
                     response=json.dumps(
                         {
-                            "message":status_code.file_download_02_fail,
+                            "message":status_code.create_02_fail,
                         }
                     ),
                     status=404,
