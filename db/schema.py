@@ -11,8 +11,8 @@ class User(db.Document):
     name = db.StringField(required=True)
     phone = db.StringField(required=True, max_length=11)
     is_deleted = db.BooleanField(required=True)
-    created_at = db.DateField(required=True)
-    updated_at = db.DateField()
+    created_at = db.DateTimeField(required=True)
+    updated_at = db.DateTimeField()
     
     def __init__(self, email, password, name, phone, is_deleted, created_at, *args, **kwargs):
         super(User, self).__init__(*args, **kwargs)
@@ -43,8 +43,8 @@ class WhitelistFace(db.Document):
     user_id = db.ReferenceField(User, required=True)
     name = db.StringField(required=True)
     is_deleted = db.BooleanField(required=True)
-    created_at = db.DateField(required=True)
-    updated_at = db.DateField()
+    created_at = db.DateTimeField(required=True)
+    updated_at = db.DateTimeField()
 
     def __init__(self, user_id, name, is_deleted, created_at, *args, **kwargs):
         super(WhitelistFace, self).__init__(*args, **kwargs)
@@ -58,8 +58,8 @@ class WhitelistFaceImage(db.Document):
     whitelist_face_id = db.ReferenceField(WhitelistFace, required=True)
     url = db.StringField(required=True)
     is_deleted = db.BooleanField(required=True)
-    created_at = db.DateField(required=True)
-    updated_at = db.DateField()
+    created_at = db.DateTimeField(required=True)
+    updated_at = db.DateTimeField()
     
     def __init__(self, whitelist_face_id, url, is_deleted, created_at, *args, **kwargs):
         super(WhitelistFaceImage, self).__init__(*args, **kwargs)
@@ -74,8 +74,8 @@ class BlockCharacter(db.Document):
     url = db.StringField(required=True)
     scope = db.EnumField(ScopeClass, requried=True)      
     is_deleted = db.BooleanField(required=True)
-    created_at = db.DateField(required=True)
-    updated_at = db.DateField()
+    created_at = db.DateTimeField(required=True)
+    updated_at = db.DateTimeField()
     
     def __init__(self, user_id, url, scope, is_deleted, created_at, *args, **kwargs):
         super(BlockCharacter, self).__init__(*args, **kwargs)
@@ -91,7 +91,7 @@ class Celery(db.Document):
     result = db.StringField()
     traceback = db.StringField()
     children = db.ListField()
-    date_done = db.DateField()
+    date_done = db.DateTimeField()
 
 class Video(db.Document):
     _id = db.ObjectIdField()
@@ -102,9 +102,9 @@ class Video(db.Document):
     face_type = db.EnumField(FaceTypeClass, required=True)
     block_character_id = db.ReferenceField(BlockCharacter)
     whitelist_faces = db.ListField(db.StringField())
-    created_at = db.DateField(required=True)
-    completed_at = db.DateField()
-    updated_at = db.DateField()
+    created_at = db.DateTimeField(required=True)
+    completed_at = db.DateTimeField()
+    updated_at = db.DateTimeField()
     
     def __init__(self, user_id, origin_url, status, created_at, *args, **kwargs):
         super(Video, self).__init__(*args, **kwargs)
