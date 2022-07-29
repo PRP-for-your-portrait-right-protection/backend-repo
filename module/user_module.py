@@ -53,9 +53,10 @@ def login():
 
     pwHash = hashlib.sha256(password.encode("utf-8")).hexdigest()
     try:
-        userId = str(schema.User.objects(email = email, password = pwHash).first().get_id())
+        user = schema.User.objects(email = email, password = pwHash).first()
+        userId = str(user.get_id())
         token = create_token(userId)
-        return token    
+        return {"token": token, "user_name": user.name}
     except Exception as ex:
         print('*********')
         print(ex)

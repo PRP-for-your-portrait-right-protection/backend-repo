@@ -7,22 +7,22 @@ from module import db_module, file_module
 from celery import Celery
 
 
-celery = Celery('celery-repo',
-    broker='amqp://localhost:5672',
-    result_backend='mongodb://localhost:27017/',
-    mongodb_backend_settings = {
-        'database': 'silicon',
-        'taskmeta_collection': 'celery'
-    }
-)
 # celery = Celery('celery-repo',
-#     broker='amqp://admin:mypass@rabbitmq:5672',
-#     result_backend='mongodb://db:27017/',
+#     broker='amqp://localhost:5672',
+#     result_backend='mongodb://localhost:27017/',
 #     mongodb_backend_settings = {
 #         'database': 'silicon',
 #         'taskmeta_collection': 'celery'
 #     }
 # )
+celery = Celery('celery-repo',
+    broker='amqp://admin:mypass@rabbitmq:5672',
+    result_backend='mongodb://db:27017/',
+    mongodb_backend_settings = {
+        'database': 'silicon',
+        'taskmeta_collection': 'celery'
+    }
+)
 
 ################### WHITELIST FACE ###################
 
@@ -76,7 +76,7 @@ def whitelist_face_image_upload(whitelistFace):
     if user == False:
         return False
     f = request.files['file']
-    location = file_module.file_upload(user, SchemaName.whitelistFaceImage, f)
+    location = file_module.file_upload(user, SchemaName.whitelistFaceImage.value, f)
     if location == False:
         return False
     id = module.db_module.create_whitelist_face_image(whitelistFace, location)
@@ -132,7 +132,7 @@ def upload_user_block_character():
     if user == False:
         return False
     f = request.files['file']
-    location = file_module.file_upload(user, SchemaName.blockCharacter, f)
+    location = file_module.file_upload(user, SchemaName.blockCharacter.value, f)
     if location == False:
         return False
     id = module.db_module.create_block_character(user, location)
@@ -175,7 +175,7 @@ def origin_video_upload():
     if user == False:
         return False
     f = request.files['file']
-    location = file_module.file_upload(user, SchemaName.video, f)
+    location = file_module.file_upload(user, SchemaName.video.value, f)
     if location == False:
         return False
     id = module.db_module.create_video(user, location)
