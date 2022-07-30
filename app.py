@@ -5,6 +5,8 @@ from db.db_connection import db_connection
 from namespaces import BlockCharacter, OriginVideo, ProccessedVideo, User, WhitelistFace
 
 app = Flask(__name__)
+app.config.update(DEBUG=True)
+
 CORS(app, resources={r'*': {'origins': 'http://localhost:3000'}})
 
 db_connection(app)
