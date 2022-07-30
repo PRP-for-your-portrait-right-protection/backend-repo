@@ -106,13 +106,13 @@ class ProccessedVideosCeleryStatusCheckClass(Resource):
         """
         try:
             result = crud_module.get_after_video_status(taskId)
-            if result != False:
+            if result["status"] == "SUCCESS" or result["status"] == "PENDING":
                 return Response(
                     response = json.dumps(result),
                     status = 200,
                     mimetype = "application/json"
                 )
-            else:
+            elif result["status"] == "FAILURE":
                 return Response(
                     response=json.dumps(
                         {

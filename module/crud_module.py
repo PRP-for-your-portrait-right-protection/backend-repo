@@ -239,15 +239,15 @@ def update_video_upload():
     # faceType 가져옴
     faceType = request.form['face_type']
 
+
     # blockCharacterId 선택적으로 가져옴
     if faceType == FaceTypeClass.character.value:
         blockCharacterId = request.form['block_character_id']
         blockCharacterImg = db_module.read_block_character_url(blockCharacterId)
-        print(blockCharacterImg)
     else:
         blockCharacterImg = None
         blockCharacterId = None
-    
+
     whitelistFaceId = request.form.getlist("whitelist_face_id") #이미지 없을경우 예외처리
     whitelistFaceImgList = db_module.read_whitelist_face_url(user, whitelistFaceId)
 
@@ -255,20 +255,37 @@ def update_video_upload():
     result = db_module.update_video(videoId, user, faceType, whitelistFaceId, blockCharacterId) # ID를 받아와서 찾은다음에 url
 
     if result == True:
-        # 키 이름은 나중에 수정 필요
-        # ai에 요청하게 될 부분임
-        task = celery.send_task('tasks.test_celery', kwargs=
-            {
-                'faceType' : faceType, # 모자이크 또는 캐릭터
-                'whitelistFaceImgList' : whitelistFaceImgList, # url 리스트
-                'blockCharacterImgUrl' : blockCharacterImg, # url로 가져와야함
-                'videoUrl' : videoUrl,
-                "user" : str(user)
-            })
-        # taskId 리턴
-        db_module.update_video_celery(videoId, user, task, task.status)
+        if faceType == "mosaic":
+            # 키 이름은 나중에 수정 필요
+            # ai에 요청하게 될 부분임
+            task = celery.send_task('tasks.mosaic', kwargs=
+                {
+                    'whitelistFaceImgList' : whitelistFaceImgList, # url 리스트
+                    'videoUrl' : videoUrl,
+                    "user" : str(user)
+                })
 
-        return {"id" : str(task.id)}
+            result2 = db_module.update_video_celery(videoId, user, task, task.status)
+
+            if result2 == True:
+                return {"id" : str(task.id)}
+            else:
+                return False
+        elif faceType == "character":
+            task = celery.send_task('tasks.character', kwargs=
+                {
+                    'whitelistFaceImgList' : whitelistFaceImgList, # url 리스트
+                    'blockCharacterImgUrl' : blockCharacterImg, # url로 가져와야함
+                    'videoUrl' : videoUrl,
+                    "user" : str(user)
+                })
+    
+            result2 = db_module.update_video_celery(videoId, user, task, task.status)
+
+            if result2 == True:
+                return {"id" : str(task.id)}
+            else:
+                return False
     else:
         return False
 
@@ -285,8 +302,17 @@ def get_after_video_status(taskId):
 
     result = db_module.read_celery_status(user, taskId)
 
-    if result != None:
-        return {"status" : result}
+    if result == "FAILURE":
+        status = celery.AsyncResult(taskId, app=celery)
+        result2 = db_module.update_video_celery_failure(user, taskId) #video컬렉션의 status를 FAILURE로 업데이트
+        if result2 == True:
+            return {"status" : "FAILURE"} #셀러리의 결과과 failure이고, video 컬렉션의 status 업데이트를 성공한 경우
+        else:
+            return {"status" : "FAILURE"} #셀러리의 결과과 failure이고, video 컬렉션의 status 업데이트를 실패한 경우
+    elif result == 0:
+            return {"status" : "PENDING"} #PENDING
+    else:
+        return {"status" : result} #SUCCESS
     
 """
 * 특정 유저에 대한 비디오 결과 모두 조회하기

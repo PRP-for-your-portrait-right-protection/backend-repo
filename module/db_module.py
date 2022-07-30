@@ -251,7 +251,6 @@ def update_video_celery(_id, user, task, status):
         completed_at = datetime.now()
     )
     if processedVideo > 0:
-        print("?????????????????!!!!!!!!!")
         return True
     else:
         print("Can't be modified")  
@@ -285,13 +284,33 @@ def read_celery_status(user, taskId):
 
     temp3 = schema.Celery.objects(_id = temp.processed_url_id).first()
 
-    if temp3 != None and temp3.status == "SUCCESS":
-        temp2 = schema.Video.objects(user_id = user, processed_url_id = taskId).update(status = "SUCCESS")
-        if temp2 > 0:
+    if temp3 != None:
+        if temp3.status == "SUCCESS":
+            temp2 = schema.Video.objects(user_id = user, processed_url_id = taskId).update(status = "SUCCESS")
+            if temp2 > 0:
+                return temp3.status
+            else:
+                # db 업데이트 실패
+                return "update Failure"
+        elif temp3.status == "FAILURE":
+            # failure일 경우
             return temp3.status
-        else:
-            # db 업데이트 실패
-            return "update Failure"
     else:
-        # failure, pending 이면 여기로
-        return temp.status
+        # pending일 경우 (셀러리 결과가 db에 저장되지 않음)
+        return 0
+
+"""
+* video status update when the celery status is failure
+"""
+def update_video_celery_failure(user, taskId):
+    update = schema.Video.objects(
+        user_id = user, 
+        processed_url_id = taskId
+        ).update(
+        status = StatusClass.failure.value
+    )
+    if update > 0:
+        return True
+    else:
+        return False
+    
