@@ -1,9 +1,7 @@
-from flask import Flask, Response, request
+from flask import Response
 import json
-from static import status_code
 from module import user_module
-from flask_restx import Resource, Api, Namespace
-from werkzeug.datastructures import FileStorage
+from flask_restx import Resource, Namespace
 
 ####################################회원#######################################
 Users = Namespace(
@@ -29,23 +27,16 @@ class UserEmailValidaionClass(Resource):
         # @return : 200 or 409
         """
         try:
-            if user_module.email_validation():
+            result, message = user_module.email_validation()
+            if result != False:
                 return Response(
-                    response = json.dumps(
-                        {
-                            "result" : status_code.user_email_validation_01_success,
-                        }
-                    ),
+                    response = json.dumps(message),
                     status = 200,
                     mimetype = "application/json"
                 )
             else:
                 return Response(
-                    response = json.dumps(
-                        {
-                            "message" : status_code.user_email_validation_02_fail
-                        }
-                    ),
+                    response = json.dumps(message),
                     status = 409,
                     mimetype = "application/json"
                 )
@@ -67,25 +58,16 @@ class UsersClass(Resource):
         # @return : 200 or 404
         """
         try:
-            idReceive = user_module.create_users()
-            if idReceive != None:
+            result, message = user_module.create_users()
+            if result != False:
                 return Response(
-                    response = json.dumps(
-                        {
-                            "result" : status_code.user_signup_01_success,
-                            "id" : idReceive,
-                        }
-                    ),
+                    response = json.dumps(message),
                     status = 201,
                     mimetype = "application/json"
                 )
             else:
                 return Response(
-                    response = json.dumps(
-                        {
-                            "message" : status_code.user_signup_02_fail
-                        }
-                    ),
+                    response = json.dumps(message),
                     status = 404,
                     mimetype = "application/json"
                 )
@@ -107,20 +89,16 @@ class UserEmailClass(Resource):
         # @return : {email: "email"}
         """
         try:
-            result = user_module.find_email()
-            if result != None:
+            result, message = user_module.find_email()
+            if result != False:
                 return Response(
-                    response = json.dumps(result),
+                    response = json.dumps(message),
                     status = 200,
                     mimetype = "application/json"
                 )
             else:
                 return Response(
-                    response = json.dumps(
-                        {
-                            "message" : status_code.user_find_email_02_fail
-                        }
-                    ),
+                    response = json.dumps(message),
                     status = 404,
                     mimetype = "application/json"
                 )
@@ -142,23 +120,16 @@ class UserPasswordValidationClass(Resource):
         # @return : message
         """
         try:
-            if user_module.password_validation():
+            result, message = user_module.password_validation()
+            if result != False:
                 return Response(
-                    response = json.dumps(
-                        {
-                            "message" : status_code.user_password_validation_01_success,
-                        }
-                    ),
+                    response = json.dumps(message),
                     status = 200,
                     mimetype = "application/json"
                 )
             else:
                 return Response(
-                    response = json.dumps(
-                        {
-                            "message" :status_code.user_password_validation_02_fail
-                        }
-                    ),
+                    response = json.dumps(message),
                     status = 404,
                     mimetype = "application/json"
                 )
@@ -180,23 +151,16 @@ class UserUpdatePasswordClass(Resource):
         # @return : message
         """
         try:
-            if user_module.update_password():
+            result, message = user_module.update_password()
+            if result != False:
                 return Response(
-                    response = json.dumps(
-                        {
-                            "message" : status_code.user_replace_password_01_success
-                        }
-                    ),
+                    response = json.dumps(message),
                     status = 200,
                     mimetype = "application/json"
                 )
             else:
                 return Response(
-                    response = json.dumps(
-                        {
-                            "message" : status_code.user_replace_password_02_fail
-                        }
-                    ),
+                    response = json.dumps(message),
                     status = 404,
                     mimetype = "application/json"
                 )
@@ -227,30 +191,16 @@ class AuthClass(Resource):
         # @return : {"token": "token", "user_name": "user_name"}
         """
         try:
-            token = user_module.login()
-            if token == 1:
+            result, message = user_module.login()
+            if result != False:
                 return Response(
-                    response=json.dumps(
-                        {
-                            "message":status_code.user_auth_02_notmatch,
-                        }
-                    ),
+                    response=json.dumps(message),
                     status=404,
                     mimetype="application/json"
                 )
-            elif token == 2:
+            else:
                 return Response(
-                    response=json.dumps(
-                        {
-                            "message":status_code.user_auth_03_fail,
-                        }
-                    ),
-                    status=424, #이전 요청이 실패하였기 때문에 지금의 요청도 실패
-                    mimetype="application/json"
-                )
-            elif token != None:
-                return Response(
-                    response=json.dumps(token),
+                    response=json.dumps(message),
                     status=200,
                     mimetype="application/json"
                 )

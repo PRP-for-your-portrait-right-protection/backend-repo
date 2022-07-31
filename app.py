@@ -5,6 +5,7 @@ from db.db_connection import db_connection
 from namespaces import BlockCharacter, OriginVideo, ProccessedVideo, User, WhitelistFace
 
 app = Flask(__name__)
+# app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # 용량제한
 CORS(app, resources={r'*': {'origins': 'http://localhost:3000'}})
 
 db_connection(app)

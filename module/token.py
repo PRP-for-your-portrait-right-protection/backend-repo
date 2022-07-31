@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from db import schema
 import jwt
 from bson import ObjectId
+from static import status_code
 
 def create_token(user_id):
     try:
@@ -14,15 +15,16 @@ def create_token(user_id):
             }
             token = jwt.encode(payload, SECRET_KEY, algorithm = 'HS256')
             if token == None:
-                print("Error occurred")
-                return 2
-            return token
+                print(status_code.user_auth_03_fail)
+                return False, {"error":status_code.user_auth_03_fail}
+            return True, token
         else:
-           return 1
+           return False, {"error":status_code.user_auth_02_notmatch}
     except Exception as ex:
         print("***********")
         print(ex)
         print("***********")
+        return False, {"error": str(ex)}
 
 """
 * 토큰 유효성 검사
