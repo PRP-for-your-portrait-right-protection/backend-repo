@@ -1,6 +1,5 @@
-from flask import Response, request
+from flask import Response
 import json
-from static import status_code
 from module import crud_module
 from flask_restx import Resource, Namespace
 from werkzeug.datastructures import FileStorage
@@ -40,20 +39,16 @@ class OriginBlockCharactersClass(Resource):
             }
         """
         try:
-            result = crud_module.get_origin_block_character()
+            result, message = crud_module.get_origin_block_character()
             if result != False:
                 return Response(
-                    response = json.dumps(result),
+                    response = json.dumps(message),
                     status = 200,
                     mimetype = "application/json"
                 )
             else:
                 return Response(
-                    response=json.dumps(
-                        {
-                            "message":status_code.read_02_fail,
-                        }
-                    ),
+                    response=json.dumps(message),
                     status=404,
                     mimetype="application/json"
                 )
@@ -77,20 +72,16 @@ class UserBlockCharactersClass(Resource):
         # @return : {id:"", url: ""}
         '''
         try:
-            result = crud_module.upload_user_block_character()
+            result, message = crud_module.upload_user_block_character()
             if result != False:
                 return Response(
-                    response = json.dumps(result),
+                    response = json.dumps(message),
                     status = 200,
                     mimetype = "application/json"
                 )
             else:
                 return Response(
-                    response=json.dumps(
-                        {
-                            "message":status_code.create_02_fail,
-                        }
-                    ),
+                    response=json.dumps(message),
                     status=404,
                     mimetype="application/json"
                 )
@@ -118,20 +109,16 @@ class UserBlockCharactersClass(Resource):
             }
         """
         try:
-            result = crud_module.get_user_block_character() 
+            result, message = crud_module.get_user_block_character() 
             if result != False:
                 return Response(
-                    response = json.dumps(result),
+                    response = json.dumps(message),
                     status = 200,
                     mimetype = "application/json"
                 )
             else:
                 return Response(
-                    response=json.dumps(
-                        {
-                            "message":status_code.read_02_fail,
-                        }
-                    ),
+                    response=json.dumps(message),
                     status=404,
                     mimetype="application/json"
                 )
@@ -154,20 +141,16 @@ class UserBlockCharactersIdClass(Resource):
         # @return : 200 or 404
         """
         try:
-            result = crud_module.delete_user_block_character(characterId)
+            result, message = crud_module.delete_user_block_character(characterId)
             if result != False:
                 return Response(
-                    response = json.dumps(result),
+                    response = json.dumps(message),
                     status = 200,
                     mimetype = "application/json"
                 )
             else:
                 return Response(
-                    response=json.dumps(
-                        {
-                            "message":status_code.delete_02_fail,
-                        }
-                    ),
+                    response=json.dumps(message),
                     status=404,
                     mimetype="application/json"
                 )

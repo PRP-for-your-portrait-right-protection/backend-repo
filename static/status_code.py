@@ -1,55 +1,69 @@
 #######################CRUD#######################
 # create code
-create_01_success = "CC01"
-create_02_fail = "CC02"
+create_01_success = "create success"
+create_02_fail = "create fail"
 
 # read code
-read_01_success = "RC01"
-read_02_fail = "RC02"
+read_01_success = "read success"
+read_02_fail = "read fail"
 
 # update code
-update_01_success = "UC01"
-update_02_fail = "UC02"
+update_01_success = "update success"
+update_02_fail = "update fail"
 
 # delete code
-delete_01_success = "DC01"
-delete_02_fail = "DC02"
+delete_01_success = "delete success"
+delete_02_fail = "delete fail"
+
+#######################ERROR#######################
+# token error code
+token_error = {"code": "TK02", "message": "Invalid token or can't find user. Please check the token"}
+
+# field error code
+field_error = "Can't find field: "
+
+# enum class error code
+enum_class_error = "Can't find enum class element: "
+
+# _id error code
+id_error = "Can't find _id or invalid _id: "
 
 #######################AI#######################
 # push celery code
-celery_push_01_success = "CP01"
-celery_push_02_fail = "CP02"
+celery_push_01_success = "celery push success"
+celery_push_02_fail = "celery push fail"
 
 # read code
-read_celery_status_01_success = "CSS01"
-read_celery_status_02_fail = "CS02"
+read_celery_status_01_success = "read celery status success"
+read_celery_status_02_fail = "read celery status fail"
 
 ######################USER######################
 # email validation code
-user_email_validation_01_success = "UE01"
-user_email_validation_02_fail = "UE02"
+user_email_validation_01_success = "user email validation success"
+user_email_validation_02_fail = "user email validation fail"
+user_email_validation_03_already = "This email is already exist"
 
 # signup code
-user_signup_01_success = "US01"
-user_signup_02_fail = "US02"
+user_signup_01_success = "user signup success"
+user_signup_02_fail = "user signup fail"
 
 # auth code
-user_auth_01_success = "UA01"
-user_auth_02_notmatch = "UA02"
-user_auth_03_fail = "UA03"
+user_auth_01_success = "user auth success"
+user_auth_02_notmatch = "user auth notmatch"
+user_auth_03_fail = "user auth fail"
 
 # find email code
-user_find_email_01_success = "UF01"
-user_find_email_02_fail = "UF02"
+user_email_find_01_success = "user email find success"
+user_email_find_02_fail = "user email find fail"
 
 # password validation code
-user_password_validation_01_success = "UP01"
-user_password_validation_02_fail = "UP02"
+user_password_validation_01_success = "user password validation success"
+user_password_validation_02_fail = "user password validation fail"
 
 # replace password code
-user_replace_password_01_success = "UR01"
-user_replace_password_02_fail = "UR02"
+user_password_replace_01_success = "user password replace success"
+user_password_replace_02_fail = "user password replace fail"
 
 # delete user code
-user_delete_01_success = "UD01"
-user_delete_01_fail = "UD02"
+user_delete_01_success = "user delete success"
+user_delete_01_fail = "user delete fail"
