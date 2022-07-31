@@ -78,7 +78,7 @@ def login():
         if result == False:
             return result, token
         else:
-            return True, {"token": token, "user_name": user.first().name}
+            return True, {"token": token, "email": user.first().email}
     except Exception as ex:
         print('*********')
         print("???????????")
