@@ -70,15 +70,18 @@ def login():
             return False, {"error": f'{status_code.field_error}password'}
 
         pwHash = hashlib.sha256(password.encode("utf-8")).hexdigest()
-        user = schema.User.objects(email = email, password = pwHash).first()
-        userId = str(user.get_id())
+        user = schema.User.objects(email = email, password = pwHash)
+        if user.count() == 0:
+            return False, {"error": "Can't find user"}
+        userId = str(user.first().get_id())
         result, token = create_token(userId)
         if result == False:
             return result, token
         else:
-            return True, {"token": token, "user_name": user.name}
+            return True, {"token": token, "user_name": user.first().name}
     except Exception as ex:
         print('*********')
+        print("???????????")
         print(ex)
         print('*********')
         return False, {"error": str(ex)}

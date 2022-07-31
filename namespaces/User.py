@@ -195,13 +195,13 @@ class AuthClass(Resource):
             if result != False:
                 return Response(
                     response=json.dumps(message),
-                    status=404,
+                    status=200,
                     mimetype="application/json"
                 )
             else:
                 return Response(
                     response=json.dumps(message),
-                    status=200,
+                    status=404,
                     mimetype="application/json"
                 )
         except Exception as ex:
