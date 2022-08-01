@@ -2,7 +2,8 @@ from flask import Flask
 from flask_cors import CORS
 from flask_restx import Api
 from db.db_connection import db_connection
-from namespaces import BlockCharacter, OriginVideo, ProccessedVideo, User, WhitelistFace
+from namespaces import BlockCharacter, OriginVideo, ProccessedVideo, User, WhitelistFace#이부분 잘 되면 놔두고 안되면 namespace바로 위로 내려야됨
+from prometheus_flask_exporter import PrometheusMetrics
 
 app = Flask(__name__)
 # app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # 용량제한
@@ -11,6 +12,17 @@ app.config.update(DEBUG=True)
 CORS(app, resources={r'*': {'origins': 'http://localhost:3000'}})
 
 db_connection(app)
+
+metrics = PrometheusMetrics(app)
+metrics.info('app_info', 'Application info', version='1.0.3')
+
+common_counter = metrics.counter(
+    'flask_by_endpoint_counter', 'Request count by endpoints',
+    labels={'endpoint': lambda: request.endpoint}
+)
+histogram = metrics.histogram('requests_by_status_and_path', 'Request latencies by status and path',
+    labels={'status': lambda r: r.status_code, 'path': lambda: request.path}
+)
 
 api = Api(
     app,

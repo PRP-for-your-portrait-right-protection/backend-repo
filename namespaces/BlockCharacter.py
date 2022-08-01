@@ -15,11 +15,14 @@ parser = BlockCharacters.parser()
 parser.add_argument('token', location='headers')
 parser.add_argument('file', type=FileStorage, location='files', required=False)
 
+from app import common_counter,histogram
 @BlockCharacters.route('/origin')
 @BlockCharacters.expect(parser)
 @BlockCharacters.doc(responses={200: 'Success'})
 @BlockCharacters.doc(responses={404: 'Failed'})
 class OriginBlockCharactersClass(Resource):
+    @common_counter
+    @histogram
     def get(self):
         """
         # 기존 케릭터 사진 url 가져오기
@@ -64,6 +67,8 @@ class OriginBlockCharactersClass(Resource):
 @BlockCharacters.doc(responses={200: 'Success'})
 @BlockCharacters.doc(responses={404: 'Failed'})
 class UserBlockCharactersClass(Resource):
+    @common_counter
+    @histogram
     def post(self):
         '''
         # 케릭터 한 개 버킷에 저장
@@ -89,7 +94,8 @@ class UserBlockCharactersClass(Resource):
             print("******************")
             print(ex)
             print("******************")
-
+    @common_counter
+    @histogram
     def get(self):
         """
         # 유저 케릭터 여러 개 url 가져오기
@@ -133,7 +139,8 @@ class UserBlockCharactersClass(Resource):
 @BlockCharacters.doc(responses={200: 'Success'})
 @BlockCharacters.doc(responses={404: 'Failed'})
 class UserBlockCharactersIdClass(Resource):
-    
+    @common_counter
+    @histogram
     def delete(self ,characterId):
         """
         # 캐릭터 한 개 삭제
