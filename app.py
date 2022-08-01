@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_cors import CORS
 from flask_restx import Api
 from db.db_connection import db_connection
@@ -8,7 +8,7 @@ app = Flask(__name__)
 # app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # 용량제한
 app.config.update(DEBUG=True)
 
-CORS(app, resources={r'*': {'origins': 'http://localhost:3000'}})
+CORS(app, resources={r'*': {'origins': '*'}})
 
 db_connection(app)
 

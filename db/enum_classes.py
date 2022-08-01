@@ -8,9 +8,9 @@ class StatusClass(enum.Enum):
     success = "SUCCESS"
     origin = "ORIGIN"
     processed = "PROCCESSED"
-    fail = "FAIL"
     deleted = "DELETED"
     failure = "FAILURE"
+    pending = "PENDING"
 
 class FaceTypeClass(enum.Enum):
     mosaic = "mosaic"
