@@ -1,6 +1,5 @@
-from flask import Response, request
+from flask import Response
 import json
-from static import status_code
 from module import crud_module
 from flask_restx import Resource, Namespace
 from werkzeug.datastructures import FileStorage
@@ -16,11 +15,14 @@ parser = BlockCharacters.parser()
 parser.add_argument('token', location='headers')
 parser.add_argument('file', type=FileStorage, location='files', required=False)
 
+from app import common_counter,histogram
 @BlockCharacters.route('/origin')
 @BlockCharacters.expect(parser)
 @BlockCharacters.doc(responses={200: 'Success'})
 @BlockCharacters.doc(responses={404: 'Failed'})
 class OriginBlockCharactersClass(Resource):
+    @common_counter
+    @histogram
     def get(self):
         """
         # 기존 케릭터 사진 url 가져오기
@@ -40,20 +42,16 @@ class OriginBlockCharactersClass(Resource):
             }
         """
         try:
-            result = crud_module.get_origin_block_character()
+            result, message = crud_module.get_origin_block_character()
             if result != False:
                 return Response(
-                    response = json.dumps(result),
+                    response = json.dumps(message),
                     status = 200,
                     mimetype = "application/json"
                 )
             else:
                 return Response(
-                    response=json.dumps(
-                        {
-                            "message":status_code.read_02_fail,
-                        }
-                    ),
+                    response=json.dumps(message),
                     status=404,
                     mimetype="application/json"
                 )
@@ -69,6 +67,8 @@ class OriginBlockCharactersClass(Resource):
 @BlockCharacters.doc(responses={200: 'Success'})
 @BlockCharacters.doc(responses={404: 'Failed'})
 class UserBlockCharactersClass(Resource):
+    @common_counter
+    @histogram
     def post(self):
         '''
         # 케릭터 한 개 버킷에 저장
@@ -77,20 +77,16 @@ class UserBlockCharactersClass(Resource):
         # @return : {id:"", url: ""}
         '''
         try:
-            result = crud_module.upload_user_block_character()
+            result, message = crud_module.upload_user_block_character()
             if result != False:
                 return Response(
-                    response = json.dumps(result),
+                    response = json.dumps(message),
                     status = 200,
                     mimetype = "application/json"
                 )
             else:
                 return Response(
-                    response=json.dumps(
-                        {
-                            "message":status_code.create_02_fail,
-                        }
-                    ),
+                    response=json.dumps(message),
                     status=404,
                     mimetype="application/json"
                 )
@@ -98,7 +94,8 @@ class UserBlockCharactersClass(Resource):
             print("******************")
             print(ex)
             print("******************")
-
+    @common_counter
+    @histogram
     def get(self):
         """
         # 유저 케릭터 여러 개 url 가져오기
@@ -118,20 +115,16 @@ class UserBlockCharactersClass(Resource):
             }
         """
         try:
-            result = crud_module.get_user_block_character() 
+            result, message = crud_module.get_user_block_character() 
             if result != False:
                 return Response(
-                    response = json.dumps(result),
+                    response = json.dumps(message),
                     status = 200,
                     mimetype = "application/json"
                 )
             else:
                 return Response(
-                    response=json.dumps(
-                        {
-                            "message":status_code.read_02_fail,
-                        }
-                    ),
+                    response=json.dumps(message),
                     status=404,
                     mimetype="application/json"
                 )
@@ -146,7 +139,8 @@ class UserBlockCharactersClass(Resource):
 @BlockCharacters.doc(responses={200: 'Success'})
 @BlockCharacters.doc(responses={404: 'Failed'})
 class UserBlockCharactersIdClass(Resource):
-    
+    @common_counter
+    @histogram
     def delete(self ,characterId):
         """
         # 캐릭터 한 개 삭제
@@ -154,20 +148,16 @@ class UserBlockCharactersIdClass(Resource):
         # @return : 200 or 404
         """
         try:
-            result = crud_module.delete_user_block_character(characterId)
+            result, message = crud_module.delete_user_block_character(characterId)
             if result != False:
                 return Response(
-                    response = json.dumps(result),
+                    response = json.dumps(message),
                     status = 200,
                     mimetype = "application/json"
                 )
             else:
                 return Response(
-                    response=json.dumps(
-                        {
-                            "message":status_code.delete_02_fail,
-                        }
-                    ),
+                    response=json.dumps(message),
                     status=404,
                     mimetype="application/json"
                 )

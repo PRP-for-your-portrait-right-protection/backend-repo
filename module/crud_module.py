@@ -1,11 +1,9 @@
-from flask import request, jsonify 
-from datetime import datetime
-from bson import ObjectId
+from flask import request 
 from db.enum_classes import ScopeClass, StatusClass, FaceTypeClass, SchemaName
 import module
+from static import status_code
 from module import db_module, file_module
 from celery import Celery
-
 
 # celery = Celery('celery-repo',
 #     broker='amqp://localhost:5672',
@@ -27,43 +25,55 @@ celery = Celery('celery-repo',
 ################### WHITELIST FACE ###################
 
 """
-* whitelist face upload - done
+* whitelist face upload
 """
 def upload_whitelist_face():
-    token = request.headers.get('Token')
-    user = module.token.get_user(token)
-    if user == False:
-        return False
-    name = request.form['name']
-    id = db_module.create_whitelist_face(user, name)
-    return {"id" : id}
+    try:
+        token = request.headers.get('Token')
+        user = module.token.get_user(token)
+        if user == False:
+            return False, {"error": status_code.token_error}
+        name = request.form.get('name')
+        if name == None or name == '':
+            return False, {"error": f'{status_code.field_error}name'}
+        result, message = db_module.create_whitelist_face(user, name)
+        return result, message
+    except Exception as ex:
+        print(ex)
+        return False, {"error": str(ex)}
 
 """
-* WhitelistFace update - done
+* WhitelistFace update
 """
 def update_whitelist_face(_id):
-    token = request.headers.get('Token')
-    user = module.token.get_user(token)
-    if user == False:
-        return False
-    name = request.form['face_name_after']
-    result = module.db_module.update_whitelist_face(user, _id, name)
-    if result == False:
-        return False
-    return result
+    try:
+        token = request.headers.get('Token')
+        user = module.token.get_user(token)
+        if user == False:
+            return False, {"error": status_code.token_error}
+        name = request.form.get('face_name_after')
+        if name == None or name == '':
+            return False, {"error": f'{status_code.field_error}face_name_after'}
+        result, message = module.db_module.update_whitelist_face(user, _id, name)
+        return result, message
+    except Exception as ex:
+        print(ex)
+        return False, {"error": str(ex)}     
 
 """
-* WhitelistFace delete - done
+* WhitelistFace delete
 """
 def delete_whitelist_face(_id):
-    token = request.headers.get('Token')
-    user = module.token.get_user(token)
-    if user == False:
-        return False
-    result = module.db_module.delete_whitelist_face(user, _id)
-    if result == False:
-        return False
-    return result
+    try:
+        token = request.headers.get('Token')
+        user = module.token.get_user(token)
+        if user == False:
+            return False, {"error": status_code.token_error}
+        result, message = module.db_module.delete_whitelist_face(user, _id)
+        return result, message
+    except Exception as ex:
+        print(ex)
+        return False, {"error": str(ex)}
 
 ################### WHITELIST FACE IMAGE ###################
 
@@ -71,42 +81,55 @@ def delete_whitelist_face(_id):
 * whitelist face image upload
 """
 def whitelist_face_image_upload(whitelistFace):
-    token = request.headers.get('Token')
-    user = module.token.get_user(token)
-    if user == False:
-        return False
-    f = request.files['file']
-    location = file_module.file_upload(user, SchemaName.whitelistFaceImage.value, f)
-    if location == False:
-        return False
-    id = module.db_module.create_whitelist_face_image(whitelistFace, location)
-    return {"id" : id}
-
+    try:
+        token = request.headers.get('Token')
+        user = module.token.get_user(token)
+        if user == False:
+            return False, {"error": status_code.token_error}
+        if 'file' not in request.files:
+            return False, {"error": f'{status_code.field_error}file'}
+        filename = request.files['file'].filename
+        if filename == None or filename == '':
+            return False, {"error": f'{status_code.field_error}file'}
+        f = request.files['file']
+        fileResult, location = file_module.file_upload(user, SchemaName.whitelistFaceImage.value, f)
+        if fileResult == False:
+            return fileResult, location
+        result, message = module.db_module.create_whitelist_face_image(whitelistFace, location)
+        return result, message
+    except Exception as ex:
+        print(ex)
+        return False, {"error": str(ex)}
+    
 """
 * whitelist face image get
 """
 def get_whitelist_face_image():
-    token = request.headers.get("Token")
-    user = module.token.get_user(token)
-    if user == False:
-        return False
-    result = module.db_module.read_whitelist_face_image(user)
-    if result == None:
-        result = False
-    return result
+    try:
+        token = request.headers.get("Token")
+        user = module.token.get_user(token)
+        if user == False:
+            return False, {"error": status_code.token_error}
+        result, message = module.db_module.read_whitelist_face_image(user)
+        return result, message
+    except Exception as ex:
+        print(ex)
+        return False, {"error": str(ex)}
 
 """
 * Whitelist face image delete
 """
 def delete_whitelist_face_image(whitelistFaceId, _id):
-    token = request.headers.get('Token')
-    user = module.token.get_user(token)
-    if user == False:
-        return False
-    result = module.db_module.delete_whitelist_face_image(whitelistFaceId, _id)
-    if result == False:
-        return False
-    return result
+    try:
+        token = request.headers.get('Token')
+        user = module.token.get_user(token)
+        if user == False:
+            return False, {"error": status_code.token_error}
+        result, message = module.db_module.delete_whitelist_face_image(whitelistFaceId, _id)
+        return result, message
+    except Exception as ex:
+        print(ex)
+        return False, {"error": str(ex)}
 
 ################### BLOCK CHARACTER ###################
 
@@ -114,238 +137,245 @@ def delete_whitelist_face_image(whitelistFaceId, _id):
 * origin block character get
 """
 def get_origin_block_character():
-    token = request.headers.get("Token")
-    user = module.token.get_user(token)
-    if user == False:
-        return False
-    result = module.db_module.read_origin_block_character()
-
-    if result != None:
-        return result
+    try:
+        token = request.headers.get("Token")
+        user = module.token.get_user(token)
+        if user == False:
+            return False, {"error": status_code.token_error}
+        result, message = module.db_module.read_origin_block_character()
+        return result, message
+    except Exception as ex:
+        print(ex)
+        return False, {"error": str(ex)}
 
 """
 * user block character upload
 """
 def upload_user_block_character():
-    token = request.headers.get('Token')
-    user = module.token.get_user(token)
-    if user == False:
-        return False
-    f = request.files['file']
-    location = file_module.file_upload(user, SchemaName.blockCharacter.value, f)
-    if location == False:
-        return False
-    id = module.db_module.create_block_character(user, location)
-    return {"id" : id}
+    try:
+        token = request.headers.get('Token')
+        user = module.token.get_user(token)
+        if user == False:
+            return False, {"error": status_code.token_error}
+        if 'file' not in request.files:
+            return False, {"error": f'{status_code.field_error}file'}
+        filename = request.files['file'].filename
+        if filename == None or filename == '':
+            return False, {"error": f'{status_code.field_error}file'}
+        f = request.files['file']
+        fileResult, location = file_module.file_upload(user, SchemaName.blockCharacter.value, f)
+        if fileResult == False:
+            return fileResult, location
+        result, message = module.db_module.create_block_character(user, location)
+        return result, message
+    except Exception as ex:    
+        print(ex)
+        return False, {"error": str(ex)}
 
 """
 * user block character get
 """
 def get_user_block_character():
-    token = request.headers.get("Token")
-    user = module.token.get_user(token)
-    if user == False:
-        return False
-    result = module.db_module.read_user_block_character(user)
-
-    if result != None:
-        return result
+    try:
+        token = request.headers.get("Token")
+        user = module.token.get_user(token)
+        if user == False:
+            return False, {"error": status_code.token_error}
+        result, message = module.db_module.read_user_block_character(user)
+        return result, message
+    except Exception as ex:    
+        print(ex)
+        return False, {"error": str(ex)}
 
 """
 * user block character delete
 """
 def delete_user_block_character(_id):
-    token = request.headers.get('Token')
-    user = module.token.get_user(token)
-    if user == False:
-        return False
-    result = module.db_module.delete_block_character(user, _id)
-    if result == False:
-        return False
-    return result
+    try:
+        token = request.headers.get('Token')
+        user = module.token.get_user(token)
+        if user == False:
+            return False, {"error": status_code.token_error}
+        result, message = module.db_module.delete_block_character(user, _id)
+        return result, message
+    except Exception as ex:    
+        print(ex)
+        return False, {"error": str(ex)}
 
 ################### VIDEO ###################
 
 """
-* origin video upload - done
+* origin video upload
 """
 def origin_video_upload():
-    token = request.headers.get('Token')
-    user = module.token.get_user(token)
-    if user == False:
-        return False
-    f = request.files['file']
-    location = file_module.file_upload(user, SchemaName.video.value, f)
-    if location == False:
-        return False
-    id = module.db_module.create_video(user, location)
-    return {"id" : id, "url": location}
-
-# """
-# * update video before save s3
-# """
-# def update_video_upload(video_id):
-#     token = request.headers.get('Token')
-#     user = module.token.get_user(token)
-#     if user == False:
-#         return False
-#     faceType = request.form['faceType']
-#     if faceType == FaceTypeClass.character:
-#         blockCharacterId = request.form['block_character_id']
-#     else:
-#         blockCharacterId = None
-#     whitelistFace = request.form['whitelist_Face']
-    
-#     result = db_module.update_video(video_id, user, faceType, blockCharacterId, whitelistFace)
-#     return result
-
-"""
-* update video after save s3
-"""
-# def update_video_upload(video_id, user, location, status):
-#     module.db_module.update_video_celery(video_id, user, location, status)
+    try:
+        token = request.headers.get('Token')
+        user = module.token.get_user(token)
+        if user == False:
+            return False, {"error": status_code.token_error}
+        if 'file' not in request.files:
+            return False, {"error": f'{status_code.field_error}file'}
+        filename = request.files['file'].filename
+        if filename == None or filename == '':
+            return False, {"error": f'{status_code.field_error}file'}
+        f = request.files['file']
+        fileResult, location = file_module.file_upload(user, SchemaName.video.value, f)
+        if fileResult == False:
+            return fileResult, location
+        result, message = module.db_module.create_video(user, location)
+        if result:
+            return result, {"id" : message, "url": location}
+        else:
+            return result, message
+    except Exception as ex:    
+        print(ex)
+        return False, {"error": str(ex)}
     
 """
 * video delete
 """
 def delete_video(_id):
-    token = request.headers.get('Token')
-    user = module.token.get_user(token)
-    if user == False:
-        return False
-    # result=module.db_module.delete_video(user, _id)
-    result=db_module.delete_video(user, _id)
-    if result == False:
-        return False
-    return result
+    try:
+        token = request.headers.get('Token')
+        user = module.token.get_user(token)
+        if user == False:
+            return False, {"error": status_code.token_error}
+        result, message = db_module.delete_video(user, _id)
+        return result, message
+    except Exception as ex:    
+        print(ex)
+        return False, {"error": str(ex)}
 
 """
 * update video before save s3
 """
 def update_video_upload():
-    token = request.headers.get('Token')
+    try:
+        token = request.headers.get('Token')
+        user = module.token.get_user(token)
+        if user == False:
+            return False, {"error": status_code.token_error}
+        
+        # video id가져옴
+        videoId = request.form.get('video_id')
+        if videoId == None or videoId == '':
+            return False, {"error": f'{status_code.field_error}video_id'}
 
-    # user_id (Object_id) 가져옴 -> 정확히는 오브젝트를 가져옴 -> 도트연산자 접근
-    user = module.token.get_user(token)
-    if user == False:
-        return False
-    
-    # video id가져옴
-    videoId = request.form["video_id"]
+        # video url 찾기
+        result, videoUrl = db_module.read_origin_video(videoId, user)
+        if result == False:
+            return result, videoUrl
 
-    # video url 찾기
-    videoUrl = db_module.read_origin_video(videoId, user)
-    if videoUrl == False:
-        return False
+        # faceType 가져옴
+        faceType = request.form.get('face_type')
+        if faceType == None or faceType == '':
+            return False, {"error": f'{status_code.field_error}face_type'}
 
-    # faceType 가져옴
-    faceType = request.form['face_type']
+        # blockCharacterId 선택적으로 가져옴
+        if faceType == FaceTypeClass.character.value:
+            blockCharacterId = request.form.get('block_character_id')
+            if blockCharacterId == None or blockCharacterId == '':
+                return False, {"error": f'{status_code.field_error}block_character_id'}
+            result, blockCharacterImg = db_module.read_block_character_url(blockCharacterId)
+            if result == False:
+                return result, blockCharacterImg
+        else:
+            blockCharacterId = None
+            blockCharacterImg = None
+        
+        # TODO - whitelistFaceId 없을 경우에 대한 것 처리하기
+        whitelistFaceId = request.form.getlist("whitelist_face_id")
+        result, whitelistFaceImgList = db_module.read_whitelist_face_url(user, whitelistFaceId)
+        if result == False:
+            return result, whitelistFaceImgList
 
-    if faceType != "mosaic" and faceType != "character":
-        return False
+        # True or False 리턴
+        result, message = db_module.update_video(videoId, user, faceType, whitelistFaceId, blockCharacterId) # ID를 받아와서 찾은다음에 url
 
-    # blockCharacterId 선택적으로 가져옴
-    if faceType == FaceTypeClass.character.value:
-        blockCharacterId = request.form['block_character_id']
-        blockCharacterImg = db_module.read_block_character_url(blockCharacterId)
-    else:
-        blockCharacterImg = None
-        blockCharacterId = None
+        if result == True:
+            if faceType == "mosaic":
+                task = celery.send_task('tasks.run_mosaic', kwargs=
+                    {
+                        'whitelistFaceImgList' : whitelistFaceImgList, # url 리스트
+                        'videoUrl' : videoUrl,
+                        "user" : str(user)
+                    })
+                 result2 = db_module.update_video_celery(videoId, user, task, task.status)
 
-    whitelistFaceId = request.form.getlist("whitelist_face_id") #이미지 없을경우 예외처리
-    whitelistFaceImgList = db_module.read_whitelist_face_url(user, whitelistFaceId)
+                 if result2 == True:
+                     return True, {"id" : str(task.id)}
+                 else:
+                     return False, {"error":"Can't update db"}
+            elif faceType == "character":
+                task = celery.send_task('tasks.run_character', kwargs=
+                    {
+                        'whitelistFaceImgList' : whitelistFaceImgList, 
+                        'blockCharacterImgUrl' : blockCharacterImg, 
+                        'videoUrl' : videoUrl,
+                        "user" : str(user)
+                    })
 
-    if whitelistFaceImgList == None: # 테스트해본 결과 해당되는 도큐먼트가 존재하지 않는 경우 None임
-        return False
+                result2 = db_module.update_video_celery(videoId, user, task, task.status)
 
-    # True or False 리턴
-    result = db_module.update_video(videoId, user, faceType, whitelistFaceId, blockCharacterId) 
-
-    if result == True:
-        if faceType == "mosaic":
-            # 키 이름은 나중에 수정 필요
-            # ai에 요청하게 될 부분임
-            task = celery.send_task('tasks.run_mosaic', kwargs=
-                {
-                    'whitelistFaceImgList' : whitelistFaceImgList, 
-                    'videoUrl' : videoUrl,
-                    "user" : str(user)
-                })
-
-            result2 = db_module.update_video_celery(videoId, user, task, task.status)
-
-            if result2 == True:
-                return {"id" : str(task.id)}
-            else:
-                return False
-        elif faceType == "character":
-            task = celery.send_task('tasks.run_character', kwargs=
-                {
-                    'whitelistFaceImgList' : whitelistFaceImgList, 
-                    'blockCharacterImgUrl' : blockCharacterImg, 
-                    'videoUrl' : videoUrl,
-                    "user" : str(user)
-                })
-    
-            result2 = db_module.update_video_celery(videoId, user, task, task.status)
-
-            if result2 == True:
-                return {"id" : str(task.id)}
-            else:
-                return False
-    else:
-        return False
+                if result2 == True:
+                    return True, {"id" : str(task.id)}
+                else:
+                    return False, {"error":"Can't update db"}
+        else:
+            return result, message
+    except Exception as ex:
+        print(ex)
+        return False, {"error": str(ex)}
 
 """
 * 셀러리 id를 통해 상태 체크
 """
 def get_after_video_status(taskId):
-    token = request.headers.get("Token")
-
-    user = module.token.get_user(token)
-
-    if user == False:
-        return False
-
-    result = db_module.read_celery_status(user, taskId)
-
-    if result == "FAILURE":
-        status = celery.AsyncResult(taskId, app=celery)
-        result2 = db_module.update_video_celery_failure(user, taskId) #video컬렉션의 status를 FAILURE로 업데이트
-        if result2 == True:
-            return {"status" : "FAILURE"} #셀러리의 결과과 failure이고, video 컬렉션의 status 업데이트를 성공한 경우
-        else:
-            return False #셀러리의 결과과 failure이고, video 컬렉션의 status 업데이트를 실패한 경우
-    elif result == 0:
-            return {"status" : "PENDING"} #PENDING
-    else:
-        return {"status" : result} #SUCCESS
+    try:
+        token = request.headers.get("Token")
+        user = module.token.get_user(token)
+        if user == False:
+            return False, {"error": status_code.token_error}
+        result, message = db_module.read_celery_status(user, taskId)
+        if result == "FAILURE":
+            status = celery.AsyncResult(taskId, app=celery)
+            result2 = db_module.update_video_celery_failure(user, taskId) #video컬렉션의 status를 FAILURE로 업데이트
+            if result2 == True:
+                return True, {"status" : "FAILURE"} #셀러리의 결과과 failure이고, video 컬렉션의 status 업데이트를 성공한 경우
+            else:
+                return False, {"error", "Can't update db"} #셀러리의 결과과 failure이고, video 컬렉션의 status 업데이트를 실패한 경우
+        elif result == 0:
+                return True, {"status" : "PENDING"} #PENDING
+    except Exception as ex:
+        print(ex)
+        return False, {"error": str(ex)}
     
 """
 * 특정 유저에 대한 비디오 결과 모두 조회하기
 """
 def get_multiple_after_video():
-    token = request.headers.get("Token")
-
-    user = module.token.get_user(token)
-
-    if user == False:
-        return False
-
-    result = module.db_module.read_processed_video(user)
-
-    if result != None:
-        return result
-    else:
-        False
+    try:
+        token = request.headers.get("Token")
+        user = module.token.get_user(token)
+        if user == False:
+            return False, {"error": status_code.token_error}
+        result, message = module.db_module.read_proccessed_video(user)
+        return result, message
+    except Exception as ex:
+        print(ex)
+        return False, {"error": str(ex)}
 
 """
 * read celery task status
 """
 def read_celery_task_status(taskId):
-    status = celery.AsyncResult(taskId, app=celery)
-    if status == StatusClass.success:
-        result = celery.AsyncResult(taskId).result
-        return result
-    else:
-        return status
+    try:
+        status = celery.AsyncResult(taskId, app=celery)
+        if status == StatusClass.success:
+            result = celery.AsyncResult(taskId).result
+            return True, {"status", result}
+        else:
+            return False, {"status", status}
+    except Exception as ex:
+        print(ex)
+        return False, {"error": str(ex)}

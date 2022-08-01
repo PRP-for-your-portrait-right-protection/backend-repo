@@ -1,8 +1,7 @@
-from flask import Response, request
+from flask import Response
 import json
-from static import status_code
 from module import crud_module
-from flask_restx import Resource, Api, Namespace
+from flask_restx import Resource, Namespace
 from werkzeug.datastructures import FileStorage
 
 ####################################사람얼굴 이름 및 이미지#######################################
@@ -18,12 +17,14 @@ parser.add_argument('name', location='form', required=False)
 parser.add_argument('file', type=FileStorage, location='files', required=False)
 parser.add_argument('face_name_after', location='form', required=False)
 
+from app import common_counter,histogram
 @WhitelistFaces.route('')
 @WhitelistFaces.expect(parser)
 @WhitelistFaces.doc(responses={200: 'Success'})
 @WhitelistFaces.doc(responses={404: 'Failed'})
 class WhitelistFacesClass(Resource):
-
+    @common_counter
+    @histogram
     def post(self):
         """
         # 인물 저장
@@ -33,20 +34,16 @@ class WhitelistFacesClass(Resource):
         # @return : {id: "id"}
         """
         try:
-            result = crud_module.upload_whitelist_face()
+            result, message = crud_module.upload_whitelist_face()
             if result != False:
                 return Response(
-                    response = json.dumps(result),
+                    response = json.dumps(message),
                     status = 200,
                     mimetype = "application/json"
                 )
             else:
                 return Response(
-                    response=json.dumps(
-                        {
-                            "message":status_code.create_02_fail,
-                        }
-                    ),
+                    response=json.dumps(message),
                     status=404,
                     mimetype="application/json"
                 )
@@ -60,7 +57,8 @@ class WhitelistFacesClass(Resource):
 @WhitelistFaces.doc(responses={200: 'Success'})
 @WhitelistFaces.doc(responses={404: 'Failed'})
 class WhitelistFacesIdClass(Resource):
-
+    @common_counter
+    @histogram
     def patch(self, whitelistFaceId):
         """
         # 특정 인물 이름 수정
@@ -69,20 +67,16 @@ class WhitelistFacesIdClass(Resource):
         # @return : 200 or 404
         """
         try:
-            result = crud_module.update_whitelist_face(whitelistFaceId)
+            result, message = crud_module.update_whitelist_face(whitelistFaceId)
             if result != False:
                 return Response(
-                    response = json.dumps(result),
+                    response = json.dumps(message),
                     status = 200,
                     mimetype = "application/json"
                 )
             else:
                 return Response(
-                    response=json.dumps(
-                        {
-                            "message":status_code.update_02_fail,
-                        }
-                    ),
+                    response=json.dumps(message),
                     status=404,
                     mimetype="application/json"
                 )
@@ -90,7 +84,8 @@ class WhitelistFacesIdClass(Resource):
             print("******************")
             print(ex)
             print("******************")
-            
+    @common_counter
+    @histogram        
     def delete(self, whitelistFaceId):
         """
         # 특정 인물에 대한 사진 모두 삭제
@@ -98,20 +93,16 @@ class WhitelistFacesIdClass(Resource):
         # @return : 200 or 404
         """
         try:
-            result = crud_module.delete_whitelist_face(whitelistFaceId)
+            result, message = crud_module.delete_whitelist_face(whitelistFaceId)
             if result != False:
                 return Response(
-                    response = json.dumps(result),
+                    response = json.dumps(message),
                     status = 200,
                     mimetype = "application/json"
                 )
             else:
                 return Response(
-                    response=json.dumps(
-                        {
-                            "message":status_code.delete_02_fail,
-                        }
-                    ),
+                    response=json.dumps(message),
                     status=404,
                     mimetype="application/json"
                 )
@@ -125,7 +116,8 @@ class WhitelistFacesIdClass(Resource):
 @WhitelistFaces.doc(responses={200: 'Success'})
 @WhitelistFaces.doc(responses={404: 'Failed'})
 class WhitelistFacesImagesClass(Resource):
-
+    @common_counter
+    @histogram
     def post(self, whitelistFaceId):
         '''
         # 특정 인물 사진 한개 추가
@@ -134,20 +126,16 @@ class WhitelistFacesImagesClass(Resource):
         # @return : {id: "id"}
         '''
         try:
-            result = crud_module.whitelist_face_image_upload(whitelistFaceId)
+            result, message = crud_module.whitelist_face_image_upload(whitelistFaceId)
             if result != False:
                 return Response(
-                    response = json.dumps(result),
+                    response = json.dumps(message),
                     status = 200,
                     mimetype = "application/json"
                 )
             else:
                 return Response(
-                    response=json.dumps(
-                        {
-                            "message":status_code.create_02_fail,
-                        }
-                    ),
+                    response=json.dumps(message),
                     status=404,
                     mimetype="application/json"
                 )
@@ -161,7 +149,8 @@ class WhitelistFacesImagesClass(Resource):
 @WhitelistFaces.doc(responses={200: 'Success'})
 @WhitelistFaces.doc(responses={404: 'Failed'})
 class WhitelistFacesImagesClass(Resource):
-
+    @common_counter
+    @histogram
     def get(self):
         """
         # user에 대한 이미지 사람별로 전부 가져오기
@@ -201,20 +190,16 @@ class WhitelistFacesImagesClass(Resource):
         }
         """
         try:
-            result = crud_module.get_whitelist_face_image()
+            result, message = crud_module.get_whitelist_face_image()
             if result != False:
                 return Response(
-                    response = json.dumps(result),
+                    response = json.dumps(message),
                     status = 200,
                     mimetype = "application/json"
                 )
             else:
                 return Response(
-                    response=json.dumps(
-                        {
-                            "message":status_code.read_02_fail,
-                        }
-                    ),
+                    response=json.dumps(message),
                     status=404,
                     mimetype="application/json"
                 )
@@ -228,7 +213,8 @@ class WhitelistFacesImagesClass(Resource):
 @WhitelistFaces.doc(responses={200: 'Success'})
 @WhitelistFaces.doc(responses={404: 'Failed'})
 class WhitelistFacesImageIdClass(Resource):
-
+    @common_counter
+    @histogram
     def delete(self, whitelistFaceId, imageId):
         '''
         # 특정 인물 사진 한개 삭제하기
@@ -236,20 +222,16 @@ class WhitelistFacesImageIdClass(Resource):
         # @return : message
         '''
         try:
-            result = crud_module.delete_whitelist_face_image(whitelistFaceId, imageId)
+            result, message = crud_module.delete_whitelist_face_image(whitelistFaceId, imageId)
             if result != False:
                 return Response(
-                    response = json.dumps(result),
+                    response = json.dumps(message),
                     status = 200,
                     mimetype = "application/json"
                 )
             else:
                 return Response(
-                    response=json.dumps(
-                        {
-                            "message":status_code.delete_02_fail,
-                        }
-                    ),
+                    response=json.dumps(message),
                     status=404,
                     mimetype="application/json"
                 )
