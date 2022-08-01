@@ -109,7 +109,7 @@ class ProccessedVideosCeleryStatusCheckClass(Resource):
                     status = 200,
                     mimetype = "application/json"
                 )
-            else:
+            elif result == False:
                 return Response(
                     response=json.dumps(message),
                     status=404,

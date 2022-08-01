@@ -234,7 +234,10 @@ def create_video(user, location):
 def read_origin_video(_id, user):
     try:
         video = schema.Video.objects(_id = _id, user_id = user).first()
-        return True, video.origin_url 
+        if video.processed_url_id == None:
+            return True, video.origin_url
+        else:
+            return False, {"error": "Can't read"}
     except Exception as ex:
         print(ex)
         return False, {"error": str(ex)}
@@ -250,13 +253,15 @@ def read_proccessed_video(user):
         for x in temp:
             # 셀러리 id
             temp2 = schema.Celery.objects(_id = x.processed_url_id).first()
+            if temp2 == None:
+                continue
             tempJson1 = {"id" : str(x._id), "url" : temp2.result.replace('\"', '')}
             tempJson['data'].append(tempJson1)
         return True, tempJson
     except Exception as ex:
         print(ex)
         return False, {"error": str(ex)}
-    
+
 """
 * Video db update
 """
@@ -351,16 +356,36 @@ def read_celery_status(user, taskId):
 
         temp3 = schema.Celery.objects(_id = temp.processed_url_id).first()
 
-        if temp3 != None and temp3.status == "SUCCESS":
-            temp2 = schema.Video.objects(user_id = user, processed_url_id = taskId).update(status = "SUCCESS")
-            if temp2 > 0:
+        if temp3 != None:
+            if temp3.status == "SUCCESS":
+                temp2 = schema.Video.objects(user_id = user, processed_url_id = taskId).update(status = "SUCCESS")
+                if temp2 > 0:
+                    return True, {"status":temp3.status}
+                else:
+                    # db 업데이트 실패
+                    return False, {"error" : status_code.update_02_fail}
+            elif temp3.status == "FAILURE":
+                # failure일 경우
                 return True, {"status":temp3.status}
-            else:
-                # db 업데이트 실패
-                return False, {"error" : status_code.update_02_fail}
         else:
-            # failure, pending 이면 여기로
-            return True, {"status":temp.status}
+            # pending일 경우 (셀러리 결과가 db에 저장되지 않음)
+            return 0
     except Exception as ex:
         print(ex)
-        return False, {"error": str(ex)}     
+        return False, {"error": str(ex)} 
+
+"""
+* video status update when the celery status is failure
+"""
+def update_video_celery_failure(user, taskId):
+    update = schema.Video.objects(
+        user_id = user, 
+        processed_url_id = taskId
+        ).update(
+        status = StatusClass.failure.value
+    )
+    if update > 0:
+        return True
+    else:
+        return False
+
