@@ -2,7 +2,6 @@ from flask import Flask
 from flask_cors import CORS
 from flask_restx import Api
 from db.db_connection import db_connection
-from namespaces import BlockCharacter, OriginVideo, ProccessedVideo, User, WhitelistFace#이부분 잘 되면 놔두고 안되면 namespace바로 위로 내려야됨
 from prometheus_flask_exporter import PrometheusMetrics
 
 app = Flask(__name__)
@@ -34,7 +33,7 @@ api = Api(
     license="MIT",
     prefix='/api/v1'
 )
-
+from namespaces import BlockCharacter, OriginVideo, ProccessedVideo, User, WhitelistFace
 api.add_namespace(User.Users, '/users')
 api.add_namespace(User.Auth, '/auth')
 api.add_namespace(WhitelistFace.WhitelistFaces, '/whitelist-faces')
