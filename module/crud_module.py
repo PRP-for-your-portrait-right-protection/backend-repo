@@ -235,10 +235,14 @@ def update_video_upload():
 
     # video url 찾기
     videoUrl = db_module.read_origin_video(videoId, user)
+    if videoUrl == False:
+        return False
 
     # faceType 가져옴
     faceType = request.form['face_type']
 
+    if faceType != "mosaic" and faceType != "character":
+        return False
 
     # blockCharacterId 선택적으로 가져옴
     if faceType == FaceTypeClass.character.value:
@@ -251,16 +255,19 @@ def update_video_upload():
     whitelistFaceId = request.form.getlist("whitelist_face_id") #이미지 없을경우 예외처리
     whitelistFaceImgList = db_module.read_whitelist_face_url(user, whitelistFaceId)
 
+    if whitelistFaceImgList == None: # 테스트해본 결과 해당되는 도큐먼트가 존재하지 않는 경우 None임
+        return False
+
     # True or False 리턴
-    result = db_module.update_video(videoId, user, faceType, whitelistFaceId, blockCharacterId) # ID를 받아와서 찾은다음에 url
+    result = db_module.update_video(videoId, user, faceType, whitelistFaceId, blockCharacterId) 
 
     if result == True:
         if faceType == "mosaic":
             # 키 이름은 나중에 수정 필요
             # ai에 요청하게 될 부분임
-            task = celery.send_task('tasks.mosaic', kwargs=
+            task = celery.send_task('tasks.run_mosaic', kwargs=
                 {
-                    'whitelistFaceImgList' : whitelistFaceImgList, # url 리스트
+                    'whitelistFaceImgList' : whitelistFaceImgList, 
                     'videoUrl' : videoUrl,
                     "user" : str(user)
                 })
@@ -272,10 +279,10 @@ def update_video_upload():
             else:
                 return False
         elif faceType == "character":
-            task = celery.send_task('tasks.character', kwargs=
+            task = celery.send_task('tasks.run_character', kwargs=
                 {
-                    'whitelistFaceImgList' : whitelistFaceImgList, # url 리스트
-                    'blockCharacterImgUrl' : blockCharacterImg, # url로 가져와야함
+                    'whitelistFaceImgList' : whitelistFaceImgList, 
+                    'blockCharacterImgUrl' : blockCharacterImg, 
                     'videoUrl' : videoUrl,
                     "user" : str(user)
                 })
@@ -308,7 +315,7 @@ def get_after_video_status(taskId):
         if result2 == True:
             return {"status" : "FAILURE"} #셀러리의 결과과 failure이고, video 컬렉션의 status 업데이트를 성공한 경우
         else:
-            return {"status" : "FAILURE"} #셀러리의 결과과 failure이고, video 컬렉션의 status 업데이트를 실패한 경우
+            return False #셀러리의 결과과 failure이고, video 컬렉션의 status 업데이트를 실패한 경우
     elif result == 0:
             return {"status" : "PENDING"} #PENDING
     else:
@@ -325,10 +332,12 @@ def get_multiple_after_video():
     if user == False:
         return False
 
-    result = module.db_module.read_proccessed_video(user)
+    result = module.db_module.read_processed_video(user)
 
     if result != None:
         return result
+    else:
+        False
 
 """
 * read celery task status

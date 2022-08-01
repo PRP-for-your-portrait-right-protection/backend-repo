@@ -180,18 +180,23 @@ def create_video(user, location):
 """
 def read_origin_video(_id, user):
     video = schema.Video.objects(_id = _id, user_id = user).first()
-    return video.origin_url
+    if video.processed_url_id == None:
+        return video.origin_url
+    else:
+        return False
 
 """
 * ProccessedVideo read
 """
-def read_proccessed_video(user):
+def read_processed_video(user):
     temp = schema.Video.objects(user_id = ObjectId(user), status = "SUCCESS")
     tempJson = {}
     tempJson['data'] = []
     for x in temp:
         # 셀러리 id
         temp2 = schema.Celery.objects(_id = x.processed_url_id).first()
+        if temp2 == None:
+            continue
         tempJson1 = {"id" : str(x._id), "url" : temp2.result.replace('\"', '')}
         tempJson['data'].append(tempJson1)
 
