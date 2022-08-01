@@ -221,7 +221,7 @@ def read_block_character_url(blockCharacterId):
 """
 def create_video(user, location):
     try:
-        video = schema.Video(user, location, "origin", datetime.now())
+        video = schema.Video(user, location, ScopeClass.origin.value, datetime.now())
         result = schema.Video.objects().insert(video)
         return True, str(result._id)
     except Exception as ex:
@@ -237,7 +237,7 @@ def read_origin_video(_id, user):
         if video.processed_url_id == None:
             return True, video.origin_url
         else:
-            return False, {"error": "Can't read"}
+            return False, {"error": status_code.celery_error}
     except Exception as ex:
         print(ex)
         return False, {"error": str(ex)}
@@ -247,7 +247,7 @@ def read_origin_video(_id, user):
 """
 def read_proccessed_video(user):
     try:
-        temp = schema.Video.objects(user_id = ObjectId(user), status = "SUCCESS")
+        temp = schema.Video.objects(user_id = ObjectId(user), status = StatusClass.success.value)
         tempJson = {}
         tempJson['data'] = []
         for x in temp:
@@ -349,22 +349,16 @@ def delete_video(user, _id):
 def read_celery_status(user, taskId):
     try:
         temp = schema.Video.objects(user_id = user, processed_url_id = taskId).first()
-        # if temp == None:  
-        #     return False
-        
-        #failure 일때도 바꾸도록 수정필요
-
         temp3 = schema.Celery.objects(_id = temp.processed_url_id).first()
-
         if temp3 != None:
-            if temp3.status == "SUCCESS":
-                temp2 = schema.Video.objects(user_id = user, processed_url_id = taskId).update(status = "SUCCESS")
+            if temp3.status == StatusClass.success.value:
+                temp2 = schema.Video.objects(user_id = user, processed_url_id = taskId).update(status = StatusClass.success.value)
                 if temp2 > 0:
                     return True, {"status":temp3.status}
                 else:
                     # db 업데이트 실패
                     return False, {"error" : status_code.update_02_fail}
-            elif temp3.status == "FAILURE":
+            elif temp3.status == StatusClass.failure.value:
                 # failure일 경우
                 return True, {"status":temp3.status}
         else:
@@ -378,14 +372,11 @@ def read_celery_status(user, taskId):
 * video status update when the celery status is failure
 """
 def update_video_celery_failure(user, taskId):
-    update = schema.Video.objects(
-        user_id = user, 
-        processed_url_id = taskId
-        ).update(
-        status = StatusClass.failure.value
-    )
-    if update > 0:
+    video = schema.Video.objects(user_id = user, processed_url_id = taskId)
+    if video.count() == 0:
+        return False
+    updateVideo = video.update(status = StatusClass.failure.value)
+    if updateVideo > 0:
         return True
     else:
         return False
-

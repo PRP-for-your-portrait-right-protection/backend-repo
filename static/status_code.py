@@ -28,6 +28,9 @@ enum_class_error = "Can't find enum class element: "
 # _id error code
 id_error = "Can't find _id or invalid _id: "
 
+# celery error code
+celery_error = "Already processed"
+
 #######################AI#######################
 # push celery code
 celery_push_01_success = "celery push success"

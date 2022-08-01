@@ -56,6 +56,7 @@ class ProccessedVideosClass(Resource):
             print("******************")
             print(ex)
             print("******************")
+            
     @common_counter
     @histogram       
     def get(self):

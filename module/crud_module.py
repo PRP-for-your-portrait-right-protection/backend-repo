@@ -270,6 +270,9 @@ def update_video_upload():
         faceType = request.form.get('face_type')
         if faceType == None or faceType == '':
             return False, {"error": f'{status_code.field_error}face_type'}
+        
+        if faceType != FaceTypeClass.character.value and faceType != FaceTypeClass.mosaic.value:
+            return False, {"error": f'{status_code.enum_class_error}face_type'}
 
         # blockCharacterId 선택적으로 가져옴
         if faceType == FaceTypeClass.character.value:
@@ -293,20 +296,20 @@ def update_video_upload():
         result, message = db_module.update_video(videoId, user, faceType, whitelistFaceId, blockCharacterId) # ID를 받아와서 찾은다음에 url
 
         if result == True:
-            if faceType == "mosaic":
+            if faceType == FaceTypeClass.mosaic.value:
                 task = celery.send_task('tasks.run_mosaic', kwargs=
                     {
                         'whitelistFaceImgList' : whitelistFaceImgList, # url 리스트
                         'videoUrl' : videoUrl,
                         "user" : str(user)
                     })
-                 result2 = db_module.update_video_celery(videoId, user, task, task.status)
+                result2 = db_module.update_video_celery(videoId, user, task, task.status)
 
-                 if result2 == True:
-                     return True, {"id" : str(task.id)}
-                 else:
-                     return False, {"error":"Can't update db"}
-            elif faceType == "character":
+                if result2 == True:
+                    return True, {"id" : str(task.id)}
+                else:
+                    return False, {"error":status_code.update_02_fail}
+            elif faceType == FaceTypeClass.character.value:
                 task = celery.send_task('tasks.run_character', kwargs=
                     {
                         'whitelistFaceImgList' : whitelistFaceImgList, 
@@ -320,7 +323,7 @@ def update_video_upload():
                 if result2 == True:
                     return True, {"id" : str(task.id)}
                 else:
-                    return False, {"error":"Can't update db"}
+                    return False, {"error":status_code.update_02_fail}
         else:
             return result, message
     except Exception as ex:
@@ -337,15 +340,15 @@ def get_after_video_status(taskId):
         if user == False:
             return False, {"error": status_code.token_error}
         result, message = db_module.read_celery_status(user, taskId)
-        if result == "FAILURE":
+        if message == StatusClass.failure.value:
             status = celery.AsyncResult(taskId, app=celery)
             result2 = db_module.update_video_celery_failure(user, taskId) #video컬렉션의 status를 FAILURE로 업데이트
             if result2 == True:
-                return True, {"status" : "FAILURE"} #셀러리의 결과과 failure이고, video 컬렉션의 status 업데이트를 성공한 경우
+                return True, {"status" : StatusClass.failure.value} #셀러리의 결과과 failure이고, video 컬렉션의 status 업데이트를 성공한 경우
             else:
-                return False, {"error", "Can't update db"} #셀러리의 결과과 failure이고, video 컬렉션의 status 업데이트를 실패한 경우
+                return False, {"error", status_code.update_02_fail} #셀러리의 결과과 failure이고, video 컬렉션의 status 업데이트를 실패한 경우
         elif result == 0:
-                return True, {"status" : "PENDING"} #PENDING
+                return True, {"status" : StatusClass.pending.value} #PENDING
     except Exception as ex:
         print(ex)
         return False, {"error": str(ex)}

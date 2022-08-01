@@ -94,6 +94,7 @@ class UserBlockCharactersClass(Resource):
             print("******************")
             print(ex)
             print("******************")
+            
     @common_counter
     @histogram
     def get(self):
@@ -132,7 +133,6 @@ class UserBlockCharactersClass(Resource):
             print("******************")
             print(ex)
             print("******************")
-
 
 @BlockCharacters.route('/user/<characterId>')
 @BlockCharacters.expect(parser)
