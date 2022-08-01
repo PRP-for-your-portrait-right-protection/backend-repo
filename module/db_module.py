@@ -306,11 +306,11 @@ def update_video_celery(_id, user, task, status):
         #     print("Can't find stauts") 
         #     return False
         video = schema.Video.objects(_id = ObjectId(_id), user_id = user)
-        if video.count() == 0:
+        if video == None:
             return False, {"error": f'{status_code.id_error}video'}
         processedVideo = video.update(
             status = status, 
-            processed_url_id = task.id, 
+            processed_url_id = str(task.id), 
             completed_at = datetime.now()
         )
         if processedVideo > 0:

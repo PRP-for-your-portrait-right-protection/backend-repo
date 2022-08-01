@@ -81,7 +81,6 @@ def login():
             return True, {"token": token, "email": user.first().email}
     except Exception as ex:
         print('*********')
-        print("???????????")
         print(ex)
         print('*********')
         return False, {"error": str(ex)}

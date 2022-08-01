@@ -297,13 +297,13 @@ def update_video_upload():
 
         if result == True:
             if faceType == FaceTypeClass.mosaic.value:
-                task = celery.send_task('tasks.run_mosaic', kwargs=
+                task = celery.send_task('tasks.run_mosaic', kwargs= 
                     {
                         'whitelistFaceImgList' : whitelistFaceImgList, # url 리스트
                         'videoUrl' : videoUrl,
                         "user" : str(user)
                     })
-                result2 = db_module.update_video_celery(videoId, user, task, task.status)
+                result2, message = db_module.update_video_celery(videoId, user, task, task.status)
 
                 if result2 == True:
                     return True, {"id" : str(task.id)}
@@ -317,7 +317,6 @@ def update_video_upload():
                         'videoUrl' : videoUrl,
                         "user" : str(user)
                     })
-
                 result2 = db_module.update_video_celery(videoId, user, task, task.status)
 
                 if result2 == True:
