@@ -10,6 +10,7 @@ class StatusClass(enum.Enum):
     processed = "PROCCESSED"
     fail = "FAIL"
     deleted = "DELETED"
+    failure = "FAILURE"
 
 class FaceTypeClass(enum.Enum):
     mosaic = "mosaic"

@@ -15,11 +15,14 @@ parser.add_argument('password', location='form', required=False)
 parser.add_argument('name', location='form', required=False)
 parser.add_argument('phone', location='form', required=False)
 
+from app import common_counter,histogram
 @Users.route('/email/validation')
 @Users.expect(parser)
 @Users.doc(response={200: 'SUCCESS'})
 @Users.doc(response={404: 'Failed'})
 class UserEmailValidaionClass(Resource):
+    @common_counter
+    @histogram
     def post(self):
         """
         # 아이디 중복체크
@@ -50,7 +53,8 @@ class UserEmailValidaionClass(Resource):
 @Users.doc(response={200: 'SUCCESS'})
 @Users.doc(response={404: 'Failed'})
 class UsersClass(Resource):
-    
+    @common_counter
+    @histogram
     def post(self):
         """
         # 회원가입
@@ -81,7 +85,8 @@ class UsersClass(Resource):
 @Users.doc(responses={200: 'Success'})
 @Users.doc(responses={404: 'Failed'})
 class UserEmailClass(Resource):
-    
+    @common_counter
+    @histogram
     def post(self):
         """
         # 아이디 찾기
@@ -112,7 +117,8 @@ class UserEmailClass(Resource):
 @Users.doc(responses={200: 'Success'})
 @Users.doc(responses={404: 'Failed'})
 class UserPasswordValidationClass(Resource):
-    
+    @common_counter
+    @histogram
     def post(self):
         """
         # 비밀번호 찾기 전 정보 검증
@@ -143,7 +149,8 @@ class UserPasswordValidationClass(Resource):
 @Users.doc(responses={200: 'Success'})
 @Users.doc(responses={404: 'Failed'})
 class UserUpdatePasswordClass(Resource):
-    
+    @common_counter
+    @histogram
     def patch(self):
         """
         # 비밀번호 변경(변경할 비밀번호 정보 받아와서 비밀번호 변경)
@@ -183,7 +190,8 @@ parser.add_argument('password', location='form')
 @Auth.doc(response={200: 'SUCCESS'})
 @Auth.doc(response={404: 'Failed'})
 class AuthClass(Resource):
-    
+    @common_counter
+    @histogram
     def post(self):
         """
         # 로그인
