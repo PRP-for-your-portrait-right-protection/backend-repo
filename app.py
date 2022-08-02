@@ -12,16 +12,8 @@ CORS(app, resources={r'*': {'origins': '*'}})
 
 db_connection(app)
 
-metrics = PrometheusMetrics(app)
-metrics.info('app_info', 'Application info', version='1.0.3')
-
-common_counter = metrics.counter(
-    'flask_by_endpoint_counter', 'Request count by endpoints',
-    labels={'endpoint': lambda: request.endpoint}
-)
-histogram = metrics.histogram('requests_by_status_and_path', 'Request latencies by status and path',
-    labels={'status': lambda r: r.status_code, 'path': lambda: request.path}
-)
+metrics = PrometheusMetrics.for_app_factory()
+metrics.init_app(app)
 
 api = Api(
     app,

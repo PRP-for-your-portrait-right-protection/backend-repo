@@ -17,14 +17,13 @@ parser.add_argument('name', location='form', required=False)
 parser.add_argument('file', type=FileStorage, location='files', required=False)
 parser.add_argument('face_name_after', location='form', required=False)
 
-from app import common_counter,histogram
+
 @WhitelistFaces.route('')
 @WhitelistFaces.expect(parser)
 @WhitelistFaces.doc(responses={200: 'Success'})
 @WhitelistFaces.doc(responses={404: 'Failed'})
 class WhitelistFacesClass(Resource):
-    @common_counter
-    @histogram
+  
     def post(self):
         """
         # 인물 저장
@@ -57,8 +56,7 @@ class WhitelistFacesClass(Resource):
 @WhitelistFaces.doc(responses={200: 'Success'})
 @WhitelistFaces.doc(responses={404: 'Failed'})
 class WhitelistFacesIdClass(Resource):
-    @common_counter
-    @histogram
+   
     def patch(self, whitelistFaceId):
         """
         # 특정 인물 이름 수정
@@ -85,8 +83,7 @@ class WhitelistFacesIdClass(Resource):
             print(ex)
             print("******************")
             
-    @common_counter
-    @histogram        
+          
     def delete(self, whitelistFaceId):
         """
         # 특정 인물에 대한 사진 모두 삭제
@@ -117,8 +114,7 @@ class WhitelistFacesIdClass(Resource):
 @WhitelistFaces.doc(responses={200: 'Success'})
 @WhitelistFaces.doc(responses={404: 'Failed'})
 class WhitelistFacesImagesClass(Resource):
-    @common_counter
-    @histogram
+   
     def post(self, whitelistFaceId):
         '''
         # 특정 인물 사진 한개 추가
@@ -150,8 +146,7 @@ class WhitelistFacesImagesClass(Resource):
 @WhitelistFaces.doc(responses={200: 'Success'})
 @WhitelistFaces.doc(responses={404: 'Failed'})
 class WhitelistFacesImagesClass(Resource):
-    @common_counter
-    @histogram
+   
     def get(self):
         """
         # user에 대한 이미지 사람별로 전부 가져오기
@@ -214,8 +209,7 @@ class WhitelistFacesImagesClass(Resource):
 @WhitelistFaces.doc(responses={200: 'Success'})
 @WhitelistFaces.doc(responses={404: 'Failed'})
 class WhitelistFacesImageIdClass(Resource):
-    @common_counter
-    @histogram
+
     def delete(self, whitelistFaceId, imageId):
         '''
         # 특정 인물 사진 한개 삭제하기
