@@ -317,7 +317,7 @@ def update_video_upload():
                         'videoUrl' : videoUrl,
                         "user" : str(user)
                     })
-                result2 = db_module.update_video_celery(videoId, user, task, task.status)
+                result2, message = db_module.update_video_celery(videoId, user, task, task.status)
 
                 if result2 == True:
                     return True, {"id" : str(task.id)}
@@ -348,6 +348,8 @@ def get_after_video_status(taskId):
                 return False, {"error", status_code.update_02_fail} #셀러리의 결과과 failure이고, video 컬렉션의 status 업데이트를 실패한 경우
         elif result == 0:
                 return True, {"status" : StatusClass.pending.value} #PENDING
+        else:
+            return True, {"status" : message} #SUCCESS
     except Exception as ex:
         print(ex)
         return False, {"error": str(ex)}
