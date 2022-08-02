@@ -15,14 +15,12 @@ parser = OriginVideos.parser()
 parser.add_argument('token', location='headers')
 parser.add_argument('file', type=FileStorage, location='files', required=False)
 
-from app import common_counter,histogram
 @OriginVideos.route('')
 @OriginVideos.expect(parser)
 @OriginVideos.doc(responses={200: 'Success'})
 @OriginVideos.doc(responses={404: 'Failed'})
 class OriginVideosClass(Resource):
-    @common_counter
-    @histogram
+
     def post(self):
         """
         # 수정 전 비디오 파일 버킷에 저장 후 DB INSERT

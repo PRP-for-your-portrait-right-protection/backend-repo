@@ -17,14 +17,13 @@ parser.add_argument('whitelist_face_id', location='form', required=False)
 parser.add_argument('faceType', location='form', required=False)
 parser.add_argument('block_character_id', location='form', required=False)
 
-from app import common_counter,histogram
+
 @ProccessedVideos.route('')
 @ProccessedVideos.expect(parser)
 @ProccessedVideos.doc(responses={200: 'Success'})
 @ProccessedVideos.doc(responses={404: 'Failed'})
 class ProccessedVideosClass(Resource):
-    @common_counter
-    @histogram
+
     def post(self):
         """
         # 프론트에서 백으로 수정할 비디오 정보 전달하면 샐러리에 전달
@@ -57,8 +56,7 @@ class ProccessedVideosClass(Resource):
             print(ex)
             print("******************")
             
-    @common_counter
-    @histogram       
+     
     def get(self):
         '''
         # 특정 유저에 대한 비디오 결과 모두 조회하기
@@ -94,8 +92,7 @@ class ProccessedVideosClass(Resource):
 @ProccessedVideos.doc(responses={200: 'Success'})
 @ProccessedVideos.doc(responses={404: 'Failed'})
 class ProccessedVideosCeleryStatusCheckClass(Resource):
-    @common_counter
-    @histogram
+   
     def get(self, taskId):
         """
         # 셀러리 id를 통해 상태 체크 후 SUCCESS 이면 video 컬렉션의 status를 SUCCESS로 바꾸고 리턴
@@ -125,8 +122,7 @@ class ProccessedVideosCeleryStatusCheckClass(Resource):
 @ProccessedVideos.doc(responses={200: 'Success'})
 @ProccessedVideos.doc(responses={404: 'Failed'})
 class ProccessedVideosOneCheckClass(Resource):
-    @common_counter
-    @histogram
+
     def delete(self,videoId):
         """
         # '수정 후 비디오' 파일 한 개 삭제하기
