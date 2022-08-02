@@ -310,7 +310,7 @@ def update_video_celery(_id, user, task, status):
             return False, {"error": f'{status_code.id_error}video'}
         processedVideo = video.update(
             status = status, 
-            processed_url_id = str(task.id), 
+            processed_url_id = task.id, 
             completed_at = datetime.now()
         )
         if processedVideo > 0:
@@ -354,13 +354,13 @@ def read_celery_status(user, taskId):
             if temp3.status == StatusClass.success.value:
                 temp2 = schema.Video.objects(user_id = user, processed_url_id = taskId).update(status = StatusClass.success.value)
                 if temp2 > 0:
-                    return True, {"status":temp3.status}
+                    return True, temp3.status
                 else:
                     # db 업데이트 실패
                     return False, {"error" : status_code.update_02_fail}
             elif temp3.status == StatusClass.failure.value:
                 # failure일 경우
-                return True, {"status":temp3.status}
+                return True, temp3.status
         else:
             # pending일 경우 (셀러리 결과가 db에 저장되지 않음)
             return 0
