@@ -136,6 +136,26 @@ def delete_whitelist_face_image(whitelistFaceId, _id):
 """
 * origin block character get
 """
+"""
+* user block character upload
+"""
+def upload_origin_block_character():
+    try:
+        if 'file' not in request.files:
+            return 404, {"error": f'{status_code.field_error}file'}
+        filename = request.files['file'].filename
+        if filename == None or filename == '':
+            return 404, {"error": f'{status_code.field_error}file'}
+        f = request.files['file']
+        fileResult, location = file_module.file_upload(ScopeClass.origin.value, SchemaName.blockCharacter.value, f)
+        if fileResult == False:
+            return 400, location
+        result, message = module.db_module.create_origin_block_character(location)
+        return result, message
+    except Exception as ex:    
+        print(ex)
+        return 400, {"error": str(ex)}
+
 def get_origin_block_character():
     try:
         token = request.headers.get("Token")

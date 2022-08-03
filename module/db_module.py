@@ -140,11 +140,23 @@ def read_whitelist_face_url(user, whitelistFaceId): #id 리스트로 받아옴
 
 ################################################ BLOCkCHARACTER ################################################
 """
+* OriginBlockCharacter create
+"""
+def create_origin_block_character(location):
+    try:
+        blockCharacter = schema.BlockCharacter(location, ScopeClass.origin.value, False, datetime.now())
+        result = schema.BlockCharacter.objects().insert(blockCharacter)
+        return 200, {"id": str(result._id)} #true->200
+    except Exception as ex:
+        print(ex)
+        return 400, {"error": str(ex)} #false->400
+
+"""
 * OriginBlockCharacter read
 """
 def read_origin_block_character():
     try:
-        temp = schema.BlockCharacter.objects(scope = ScopeClass.origin, is_deleted=False)
+        temp = schema.BlockCharacter.objects(scope = ScopeClass.origin.value, is_deleted=False)
         tempJson = {}
         tempJson["data"] = []   
         for x in temp:
@@ -160,7 +172,7 @@ def read_origin_block_character():
 """
 def create_block_character(user, location):
     try:
-        blockCharacter = schema.BlockCharacter(user, location, ScopeClass.user, False, datetime.now())
+        blockCharacter = schema.BlockCharacter(location, ScopeClass.user.value, False, datetime.now(), user)
         result = schema.BlockCharacter.objects().insert(blockCharacter)
         return 200, {"id": str(result._id)} #true->200
     except Exception as ex:
@@ -172,7 +184,7 @@ def create_block_character(user, location):
 """
 def read_user_block_character(user):
     try:
-        temp = schema.BlockCharacter.objects(user_id = ObjectId(user), scope = ScopeClass.user, is_deleted=False)
+        temp = schema.BlockCharacter.objects(user_id = ObjectId(user), scope = ScopeClass.user.value, is_deleted=False)
         tempJson = {}
         tempJson['data'] = []
         for x in temp:
@@ -188,7 +200,7 @@ def read_user_block_character(user):
 """
 def delete_block_character(user, _id):
     try:
-        blockCharacter = schema.BlockCharacter.objects(_id = ObjectId(_id), scope = ScopeClass.user, user_id = user, is_deleted=False)
+        blockCharacter = schema.BlockCharacter.objects(_id = ObjectId(_id), scope = ScopeClass.user.value, user_id = user, is_deleted=False)
         if blockCharacter.count() == 0:
             return 404, {"error": f'{status_code.id_error}block_character'} #false->404
         deleteBlockCharacter = blockCharacter.update(

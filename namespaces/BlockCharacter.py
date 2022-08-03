@@ -20,6 +20,24 @@ parser.add_argument('file', type=FileStorage, location='files', required=False)
 @BlockCharacters.doc(responses={200: 'Success'})
 @BlockCharacters.doc(responses={404: 'Failed'})
 class OriginBlockCharactersClass(Resource):
+    
+    def post(self):
+        """
+        # 기존 케릭터 사진 추가
+        # @form-data : file
+        # @return : message
+        """
+        try:
+            result, message = crud_module.upload_origin_block_character()
+            return Response(
+                response = json.dumps(message),
+                status = result,
+                mimetype = "application/json"
+            )
+        except Exception as ex:
+            print("******************")
+            print(ex)
+            print("******************")
 
     def get(self):
         """
