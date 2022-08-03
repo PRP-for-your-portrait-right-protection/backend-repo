@@ -70,16 +70,17 @@ class WhitelistFaceImage(db.Document):
 
 class BlockCharacter(db.Document):
     _id = db.ObjectIdField()
-    user_id = db.ReferenceField(User, required=True)
+    user_id = db.ReferenceField(User)
     url = db.StringField(required=True)
     scope = db.EnumField(ScopeClass, requried=True)      
     is_deleted = db.BooleanField(required=True)
     created_at = db.DateTimeField(required=True)
     updated_at = db.DateTimeField()
     
-    def __init__(self, user_id, url, scope, is_deleted, created_at, *args, **kwargs):
+    def __init__(self, url, scope, is_deleted, created_at, user_id = "", *args, **kwargs):
         super(BlockCharacter, self).__init__(*args, **kwargs)
-        self.user_id = user_id
+        if user_id != "" and user_id != None:
+            self.user_id = user_id
         self.url = url
         self.scope = scope
         self.is_deleted = is_deleted
