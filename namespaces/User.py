@@ -30,17 +30,10 @@ class UserEmailValidaionClass(Resource):
         """
         try:
             result, message = user_module.email_validation()
-            if result != False:
-                return Response(
-                    response = json.dumps(message),
-                    status = 200,
-                    mimetype = "application/json"
-                )
-            else:
-                return Response(
-                    response = json.dumps(message),
-                    status = 409,
-                    mimetype = "application/json"
+            return Response(
+                response = json.dumps(message),
+                status = result,
+                mimetype = "application/json"
                 )
         except Exception as ex:
             print("******************")
@@ -61,18 +54,11 @@ class UsersClass(Resource):
         """
         try:
             result, message = user_module.create_users()
-            if result != False:
-                return Response(
-                    response = json.dumps(message),
-                    status = 201,
-                    mimetype = "application/json"
-                )
-            else:
-                return Response(
-                    response = json.dumps(message),
-                    status = 404,
-                    mimetype = "application/json"
-                )
+            return Response(
+                response = json.dumps(message), ##회원가입 성공일때는 status를 201로 받아 나머지는 다 200
+                status = result,
+                mimetype = "application/json"
+            )
         except Exception as ex:
             print("******************")
             print(ex)
@@ -92,18 +78,11 @@ class UserEmailClass(Resource):
         """
         try:
             result, message = user_module.find_email()
-            if result != False:
-                return Response(
-                    response = json.dumps(message),
-                    status = 200,
-                    mimetype = "application/json"
-                )
-            else:
-                return Response(
-                    response = json.dumps(message),
-                    status = 404,
-                    mimetype = "application/json"
-                )
+            return Response(
+                response = json.dumps(message),
+                status = result,
+                mimetype = "application/json"
+            )
         except Exception as ex:
             print("******************")
             print(ex)
@@ -123,18 +102,11 @@ class UserPasswordValidationClass(Resource):
         """
         try:
             result, message = user_module.password_validation()
-            if result != False:
-                return Response(
-                    response = json.dumps(message),
-                    status = 200,
-                    mimetype = "application/json"
-                )
-            else:
-                return Response(
-                    response = json.dumps(message),
-                    status = 404,
-                    mimetype = "application/json"
-                )
+            return Response(
+                response = json.dumps(message),
+                status = result,
+                mimetype = "application/json"
+            )
         except Exception as ex:
             print("******************")
             print(ex)
@@ -154,18 +126,11 @@ class UserUpdatePasswordClass(Resource):
         """
         try:
             result, message = user_module.update_password()
-            if result != False:
-                return Response(
-                    response = json.dumps(message),
-                    status = 200,
-                    mimetype = "application/json"
-                )
-            else:
-                return Response(
-                    response = json.dumps(message),
-                    status = 404,
-                    mimetype = "application/json"
-                )
+            return Response(
+                response = json.dumps(message),
+                status = result,
+                mimetype = "application/json"
+            )
         except Exception as ex:
             print("******************")
             print(ex)
@@ -194,18 +159,11 @@ class AuthClass(Resource):
         """
         try:
             result, message = user_module.login()
-            if result != False:
-                return Response(
-                    response=json.dumps(message),
-                    status=200,
-                    mimetype="application/json"
-                )
-            else:
-                return Response(
-                    response=json.dumps(message),
-                    status=404,
-                    mimetype="application/json"
-                )
+            return Response(
+                response = json.dumps(message),
+                status = result,
+                mimetype = "application/json"
+            )
         except Exception as ex:
             print("******************")
             print(ex)

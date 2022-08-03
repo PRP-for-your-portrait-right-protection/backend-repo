@@ -13,10 +13,10 @@ def create_whitelist_face(user, name):
     try:
         whitelistFace = schema.WhitelistFace(user, name, False, datetime.now())
         result = schema.WhitelistFace.objects().insert(whitelistFace)
-        return True, {"id" : str(result._id)}
+        return 200, {"id" : str(result._id)} ###true -> 200으로 바꿈
     except Exception as ex:
         print(ex)
-        return False, {"error": str(ex)}
+        return 400, {"error": str(ex)}  ###false-> 400
 
 """
 * WhitelistFace update
@@ -25,19 +25,19 @@ def update_whitelist_face(user, _id, name):
     try:
         whitelistFace = schema.WhitelistFace.objects(_id = ObjectId(_id), user_id = user, is_deleted=False)
         if whitelistFace.count() == 0:
-            return False, {"error": f'{status_code.id_error}whitelist_face'}
+            return 404, {"error": f'{status_code.id_error}whitelist_face'}  #false ->404
         updateWhitelistFace = whitelistFace.update(
             name = name,
             updated_at = datetime.now()
         )
         if updateWhitelistFace > 0:
-            return True, {"message": status_code.update_01_success}
+            return 200, {"message": status_code.update_01_success}  #true ->> 200
         else:
             print("Can't be modified")
-            return False, {"error": status_code.update_02_fail}
+            return 400, {"error": status_code.update_02_fail}  #false ->400
     except Exception as ex:
         print(ex)
-        return False, {"error": str(ex)}
+        return 400, {"error": str(ex)}  #false ->400
 
 """
 * WhitelistFace delete
@@ -46,7 +46,7 @@ def delete_whitelist_face(user, _id):  ##white list image 도 같이 지워져�
     try:
         whitelistFace = schema.WhitelistFace.objects(_id = ObjectId(_id), user_id = user, is_deleted=False)
         if whitelistFace.count() == 0:
-            return False, {"error": f'{status_code.id_error}whitelist_face'}
+            return 404, {"error": f'{status_code.id_error}whitelist_face'}  #false ->404
         deleteWhitelistFace = whitelistFace.update(
             is_deleted=True,
             updated_at =datetime.now()
@@ -56,13 +56,13 @@ def delete_whitelist_face(user, _id):  ##white list image 도 같이 지워져�
                 is_deleted=True,
                 updated_at =datetime.now()
             )
-            return True, {"message": status_code.delete_01_success}
+            return 200, {"message": status_code.delete_01_success}  #true ->> 200
         else:
             print("Can't be deleted")
-            return False, {"error": status_code.delete_02_fail}
+            return 404, {"error": status_code.delete_02_fail} #false ->400
     except Exception as ex:
         print(ex)
-        return False, {"error": str(ex)}
+        return 400, {"error": str(ex)} #false ->400
 
 ################### WHITELIST FACE IMAGE ###################
 
@@ -73,10 +73,10 @@ def create_whitelist_face_image(whitelistFace, location):
     try:
         whitelistFaceImage = schema.WhitelistFaceImage(whitelistFace, location, False, datetime.now())
         result = schema.WhitelistFaceImage.objects().insert(whitelistFaceImage)
-        return True, {"id" : str(result._id)}
+        return 200, {"id" : str(result._id)} #true->200
     except Exception as ex:
         print(ex)
-        return False, {"error": str(ex)}
+        return 400, {"error": str(ex)} #false->400
 
 """
 * WhitelistFaceImage read
@@ -97,10 +97,10 @@ def read_whitelist_face_image(user):
             for y in imageResult:
                 arr["whitelistFaceImages"].append({"id" : str(y._id), "url" : y.url})
             data["data"].append(arr)
-        return True, data
+        return 200, data  #true->200
     except Exception as ex:
         print(ex)
-        return False, {"error": str(ex)}
+        return 400, {"error": str(ex)}  #false->400
     
 """
 * WhitelistFaceImage delete
@@ -109,19 +109,19 @@ def delete_whitelist_face_image(whitelistFaceId, _id):
     try:
         whilelistFaceImage = schema.WhitelistFaceImage.objects(_id = ObjectId(_id), whitelist_face_id = whitelistFaceId, is_deleted=False)
         if whilelistFaceImage.count() == 0:
-            return False, {"error": f'{status_code.id_error}whitelist_face_image'}
+            return 404, {"error": f'{status_code.id_error}whitelist_face_image'} #false->404
         deleteWhilelistFaceImage = whilelistFaceImage.update(
             is_deleted=True,
             updated_at =datetime.now()
         )
         if deleteWhilelistFaceImage > 0:
-            return True, {"message": status_code.delete_01_success}
+            return 200, {"message": status_code.delete_01_success} #true->200
         else:
             print("Can't be deleted")
-            return False, {"error": status_code.delete_02_fail}
+            return 404, {"error": status_code.delete_02_fail} #false->404
     except Exception as ex:
         print(ex)
-        return False, {"error": str(ex)}
+        return 400, {"error": str(ex)}  #false->400
 
 """
 * WhitelistFaceImg corresponding to id read
@@ -150,10 +150,10 @@ def read_origin_block_character():
         for x in temp:
             tempJson1 = {"id" : str(x._id), "url" : x.url}
             tempJson["data"].append(tempJson1)
-        return True, tempJson
+        return 200, tempJson #true->200
     except Exception as ex:
         print(ex)
-        return False, {"error": str(ex)}
+        return 400, {"error": str(ex)} #false->400
 
 """
 * BlockCharacter create
@@ -162,11 +162,11 @@ def create_block_character(user, location):
     try:
         blockCharacter = schema.BlockCharacter(user, location, ScopeClass.user, False, datetime.now())
         result = schema.BlockCharacter.objects().insert(blockCharacter)
-        return True, {"id": str(result._id)}
+        return 200, {"id": str(result._id)} #true->200
     except Exception as ex:
         print(ex)
-        return False, {"error": str(ex)}
-
+        return 400, {"error": str(ex)} #false->400
+ 
 """
 * UserBlockCharacter read
 """
@@ -178,10 +178,10 @@ def read_user_block_character(user):
         for x in temp:
             tempJson1 = {"id" : str(x._id), "url" : x.url}
             tempJson['data'].append(tempJson1)
-        return True, tempJson
+        return 200, tempJson  
     except Exception as ex:
         print(ex)
-        return False, {"error": str(ex)}
+        return 400, {"error": str(ex)}
 
 """
 * BlockCharacter delete
@@ -190,19 +190,19 @@ def delete_block_character(user, _id):
     try:
         blockCharacter = schema.BlockCharacter.objects(_id = ObjectId(_id), scope = ScopeClass.user, user_id = user, is_deleted=False)
         if blockCharacter.count() == 0:
-            return False, {"error": f'{status_code.id_error}block_character'}
+            return 404, {"error": f'{status_code.id_error}block_character'} #false->404
         deleteBlockCharacter = blockCharacter.update(
             is_deleted=True,
             updated_at =datetime.now()
         )
         if deleteBlockCharacter > 0:
-            return True, {"message": status_code.delete_01_success}
+            return 200, {"message": status_code.delete_01_success} #true->200
         else:
             print("Can't be deleted")  
-            return False, {"error": status_code.delete_02_fail}
+            return 400, {"error": status_code.delete_02_fail} #false->400
     except Exception as ex:
         print(ex)
-        return False, {"error": str(ex)}
+        return 400, {"error": str(ex)} #false->400
 
 """
 * BlockCharacter corresponding to id read

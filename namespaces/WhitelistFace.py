@@ -34,18 +34,11 @@ class WhitelistFacesClass(Resource):
         """
         try:
             result, message = crud_module.upload_whitelist_face()
-            if result != False:
-                return Response(
-                    response = json.dumps(message),
-                    status = 200,
-                    mimetype = "application/json"
-                )
-            else:
-                return Response(
-                    response=json.dumps(message),
-                    status=404,
-                    mimetype="application/json"
-                )
+            return Response(
+                response = json.dumps(message),
+                status = result,
+                mimetype = "application/json"
+            )
         except Exception as ex:
             print("******************")
             print(ex)
@@ -66,18 +59,11 @@ class WhitelistFacesIdClass(Resource):
         """
         try:
             result, message = crud_module.update_whitelist_face(whitelistFaceId)
-            if result != False:
-                return Response(
-                    response = json.dumps(message),
-                    status = 200,
-                    mimetype = "application/json"
-                )
-            else:
-                return Response(
-                    response=json.dumps(message),
-                    status=404,
-                    mimetype="application/json"
-                )
+            return Response(
+                response = json.dumps(message),
+                status = result,
+                mimetype = "application/json"
+            )
         except Exception as ex:
             print("******************")
             print(ex)
@@ -92,18 +78,11 @@ class WhitelistFacesIdClass(Resource):
         """
         try:
             result, message = crud_module.delete_whitelist_face(whitelistFaceId)
-            if result != False:
-                return Response(
-                    response = json.dumps(message),
-                    status = 200,
-                    mimetype = "application/json"
-                )
-            else:
-                return Response(
-                    response=json.dumps(message),
-                    status=404,
-                    mimetype="application/json"
-                )
+            return Response(
+                response = json.dumps(message),
+                status = result,
+                mimetype = "application/json"
+            )
         except Exception as ex:
             print("******************")
             print(ex)
@@ -124,18 +103,11 @@ class WhitelistFacesImagesClass(Resource):
         '''
         try:
             result, message = crud_module.whitelist_face_image_upload(whitelistFaceId)
-            if result != False:
-                return Response(
-                    response = json.dumps(message),
-                    status = 200,
-                    mimetype = "application/json"
-                )
-            else:
-                return Response(
-                    response=json.dumps(message),
-                    status=404,
-                    mimetype="application/json"
-                )
+            return Response(
+                response = json.dumps(message),
+                status = result,
+                mimetype = "application/json"
+            )
         except Exception as ex:
             print("******************")
             print(ex)
@@ -187,18 +159,11 @@ class WhitelistFacesImagesClass(Resource):
         """
         try:
             result, message = crud_module.get_whitelist_face_image()
-            if result != False:
-                return Response(
-                    response = json.dumps(message),
-                    status = 200,
-                    mimetype = "application/json"
-                )
-            else:
-                return Response(
-                    response=json.dumps(message),
-                    status=404,
-                    mimetype="application/json"
-                )
+            return Response(
+                response = json.dumps(message),
+                status = result,
+                mimetype = "application/json"
+            )
         except Exception as ex:
             print("******************")
             print(ex)
@@ -218,18 +183,11 @@ class WhitelistFacesImageIdClass(Resource):
         '''
         try:
             result, message = crud_module.delete_whitelist_face_image(whitelistFaceId, imageId)
-            if result != False:
-                return Response(
-                    response = json.dumps(message),
-                    status = 200,
-                    mimetype = "application/json"
-                )
-            else:
-                return Response(
-                    response=json.dumps(message),
-                    status=404,
-                    mimetype="application/json"
-                )
+            return Response(
+                response = json.dumps(message),
+                status = result,
+                mimetype = "application/json"
+            )
         except Exception as ex:
             print("******************")
             print(ex)

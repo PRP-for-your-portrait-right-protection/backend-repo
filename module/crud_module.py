@@ -32,15 +32,15 @@ def upload_whitelist_face():
         token = request.headers.get('Token')
         user = module.token.get_user(token)
         if user == False:
-            return False, {"error": status_code.token_error}
+            return 401, {"error": status_code.token_error}
         name = request.form.get('name')
         if name == None or name == '':
-            return False, {"error": f'{status_code.field_error}name'}
+            return 404, {"error": f'{status_code.field_error}name'}
         result, message = db_module.create_whitelist_face(user, name)
         return result, message
     except Exception as ex:
         print(ex)
-        return False, {"error": str(ex)}
+        return 400, {"error": str(ex)}
 
 """
 * WhitelistFace update
@@ -50,15 +50,15 @@ def update_whitelist_face(_id):
         token = request.headers.get('Token')
         user = module.token.get_user(token)
         if user == False:
-            return False, {"error": status_code.token_error}
+            return 401, {"error": status_code.token_error}
         name = request.form.get('face_name_after')
         if name == None or name == '':
-            return False, {"error": f'{status_code.field_error}face_name_after'}
+            return 404, {"error": f'{status_code.field_error}face_name_after'}
         result, message = module.db_module.update_whitelist_face(user, _id, name)
         return result, message
     except Exception as ex:
         print(ex)
-        return False, {"error": str(ex)}     
+        return 400, {"error": str(ex)}     
 
 """
 * WhitelistFace delete
@@ -68,12 +68,12 @@ def delete_whitelist_face(_id):
         token = request.headers.get('Token')
         user = module.token.get_user(token)
         if user == False:
-            return False, {"error": status_code.token_error}
+            return 401, {"error": status_code.token_error}
         result, message = module.db_module.delete_whitelist_face(user, _id)
         return result, message
     except Exception as ex:
         print(ex)
-        return False, {"error": str(ex)}
+        return 400, {"error": str(ex)}
 
 ################### WHITELIST FACE IMAGE ###################
 
@@ -85,21 +85,21 @@ def whitelist_face_image_upload(whitelistFace):
         token = request.headers.get('Token')
         user = module.token.get_user(token)
         if user == False:
-            return False, {"error": status_code.token_error}
+            return 401, {"error": status_code.token_error}
         if 'file' not in request.files:
-            return False, {"error": f'{status_code.field_error}file'}
+            return 404, {"error": f'{status_code.field_error}file'} 
         filename = request.files['file'].filename
         if filename == None or filename == '':
-            return False, {"error": f'{status_code.field_error}file'}
+            return 404, {"error": f'{status_code.field_error}file'}
         f = request.files['file']
         fileResult, location = file_module.file_upload(user, SchemaName.whitelistFaceImage.value, f)
         if fileResult == False:
-            return fileResult, location
+            return 400, location
         result, message = module.db_module.create_whitelist_face_image(whitelistFace, location)
         return result, message
     except Exception as ex:
         print(ex)
-        return False, {"error": str(ex)}
+        return 400, {"error": str(ex)}
     
 """
 * whitelist face image get
@@ -109,12 +109,12 @@ def get_whitelist_face_image():
         token = request.headers.get("Token")
         user = module.token.get_user(token)
         if user == False:
-            return False, {"error": status_code.token_error}
+            return 401, {"error": status_code.token_error}
         result, message = module.db_module.read_whitelist_face_image(user)
         return result, message
     except Exception as ex:
         print(ex)
-        return False, {"error": str(ex)}
+        return 400, {"error": str(ex)}
 
 """
 * Whitelist face image delete
@@ -124,12 +124,12 @@ def delete_whitelist_face_image(whitelistFaceId, _id):
         token = request.headers.get('Token')
         user = module.token.get_user(token)
         if user == False:
-            return False, {"error": status_code.token_error}
+            return 401, {"error": status_code.token_error}
         result, message = module.db_module.delete_whitelist_face_image(whitelistFaceId, _id)
         return result, message
     except Exception as ex:
         print(ex)
-        return False, {"error": str(ex)}
+        return 400, {"error": str(ex)}
 
 ################### BLOCK CHARACTER ###################
 
@@ -141,12 +141,12 @@ def get_origin_block_character():
         token = request.headers.get("Token")
         user = module.token.get_user(token)
         if user == False:
-            return False, {"error": status_code.token_error}
+            return 401, {"error": status_code.token_error}
         result, message = module.db_module.read_origin_block_character()
         return result, message
     except Exception as ex:
         print(ex)
-        return False, {"error": str(ex)}
+        return 400, {"error": str(ex)}
 
 """
 * user block character upload
@@ -156,21 +156,21 @@ def upload_user_block_character():
         token = request.headers.get('Token')
         user = module.token.get_user(token)
         if user == False:
-            return False, {"error": status_code.token_error}
+            return 401, {"error": status_code.token_error}
         if 'file' not in request.files:
-            return False, {"error": f'{status_code.field_error}file'}
+            return 404, {"error": f'{status_code.field_error}file'}
         filename = request.files['file'].filename
         if filename == None or filename == '':
-            return False, {"error": f'{status_code.field_error}file'}
+            return 404, {"error": f'{status_code.field_error}file'}
         f = request.files['file']
         fileResult, location = file_module.file_upload(user, SchemaName.blockCharacter.value, f)
         if fileResult == False:
-            return fileResult, location
+            return 400, location
         result, message = module.db_module.create_block_character(user, location)
         return result, message
     except Exception as ex:    
         print(ex)
-        return False, {"error": str(ex)}
+        return 400, {"error": str(ex)}
 
 """
 * user block character get
@@ -180,12 +180,12 @@ def get_user_block_character():
         token = request.headers.get("Token")
         user = module.token.get_user(token)
         if user == False:
-            return False, {"error": status_code.token_error}
+            return 401, {"error": status_code.token_error}
         result, message = module.db_module.read_user_block_character(user)
         return result, message
     except Exception as ex:    
         print(ex)
-        return False, {"error": str(ex)}
+        return 400, {"error": str(ex)}
 
 """
 * user block character delete
@@ -195,12 +195,12 @@ def delete_user_block_character(_id):
         token = request.headers.get('Token')
         user = module.token.get_user(token)
         if user == False:
-            return False, {"error": status_code.token_error}
+            return 401, {"error": status_code.token_error}
         result, message = module.db_module.delete_block_character(user, _id)
         return result, message
     except Exception as ex:    
         print(ex)
-        return False, {"error": str(ex)}
+        return 400, {"error": str(ex)}
 
 ################### VIDEO ###################
 
@@ -212,24 +212,24 @@ def origin_video_upload():
         token = request.headers.get('Token')
         user = module.token.get_user(token)
         if user == False:
-            return False, {"error": status_code.token_error}
+            return 401, {"error": status_code.token_error}
         if 'file' not in request.files:
-            return False, {"error": f'{status_code.field_error}file'}
+            return 404, {"error": f'{status_code.field_error}file'}
         filename = request.files['file'].filename
         if filename == None or filename == '':
-            return False, {"error": f'{status_code.field_error}file'}
+            return 404, {"error": f'{status_code.field_error}file'}
         f = request.files['file']
         fileResult, location = file_module.file_upload(user, SchemaName.video.value, f)
         if fileResult == False:
             return fileResult, location
         result, message = module.db_module.create_video(user, location)
-        if result:
+        if result == 200: ###### result-> result == 200
             return result, {"id" : message, "url": location}
         else:
-            return result, message
+            return 400, message
     except Exception as ex:    
         print(ex)
-        return False, {"error": str(ex)}
+        return 400, {"error": str(ex)}
     
 """
 * video delete

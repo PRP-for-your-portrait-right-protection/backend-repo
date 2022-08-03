@@ -41,18 +41,11 @@ class OriginBlockCharactersClass(Resource):
         """
         try:
             result, message = crud_module.get_origin_block_character()
-            if result != False:
-                return Response(
-                    response = json.dumps(message),
-                    status = 200,
-                    mimetype = "application/json"
-                )
-            else:
-                return Response(
-                    response=json.dumps(message),
-                    status=404,
-                    mimetype="application/json"
-                )
+            return Response(
+                response = json.dumps(message),
+                status = result,
+                mimetype = "application/json"
+            )
         except Exception as ex:
             print("******************")
             print(ex)
@@ -75,18 +68,11 @@ class UserBlockCharactersClass(Resource):
         '''
         try:
             result, message = crud_module.upload_user_block_character()
-            if result != False:
-                return Response(
-                    response = json.dumps(message),
-                    status = 200,
-                    mimetype = "application/json"
-                )
-            else:
-                return Response(
-                    response=json.dumps(message),
-                    status=404,
-                    mimetype="application/json"
-                )
+            return Response(
+                response = json.dumps(message),
+                status = result,
+                mimetype = "application/json"
+            )
         except Exception as ex:
             print("******************")
             print(ex)
@@ -113,18 +99,11 @@ class UserBlockCharactersClass(Resource):
         """
         try:
             result, message = crud_module.get_user_block_character() 
-            if result != False:
-                return Response(
-                    response = json.dumps(message),
-                    status = 200,
-                    mimetype = "application/json"
-                )
-            else:
-                return Response(
-                    response=json.dumps(message),
-                    status=404,
-                    mimetype="application/json"
-                )
+            return Response(
+                response = json.dumps(message),
+                status = result,
+                mimetype = "application/json"
+            )
         except Exception as ex:
             print("******************")
             print(ex)
@@ -144,18 +123,11 @@ class UserBlockCharactersIdClass(Resource):
         """
         try:
             result, message = crud_module.delete_user_block_character(characterId)
-            if result != False:
-                return Response(
-                    response = json.dumps(message),
-                    status = 200,
-                    mimetype = "application/json"
-                )
-            else:
-                return Response(
-                    response=json.dumps(message),
-                    status=404,
-                    mimetype="application/json"
-                )
+            return Response(
+                response = json.dumps(message),
+                status = result,
+                mimetype = "application/json"
+            )
         except Exception as ex:
             print("******************")
             print(ex)

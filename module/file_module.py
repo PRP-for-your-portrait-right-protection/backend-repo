@@ -30,17 +30,17 @@ def file_upload(user, collctionName, f):
         if ret :
             # 6-3. 성공 message return
             if location != None:
-                return True, location
+                return 200, location #true->200
             else:
                 print("Can't find location")
-                return False, {"error":"Can't find location"}
+                return False, {"error":"Can't find location"} #false ->400 
         
         # 6. 버킷에 파일 저장 실패 시 진행 (ret == False 일 경우)
         else:
-            return False, {"error":"Can't saved in s3 bucket"}
+            return False, {"error":"Can't saved in s3 bucket"} #false ->400
         
     except Exception as ex:
         print("******************")
         print(ex)
         print("******************")
-        return False, {"error" : str(ex)}
+        return False, {"error" : str(ex)}  #false -> 400
