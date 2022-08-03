@@ -375,7 +375,7 @@ def read_celery_status(user, taskId):
                 return True, temp3.status
         else:
             # pending일 경우 (셀러리 결과가 db에 저장되지 않음)
-            return 0
+            return 0, StatusClass.pending.value
     except Exception as ex:
         print(ex)
         return False, {"error": str(ex)} 
