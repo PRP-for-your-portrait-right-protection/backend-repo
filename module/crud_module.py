@@ -223,8 +223,8 @@ def origin_video_upload():
         if fileResult == False:
             return fileResult, location
         result, message = module.db_module.create_video(user, location)
-        if result == 200: ###### result-> result == 200
-            return result, {"id" : message, "url": location}
+        if result == True: ###### result-> result == 200
+            return 200, {"id" : message, "url": location}
         else:
             return 400, message
     except Exception as ex:    
