@@ -30,18 +30,11 @@ class OriginVideosClass(Resource):
         """
         try:
             result, message = crud_module.origin_video_upload()
-            if result != False:
-                return Response(
-                    response = json.dumps(message),
-                    status = 200,
-                    mimetype = "application/json"
-                )
-            else:
-                return Response(
-                    response=json.dumps(message),
-                    status=404,
-                    mimetype="application/json"
-                )
+            return Response(
+                response = json.dumps(message),
+                status = result,
+                mimetype = "application/json"
+            )
         except Exception as ex:
             print("******************")
             print(ex)
