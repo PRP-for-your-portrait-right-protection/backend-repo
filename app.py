@@ -25,7 +25,7 @@ api = Api(
     license="MIT",
     prefix='/api/v1'
 )
-from namespaces import BlockCharacter, OriginVideo, ProccessedVideo, User, WhitelistFace
+from apis import BlockCharacter, OriginVideo, ProccessedVideo, User, WhitelistFace
 api.add_namespace(User.Users, '/users')
 api.add_namespace(User.Auth, '/auth')
 api.add_namespace(WhitelistFace.WhitelistFaces, '/whitelist-faces')
